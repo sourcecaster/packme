@@ -326,7 +326,7 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
 void writeOutput(String outputFilename, String prefix) {
 	final List<String> out = <String>[];
 	out.add("import 'dart:typed_data';");
-	out.add("import 'package:serveme/serveme.dart';");
+	out.add("import 'package:packme/packme.dart';");
 	out.add('');
 	for (final Message message in messages.values) {
 		out.addAll(message.output());
