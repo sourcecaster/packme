@@ -1,7 +1,43 @@
 library packme;
 
-/// A Calculator.
-class Calculator {
-  /// Returns [value] plus 1.
-  int addOne(int value) => value + 1;
+import 'dart:convert';
+import 'dart:typed_data';
+
+part 'message.dart';
+
+class PackMe {
+	PackMe({this.onError});
+
+	late final Function(String, [StackTrace])? onError;
+	final Map<int, PackMeMessage Function()> _factory = <int, PackMeMessage Function()>{};
+
+	void register(Map<int, PackMeMessage Function()> messageFactory) {
+		_factory.addAll(messageFactory);
+	}
+
+	Uint8List? pack(PackMeMessage message) {
+		try {
+			message.pack();
+			return message.data!;
+		}
+		catch (err, stack) {
+			onError?.call('Packing message failed: $err', stack);
+			return null;
+		}
+	}
+
+	PackMeMessage? unpack(Uint8List data) {
+		try {
+			if (data.length < 4) return null;
+			final int id = data.buffer.asByteData().getUint32(0, Endian.big);
+			final PackMeMessage? message = _factory[id]?.call();
+			message?.data = data;
+			message?.unpack();
+			return message;
+		}
+		catch (err, stack) {
+			onError?.call('Unpacking message failed: $err', stack);
+			return null;
+		}
+	}
 }
