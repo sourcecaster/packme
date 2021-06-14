@@ -8,7 +8,7 @@ part 'message.dart';
 class PackMe {
 	PackMe({this.onError});
 
-	late final Function(String, [StackTrace])? onError;
+	final Function(String, [StackTrace])? onError;
 	final Map<int, PackMeMessage Function()> _factory = <int, PackMeMessage Function()>{};
 
 	void register(Map<int, PackMeMessage Function()> messageFactory) {
