@@ -486,6 +486,42 @@ class DeleteResponse extends PackMeMessage {
 	
 }
 
+class UpdateSessionMessage extends PackMeMessage {
+	late List<int> userId;
+	late String sessionId;
+	
+	@override
+	int estimate() {
+		reset();
+		int bytes = 4;
+		bytes += 4;
+		bytes += 1 * userId.length;
+		bytes += stringBytes(sessionId);
+		return bytes;
+	}
+	
+	@override
+	void pack() {
+		data = Uint8List(estimate());
+		packUint32(743336169);
+		packUint32(userId.length);
+		userId.forEach(packUint8);
+		packString(sessionId);
+	}
+	
+	@override
+	void unpack() {
+		unpackUint32();
+		userId = <int>[];
+		final int userIdLength = unpackUint32();
+		for (int i = 0; i < userIdLength; i++) {
+			userId.add(unpackUint8());
+		}
+		sessionId = unpackString();
+	}
+	
+}
+
 final Map<int, PackMeMessage Function()> exampleUsersMessageFactory = <int, PackMeMessage Function()>{
 	12982278: () => GetAllRequest(),
 	242206268: () => GetAllResponse(),
@@ -493,4 +529,5 @@ final Map<int, PackMeMessage Function()> exampleUsersMessageFactory = <int, Pack
 	430536944: () => GetResponse(),
 	808423104: () => DeleteRequest(),
 	69897231: () => DeleteResponse(),
+	743336169: () => UpdateSessionMessage(),
 };

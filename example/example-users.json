@@ -57,5 +57,11 @@
 		{
 			"?error": "string"
 		}
+	],
+	"update_session": [
+		{
+			"user_id": ["uint8"],
+			"session_id": "string"
+		}
 	]
 }
