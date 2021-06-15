@@ -4,21 +4,21 @@ import 'package:packme/packme.dart';
 class GetAllRequest extends PackMeMessage {
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 4;
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(12982278);
+	void $pack() {
+		$init();
+		$packUint32(12982278);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
+	void $unpack() {
+		$unpackUint32();
 	}
 	
 }
@@ -31,21 +31,21 @@ class GetAllResponseUser extends PackMeMessage {
 	int? age;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 1;
 		bytes += 4;
 		bytes += 1 * id.length;
-		bytes += stringBytes(nickname);
-		setFlag(firstName != null);
+		bytes += $stringBytes(nickname);
+		$setFlag(firstName != null);
 		if (firstName != null) {
-			bytes += stringBytes(firstName!);
+			bytes += $stringBytes(firstName!);
 		}
-		setFlag(lastName != null);
+		$setFlag(lastName != null);
 		if (lastName != null) {
-			bytes += stringBytes(lastName!);
+			bytes += $stringBytes(lastName!);
 		}
-		setFlag(age != null);
+		$setFlag(age != null);
 		if (age != null) {
 			bytes += 1;
 		}
@@ -53,33 +53,33 @@ class GetAllResponseUser extends PackMeMessage {
 	}
 	
 	@override
-	void pack() {
-		for (int i = 0; i < 1; i++) packUint8(flags[i]);
-		packUint32(id.length);
-		id.forEach(packUint8);
-		packString(nickname);
-		if (firstName != null) packString(firstName!);
-		if (lastName != null) packString(lastName!);
-		if (age != null) packUint8(age!);
+	void $pack() {
+		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
+		$packUint32(id.length);
+		id.forEach($packUint8);
+		$packString(nickname);
+		if (firstName != null) $packString(firstName!);
+		if (lastName != null) $packString(lastName!);
+		if (age != null) $packUint8(age!);
 	}
 	
 	@override
-	void unpack() {
-		for (int i = 0; i < 1; i++) flags.add(unpackUint8());
+	void $unpack() {
+		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
 		id = <int>[];
-		final int idLength = unpackUint32();
+		final int idLength = $unpackUint32();
 		for (int i = 0; i < idLength; i++) {
-			id.add(unpackUint8());
+			id.add($unpackUint8());
 		}
-		nickname = unpackString();
-		if (getFlag()) {
-			firstName = unpackString();
+		nickname = $unpackString();
+		if ($getFlag()) {
+			firstName = $unpackString();
 		}
-		if (getFlag()) {
-			lastName = unpackString();
+		if ($getFlag()) {
+			lastName = $unpackString();
 		}
-		if (getFlag()) {
-			age = unpackUint8();
+		if ($getFlag()) {
+			age = $unpackUint8();
 		}
 	}
 	
@@ -89,29 +89,29 @@ class GetAllResponse extends PackMeMessage {
 	late List<GetAllResponseUser> users;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 4;
 		bytes += 4;
-		for (int i = 0; i < users.length; i++) bytes += users[i].estimate();
+		for (int i = 0; i < users.length; i++) bytes += users[i].$estimate();
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(242206268);
-		packUint32(users.length);
-		users.forEach(packMessage);
+	void $pack() {
+		$init();
+		$packUint32(242206268);
+		$packUint32(users.length);
+		users.forEach($packMessage);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
+	void $unpack() {
+		$unpackUint32();
 		users = <GetAllResponseUser>[];
-		final int usersLength = unpackUint32();
+		final int usersLength = $unpackUint32();
 		for (int i = 0; i < usersLength; i++) {
-			users.add(unpackMessage(GetAllResponseUser()) as GetAllResponseUser);
+			users.add($unpackMessage(GetAllResponseUser()) as GetAllResponseUser);
 		}
 	}
 	
@@ -121,8 +121,8 @@ class GetRequest extends PackMeMessage {
 	late List<int> userId;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 4;
 		bytes += 4;
 		bytes += 1 * userId.length;
@@ -130,20 +130,20 @@ class GetRequest extends PackMeMessage {
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(781905656);
-		packUint32(userId.length);
-		userId.forEach(packUint8);
+	void $pack() {
+		$init();
+		$packUint32(781905656);
+		$packUint32(userId.length);
+		userId.forEach($packUint8);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
+	void $unpack() {
+		$unpackUint32();
 		userId = <int>[];
-		final int userIdLength = unpackUint32();
+		final int userIdLength = $unpackUint32();
 		for (int i = 0; i < userIdLength; i++) {
-			userId.add(unpackUint8());
+			userId.add($unpackUint8());
 		}
 	}
 	
@@ -157,26 +157,26 @@ class GetResponseInfo extends PackMeMessage {
 	DateTime? birthDate;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 1;
-		setFlag(firstName != null);
+		$setFlag(firstName != null);
 		if (firstName != null) {
-			bytes += stringBytes(firstName!);
+			bytes += $stringBytes(firstName!);
 		}
-		setFlag(lastName != null);
+		$setFlag(lastName != null);
 		if (lastName != null) {
-			bytes += stringBytes(lastName!);
+			bytes += $stringBytes(lastName!);
 		}
-		setFlag(male != null);
+		$setFlag(male != null);
 		if (male != null) {
 			bytes += 1;
 		}
-		setFlag(age != null);
+		$setFlag(age != null);
 		if (age != null) {
 			bytes += 1;
 		}
-		setFlag(birthDate != null);
+		$setFlag(birthDate != null);
 		if (birthDate != null) {
 			bytes += 8;
 		}
@@ -184,32 +184,32 @@ class GetResponseInfo extends PackMeMessage {
 	}
 	
 	@override
-	void pack() {
-		for (int i = 0; i < 1; i++) packUint8(flags[i]);
-		if (firstName != null) packString(firstName!);
-		if (lastName != null) packString(lastName!);
-		if (male != null) packUint8(male!);
-		if (age != null) packUint8(age!);
-		if (birthDate != null) packDateTime(birthDate!);
+	void $pack() {
+		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
+		if (firstName != null) $packString(firstName!);
+		if (lastName != null) $packString(lastName!);
+		if (male != null) $packUint8(male!);
+		if (age != null) $packUint8(age!);
+		if (birthDate != null) $packDateTime(birthDate!);
 	}
 	
 	@override
-	void unpack() {
-		for (int i = 0; i < 1; i++) flags.add(unpackUint8());
-		if (getFlag()) {
-			firstName = unpackString();
+	void $unpack() {
+		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
+		if ($getFlag()) {
+			firstName = $unpackString();
 		}
-		if (getFlag()) {
-			lastName = unpackString();
+		if ($getFlag()) {
+			lastName = $unpackString();
 		}
-		if (getFlag()) {
-			male = unpackUint8();
+		if ($getFlag()) {
+			male = $unpackUint8();
 		}
-		if (getFlag()) {
-			age = unpackUint8();
+		if ($getFlag()) {
+			age = $unpackUint8();
 		}
-		if (getFlag()) {
-			birthDate = unpackDateTime();
+		if ($getFlag()) {
+			birthDate = $unpackDateTime();
 		}
 	}
 	
@@ -221,43 +221,43 @@ class GetResponseSocial extends PackMeMessage {
 	String? instagramId;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 1;
-		setFlag(facebookId != null);
+		$setFlag(facebookId != null);
 		if (facebookId != null) {
-			bytes += stringBytes(facebookId!);
+			bytes += $stringBytes(facebookId!);
 		}
-		setFlag(twitterId != null);
+		$setFlag(twitterId != null);
 		if (twitterId != null) {
-			bytes += stringBytes(twitterId!);
+			bytes += $stringBytes(twitterId!);
 		}
-		setFlag(instagramId != null);
+		$setFlag(instagramId != null);
 		if (instagramId != null) {
-			bytes += stringBytes(instagramId!);
+			bytes += $stringBytes(instagramId!);
 		}
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		for (int i = 0; i < 1; i++) packUint8(flags[i]);
-		if (facebookId != null) packString(facebookId!);
-		if (twitterId != null) packString(twitterId!);
-		if (instagramId != null) packString(instagramId!);
+	void $pack() {
+		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
+		if (facebookId != null) $packString(facebookId!);
+		if (twitterId != null) $packString(twitterId!);
+		if (instagramId != null) $packString(instagramId!);
 	}
 	
 	@override
-	void unpack() {
-		for (int i = 0; i < 1; i++) flags.add(unpackUint8());
-		if (getFlag()) {
-			facebookId = unpackString();
+	void $unpack() {
+		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
+		if ($getFlag()) {
+			facebookId = $unpackString();
 		}
-		if (getFlag()) {
-			twitterId = unpackString();
+		if ($getFlag()) {
+			twitterId = $unpackString();
 		}
-		if (getFlag()) {
-			instagramId = unpackString();
+		if ($getFlag()) {
+			instagramId = $unpackString();
 		}
 	}
 	
@@ -271,28 +271,28 @@ class GetResponseStats extends PackMeMessage {
 	late double rating;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 20;
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		packUint32(posts);
-		packUint32(comments);
-		packUint32(likes);
-		packUint32(dislikes);
-		packFloat(rating);
+	void $pack() {
+		$packUint32(posts);
+		$packUint32(comments);
+		$packUint32(likes);
+		$packUint32(dislikes);
+		$packFloat(rating);
 	}
 	
 	@override
-	void unpack() {
-		posts = unpackUint32();
-		comments = unpackUint32();
-		likes = unpackUint32();
-		dislikes = unpackUint32();
-		rating = unpackFloat();
+	void $unpack() {
+		posts = $unpackUint32();
+		comments = $unpackUint32();
+		likes = $unpackUint32();
+		dislikes = $unpackUint32();
+		rating = $unpackFloat();
 	}
 	
 }
@@ -302,23 +302,23 @@ class GetResponseLastActive extends PackMeMessage {
 	late String ip;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 8;
-		bytes += stringBytes(ip);
+		bytes += $stringBytes(ip);
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		packDateTime(datetime);
-		packString(ip);
+	void $pack() {
+		$packDateTime(datetime);
+		$packString(ip);
 	}
 	
 	@override
-	void unpack() {
-		datetime = unpackDateTime();
-		ip = unpackString();
+	void $unpack() {
+		datetime = $unpackDateTime();
+		ip = $unpackString();
 	}
 	
 }
@@ -329,25 +329,25 @@ class GetResponseSession extends PackMeMessage {
 	late bool active;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 9;
-		bytes += stringBytes(ip);
+		bytes += $stringBytes(ip);
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		packDateTime(created);
-		packString(ip);
-		packBool(active);
+	void $pack() {
+		$packDateTime(created);
+		$packString(ip);
+		$packBool(active);
 	}
 	
 	@override
-	void unpack() {
-		created = unpackDateTime();
-		ip = unpackString();
-		active = unpackBool();
+	void $unpack() {
+		created = $unpackDateTime();
+		ip = $unpackString();
+		active = $unpackBool();
 	}
 	
 }
@@ -364,58 +364,58 @@ class GetResponse extends PackMeMessage {
 	late List<GetResponseSession> sessions;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 14;
-		bytes += stringBytes(email);
-		bytes += stringBytes(nickname);
-		bytes += info.estimate();
-		bytes += social.estimate();
-		bytes += stats.estimate();
-		setFlag(lastActive != null);
+		bytes += $stringBytes(email);
+		bytes += $stringBytes(nickname);
+		bytes += info.$estimate();
+		bytes += social.$estimate();
+		bytes += stats.$estimate();
+		$setFlag(lastActive != null);
 		if (lastActive != null) {
-			bytes += lastActive!.estimate();
+			bytes += lastActive!.$estimate();
 		}
 		bytes += 4;
-		for (int i = 0; i < sessions.length; i++) bytes += sessions[i].estimate();
+		for (int i = 0; i < sessions.length; i++) bytes += sessions[i].$estimate();
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(430536944);
-		for (int i = 0; i < 1; i++) packUint8(flags[i]);
-		packString(email);
-		packString(nickname);
-		packBool(hidden);
-		packDateTime(created);
-		packMessage(info);
-		packMessage(social);
-		packMessage(stats);
-		if (lastActive != null) packMessage(lastActive!);
-		packUint32(sessions.length);
-		sessions.forEach(packMessage);
+	void $pack() {
+		$init();
+		$packUint32(430536944);
+		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
+		$packString(email);
+		$packString(nickname);
+		$packBool(hidden);
+		$packDateTime(created);
+		$packMessage(info);
+		$packMessage(social);
+		$packMessage(stats);
+		if (lastActive != null) $packMessage(lastActive!);
+		$packUint32(sessions.length);
+		sessions.forEach($packMessage);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
-		for (int i = 0; i < 1; i++) flags.add(unpackUint8());
-		email = unpackString();
-		nickname = unpackString();
-		hidden = unpackBool();
-		created = unpackDateTime();
-		info = unpackMessage(GetResponseInfo()) as GetResponseInfo;
-		social = unpackMessage(GetResponseSocial()) as GetResponseSocial;
-		stats = unpackMessage(GetResponseStats()) as GetResponseStats;
-		if (getFlag()) {
-			lastActive = unpackMessage(GetResponseLastActive()) as GetResponseLastActive;
+	void $unpack() {
+		$unpackUint32();
+		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
+		email = $unpackString();
+		nickname = $unpackString();
+		hidden = $unpackBool();
+		created = $unpackDateTime();
+		info = $unpackMessage(GetResponseInfo()) as GetResponseInfo;
+		social = $unpackMessage(GetResponseSocial()) as GetResponseSocial;
+		stats = $unpackMessage(GetResponseStats()) as GetResponseStats;
+		if ($getFlag()) {
+			lastActive = $unpackMessage(GetResponseLastActive()) as GetResponseLastActive;
 		}
 		sessions = <GetResponseSession>[];
-		final int sessionsLength = unpackUint32();
+		final int sessionsLength = $unpackUint32();
 		for (int i = 0; i < sessionsLength; i++) {
-			sessions.add(unpackMessage(GetResponseSession()) as GetResponseSession);
+			sessions.add($unpackMessage(GetResponseSession()) as GetResponseSession);
 		}
 	}
 	
@@ -425,8 +425,8 @@ class DeleteRequest extends PackMeMessage {
 	late List<int> userId;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 4;
 		bytes += 4;
 		bytes += 1 * userId.length;
@@ -434,20 +434,20 @@ class DeleteRequest extends PackMeMessage {
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(808423104);
-		packUint32(userId.length);
-		userId.forEach(packUint8);
+	void $pack() {
+		$init();
+		$packUint32(808423104);
+		$packUint32(userId.length);
+		userId.forEach($packUint8);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
+	void $unpack() {
+		$unpackUint32();
 		userId = <int>[];
-		final int userIdLength = unpackUint32();
+		final int userIdLength = $unpackUint32();
 		for (int i = 0; i < userIdLength; i++) {
-			userId.add(unpackUint8());
+			userId.add($unpackUint8());
 		}
 	}
 	
@@ -457,30 +457,30 @@ class DeleteResponse extends PackMeMessage {
 	String? error;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 5;
-		setFlag(error != null);
+		$setFlag(error != null);
 		if (error != null) {
-			bytes += stringBytes(error!);
+			bytes += $stringBytes(error!);
 		}
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(69897231);
-		for (int i = 0; i < 1; i++) packUint8(flags[i]);
-		if (error != null) packString(error!);
+	void $pack() {
+		$init();
+		$packUint32(69897231);
+		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
+		if (error != null) $packString(error!);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
-		for (int i = 0; i < 1; i++) flags.add(unpackUint8());
-		if (getFlag()) {
-			error = unpackString();
+	void $unpack() {
+		$unpackUint32();
+		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
+		if ($getFlag()) {
+			error = $unpackString();
 		}
 	}
 	
@@ -491,33 +491,33 @@ class UpdateSessionMessage extends PackMeMessage {
 	late String sessionId;
 	
 	@override
-	int estimate() {
-		reset();
+	int $estimate() {
+		$reset();
 		int bytes = 4;
 		bytes += 4;
 		bytes += 1 * userId.length;
-		bytes += stringBytes(sessionId);
+		bytes += $stringBytes(sessionId);
 		return bytes;
 	}
 	
 	@override
-	void pack() {
-		data = Uint8List(estimate());
-		packUint32(743336169);
-		packUint32(userId.length);
-		userId.forEach(packUint8);
-		packString(sessionId);
+	void $pack() {
+		$init();
+		$packUint32(743336169);
+		$packUint32(userId.length);
+		userId.forEach($packUint8);
+		$packString(sessionId);
 	}
 	
 	@override
-	void unpack() {
-		unpackUint32();
+	void $unpack() {
+		$unpackUint32();
 		userId = <int>[];
-		final int userIdLength = unpackUint32();
+		final int userIdLength = $unpackUint32();
 		for (int i = 0; i < userIdLength; i++) {
-			userId.add(unpackUint8());
+			userId.add($unpackUint8());
 		}
-		sessionId = unpackString();
+		sessionId = $unpackString();
 	}
 	
 }

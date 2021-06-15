@@ -139,7 +139,7 @@ class MessageField {
 	}
 
 	/// Returns required unpack method depending on field type.
-	String get _unpack => 'un$_pack';
+	String get _unpack => '\$un$_pack';
 
 	/// Returns code of class field declaration.
 	String get declaration {
@@ -150,19 +150,19 @@ class MessageField {
 	/// Returns code required to estimate size in bytes of this field.
 	List<String> get estimate {
 		final List<String> code = <String>[];
-		if (optional) code.add('		setFlag($name != null);');
+		if (optional) code.add('		\$setFlag($name != null);');
 		if (optional) code.add('		if ($name != null) {');
 		if (!array) {
 			if (type is String && type != 'string') code.add('${optional ? '	' : ''}		bytes += ${sizeOf[type]};');
-			else if (type == 'string') code.add('${optional ? '	' : ''}		bytes += stringBytes($_name);');
-			else if (type is Message) code.add('${optional ? '	' : ''}		bytes += $_name.estimate();');
+			else if (type == 'string') code.add('${optional ? '	' : ''}		bytes += \$stringBytes($_name);');
+			else if (type is Message) code.add('${optional ? '	' : ''}		bytes += $_name.\$estimate();');
 			else throw Exception('Wrong type "$type" for field "$name"');
 		}
 		else {
 			code.add('		${optional ? '	' : ''}bytes += 4;');
 			if (type is String && type != 'string') code.add('${optional ? '	' : ''}		bytes += ${sizeOf[type]} * $_name.length;');
-			else if (type == 'string') code.add('${optional ? '	' : ''}		for (int i = 0; i < $_name.length; i++) bytes += stringBytes($_name[i]);');
-			else if (type is Message) code.add('${optional ? '	' : ''}		for (int i = 0; i < $_name.length; i++) bytes += $_name[i].estimate();');
+			else if (type == 'string') code.add('${optional ? '	' : ''}		for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);');
+			else if (type is Message) code.add('${optional ? '	' : ''}		for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();');
 			else throw Exception('Wrong type "$type" for field "$name"');
 		}
 		if (optional) code.add('		}');
@@ -173,12 +173,12 @@ class MessageField {
 	List<String> get pack {
 		final List<String> code = <String>[];
 		if (!array) {
-			code.add('		${optional ? 'if ($name != null) ' : ''}$_pack($_name);');
+			code.add('		${optional ? 'if ($name != null) ' : ''}\$$_pack($_name);');
 		}
 		else {
 			if (optional) code.add('		if ($name != null) {');
-			code.add('${optional ? '	' : ''}		packUint32($_name.length);');
-			code.add('${optional ? '	' : ''}		$_name.forEach($_pack);');
+			code.add('${optional ? '	' : ''}		\$packUint32($_name.length);');
+			code.add('${optional ? '	' : ''}		$_name.forEach(\$$_pack);');
 			if (optional) code.add('		}');
 		}
 		return code;
@@ -188,13 +188,13 @@ class MessageField {
 	List<String> get unpack {
 		final List<String> code = <String>[];
 		final String ending = type is Message ? '(${type.name}()) as ${type.name}' : '()';
-		if (optional) code.add('		if (getFlag()) {');
+		if (optional) code.add(r'		if ($getFlag()) {');
 		if (!array) {
 			code.add('${optional ? '	' : ''}		$name = $_unpack$ending;');
 		}
 		else {
 			code.add('${optional ? '	' : ''}		$name = <$_type>[];');
-			code.add('${optional ? '	' : ''}		final int ${name}Length = unpackUint32();');
+			code.add('${optional ? '	' : ''}		final int ${name}Length = \$unpackUint32();');
 			code.add('${optional ? '	' : ''}		for (int i = 0; i < ${name}Length; i++) {');
 			code.add('${optional ? '	' : ''}			$_name.add($_unpack$ending);');
 			code.add('${optional ? '	' : ''}		}');
@@ -252,8 +252,8 @@ class Message {
 		}
 		code.add('	');
 		code.add('	@override');
-		code.add('	int estimate() {');
-		code.add('		reset();');
+		code.add(r'	int $estimate() {');
+		code.add(r'		$reset();');
 		code.add('		int bytes = $bufferSize;');
 		for (final MessageField field in fields.values) {
 			if (field.optional || field.array || field.type == 'string' || field.type is Message) code.addAll(field.estimate);
@@ -262,21 +262,21 @@ class Message {
 		code.add('	}');
 		code.add('	');
 		code.add('	@override');
-		code.add('	void pack() {');
+		code.add(r'	void $pack() {');
 		if (id != null) {
-			code.add('		data = Uint8List(estimate());');
-			code.add('		packUint32($id);');
+			code.add(r'		$init();');
+			code.add('		\$packUint32($id);');
 		}
-		if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) packUint8(flags[i]);');
+		if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) \$packUint8(\$flags[i]);');
 		for (final MessageField field in fields.values) {
 			code.addAll(field.pack);
 		}
 		code.add('	}');
 		code.add('	');
 		code.add('	@override');
-		code.add('	void unpack() {');
-		if (id != null) code.add('		unpackUint32();');
-		if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) flags.add(unpackUint8());');
+		code.add(r'	void $unpack() {');
+		if (id != null) code.add(r'		$unpackUint32();');
+		if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) \$flags.add(\$unpackUint8());');
 		for (final MessageField field in fields.values) {
 			code.addAll(field.unpack);
 		}

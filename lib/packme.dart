@@ -17,8 +17,8 @@ class PackMe {
 
 	Uint8List? pack(PackMeMessage message) {
 		try {
-			message.pack();
-			return message.data!;
+			message.$pack();
+			return message._data!;
 		}
 		catch (err, stack) {
 			onError?.call('Packing message failed: $err', stack);
@@ -31,8 +31,8 @@ class PackMe {
 			if (data.length < 4) return null;
 			final int id = data.buffer.asByteData().getUint32(0, Endian.big);
 			final PackMeMessage? message = _factory[id]?.call();
-			message?.data = data;
-			message?.unpack();
+			message?._data = data;
+			message?.$unpack();
 			return message;
 		}
 		catch (err, stack) {
