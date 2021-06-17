@@ -23,7 +23,7 @@ abstract class PackMeMessage {
 	void $initPack(int commandId) {
 		_data = Uint8List($estimate());
 		$packUint32(commandId);
-		$packUint32(_transactionId ?? (++_globalTransactionId & 0xFFFFFFFF));
+		$packUint32(_transactionId ?? (_transactionId = ++_globalTransactionId & 0xFFFFFFFF));
 	}
 	void $initUnpack() {
 		$unpackUint32();
