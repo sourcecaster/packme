@@ -208,9 +208,10 @@ class MessageField {
 /// classes or nested data classes).
 
 class Message {
-	Message(this.name, this.manifest, {this.id});
+	Message(this.name, this.manifest, {this.id, this.responseClass});
 
 	final int? id;
+	final String? responseClass;
 	final String name;
 	final Map<String, dynamic> manifest;
 
@@ -244,11 +245,20 @@ class Message {
 		/// Add required bytes to store field existence flags.
 		final int flagBytes = (optionalCount / 8).ceil();
 		bufferSize += flagBytes;
-		/// Add 4 bytes for command ID
-		if (id != null) bufferSize += 4;
+		/// Add 4 bytes for command ID and transaction ID
+		if (id != null) bufferSize += 8;
 		code.add('class $name extends PackMeMessage {');
 		for (final MessageField field in fields.values) {
 			code.add('	${field.declaration}');
+		}
+		if (responseClass != null) {
+			code.add('	');
+			code.add('	@override');
+			code.add('	$responseClass get \$response {');
+			code.add('		final $responseClass message = $responseClass();');
+			code.add(r'		message.$request = this;');
+			code.add('		return message;');
+			code.add('	}');
 		}
 		code.add('	');
 		code.add('	@override');
@@ -263,10 +273,7 @@ class Message {
 		code.add('	');
 		code.add('	@override');
 		code.add(r'	void $pack() {');
-		if (id != null) {
-			code.add(r'		$init();');
-			code.add('		\$packUint32($id);');
-		}
+		if (id != null) code.add('		\$initPack($id);');
 		if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) \$packUint8(\$flags[i]);');
 		for (final MessageField field in fields.values) {
 			code.addAll(field.pack);
@@ -275,7 +282,7 @@ class Message {
 		code.add('	');
 		code.add('	@override');
 		code.add(r'	void $unpack() {');
-		if (id != null) code.add(r'		$unpackUint32();');
+		if (id != null) code.add(r'		$initUnpack();'); // command ID
 		if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) \$flags.add(\$unpackUint8());');
 		for (final MessageField field in fields.values) {
 			code.addAll(field.unpack);
@@ -334,7 +341,7 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
 			if (allMessages[hashResponse] != null) {
 				throw Exception('Message name "$commandNameResponse" is duplicated. Or hash code turned out to be the same as for "${allMessages[hashResponse]!.name}".');
 			}
-			allMessages[hashRequest] = messages[hashRequest] = Message(commandNameRequest, entry.value[0] as Map<String, dynamic>, id: hashRequest);
+			allMessages[hashRequest] = messages[hashRequest] = Message(commandNameRequest, entry.value[0] as Map<String, dynamic>, id: hashRequest, responseClass: commandNameResponse);
 			allMessages[hashResponse] = messages[hashResponse] = Message(commandNameResponse, entry.value[1] as Map<String, dynamic>, id: hashResponse);
 		}
 	}
@@ -342,7 +349,6 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
 
 void writeOutput(String outputFilename, String prefix) {
 	final List<String> out = <String>[];
-	out.add("import 'dart:typed_data';");
 	out.add("import 'package:packme/packme.dart';");
 	out.add('');
 	for (final Message message in messages.values) {

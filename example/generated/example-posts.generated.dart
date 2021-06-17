@@ -1,24 +1,29 @@
-import 'dart:typed_data';
 import 'package:packme/packme.dart';
 
 class GetAllRequest extends PackMeMessage {
 	
 	@override
+	GetAllResponse get $response {
+		final GetAllResponse message = GetAllResponse();
+		message.$request = this;
+		return message;
+	}
+	
+	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		return bytes;
 	}
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(63570112);
+		$initPack(63570112);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 	}
 	
 }
@@ -110,7 +115,7 @@ class GetAllResponse extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		for (int i = 0; i < posts.length; i++) bytes += posts[i].$estimate();
 		return bytes;
@@ -118,15 +123,14 @@ class GetAllResponse extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(280110613);
+		$initPack(280110613);
 		$packUint32(posts.length);
 		posts.forEach($packMessage);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		posts = <GetAllResponsePost>[];
 		final int postsLength = $unpackUint32();
 		for (int i = 0; i < postsLength; i++) {
@@ -140,9 +144,16 @@ class GetRequest extends PackMeMessage {
 	late List<int> postId;
 	
 	@override
+	GetResponse get $response {
+		final GetResponse message = GetResponse();
+		message.$request = this;
+		return message;
+	}
+	
+	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		bytes += 1 * postId.length;
 		return bytes;
@@ -150,15 +161,14 @@ class GetRequest extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(187698222);
+		$initPack(187698222);
 		$packUint32(postId.length);
 		postId.forEach($packUint8);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		postId = <int>[];
 		final int postIdLength = $unpackUint32();
 		for (int i = 0; i < postIdLength; i++) {
@@ -337,7 +347,7 @@ class GetResponse extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 12;
+		int bytes = 16;
 		bytes += $stringBytes(title);
 		bytes += $stringBytes(content);
 		bytes += author.$estimate();
@@ -349,8 +359,7 @@ class GetResponse extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(244485545);
+		$initPack(244485545);
 		$packString(title);
 		$packString(content);
 		$packDateTime(posted);
@@ -362,7 +371,7 @@ class GetResponse extends PackMeMessage {
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		title = $unpackString();
 		content = $unpackString();
 		posted = $unpackDateTime();
@@ -381,9 +390,16 @@ class DeleteRequest extends PackMeMessage {
 	late List<int> postId;
 	
 	@override
+	DeleteResponse get $response {
+		final DeleteResponse message = DeleteResponse();
+		message.$request = this;
+		return message;
+	}
+	
+	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		bytes += 1 * postId.length;
 		return bytes;
@@ -391,15 +407,14 @@ class DeleteRequest extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(486637631);
+		$initPack(486637631);
 		$packUint32(postId.length);
 		postId.forEach($packUint8);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		postId = <int>[];
 		final int postIdLength = $unpackUint32();
 		for (int i = 0; i < postIdLength; i++) {
@@ -415,7 +430,7 @@ class DeleteResponse extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 5;
+		int bytes = 9;
 		$setFlag(error != null);
 		if (error != null) {
 			bytes += $stringBytes(error!);
@@ -425,15 +440,14 @@ class DeleteResponse extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(788388804);
+		$initPack(788388804);
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		if (error != null) $packString(error!);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
 		if ($getFlag()) {
 			error = $unpackString();

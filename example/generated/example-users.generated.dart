@@ -1,24 +1,29 @@
-import 'dart:typed_data';
 import 'package:packme/packme.dart';
 
 class GetAllRequest extends PackMeMessage {
 	
 	@override
+	GetAllResponse get $response {
+		final GetAllResponse message = GetAllResponse();
+		message.$request = this;
+		return message;
+	}
+	
+	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		return bytes;
 	}
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(12982278);
+		$initPack(12982278);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 	}
 	
 }
@@ -91,7 +96,7 @@ class GetAllResponse extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		for (int i = 0; i < users.length; i++) bytes += users[i].$estimate();
 		return bytes;
@@ -99,15 +104,14 @@ class GetAllResponse extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(242206268);
+		$initPack(242206268);
 		$packUint32(users.length);
 		users.forEach($packMessage);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		users = <GetAllResponseUser>[];
 		final int usersLength = $unpackUint32();
 		for (int i = 0; i < usersLength; i++) {
@@ -121,9 +125,16 @@ class GetRequest extends PackMeMessage {
 	late List<int> userId;
 	
 	@override
+	GetResponse get $response {
+		final GetResponse message = GetResponse();
+		message.$request = this;
+		return message;
+	}
+	
+	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		bytes += 1 * userId.length;
 		return bytes;
@@ -131,15 +142,14 @@ class GetRequest extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(781905656);
+		$initPack(781905656);
 		$packUint32(userId.length);
 		userId.forEach($packUint8);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		userId = <int>[];
 		final int userIdLength = $unpackUint32();
 		for (int i = 0; i < userIdLength; i++) {
@@ -366,7 +376,7 @@ class GetResponse extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 14;
+		int bytes = 18;
 		bytes += $stringBytes(email);
 		bytes += $stringBytes(nickname);
 		bytes += info.$estimate();
@@ -383,8 +393,7 @@ class GetResponse extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(430536944);
+		$initPack(430536944);
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		$packString(email);
 		$packString(nickname);
@@ -400,7 +409,7 @@ class GetResponse extends PackMeMessage {
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
 		email = $unpackString();
 		nickname = $unpackString();
@@ -425,9 +434,16 @@ class DeleteRequest extends PackMeMessage {
 	late List<int> userId;
 	
 	@override
+	DeleteResponse get $response {
+		final DeleteResponse message = DeleteResponse();
+		message.$request = this;
+		return message;
+	}
+	
+	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		bytes += 1 * userId.length;
 		return bytes;
@@ -435,15 +451,14 @@ class DeleteRequest extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(808423104);
+		$initPack(808423104);
 		$packUint32(userId.length);
 		userId.forEach($packUint8);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		userId = <int>[];
 		final int userIdLength = $unpackUint32();
 		for (int i = 0; i < userIdLength; i++) {
@@ -459,7 +474,7 @@ class DeleteResponse extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 5;
+		int bytes = 9;
 		$setFlag(error != null);
 		if (error != null) {
 			bytes += $stringBytes(error!);
@@ -469,15 +484,14 @@ class DeleteResponse extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(69897231);
+		$initPack(69897231);
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		if (error != null) $packString(error!);
 	}
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
 		if ($getFlag()) {
 			error = $unpackString();
@@ -493,7 +507,7 @@ class UpdateSessionMessage extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 4;
+		int bytes = 8;
 		bytes += 4;
 		bytes += 1 * userId.length;
 		bytes += $stringBytes(sessionId);
@@ -502,8 +516,7 @@ class UpdateSessionMessage extends PackMeMessage {
 	
 	@override
 	void $pack() {
-		$init();
-		$packUint32(743336169);
+		$initPack(743336169);
 		$packUint32(userId.length);
 		userId.forEach($packUint8);
 		$packString(sessionId);
@@ -511,7 +524,7 @@ class UpdateSessionMessage extends PackMeMessage {
 	
 	@override
 	void $unpack() {
-		$unpackUint32();
+		$initUnpack();
 		userId = <int>[];
 		final int userIdLength = $unpackUint32();
 		for (int i = 0; i < userIdLength; i++) {

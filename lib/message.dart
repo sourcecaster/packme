@@ -5,15 +5,29 @@ const Utf8Codec _utf8 = Utf8Codec();
 abstract class PackMeMessage {
 	int _offset = 0;
 	Uint8List? _data;
+	static int _globalTransactionId = 0;
+	int? _transactionId;
 	final List<int> $flags = <int>[];
 	int _bitNumber = 0;
+
+	int get $transactionId => _transactionId ?? -1;
+	PackMeMessage? get $response => null;
+	set $request(PackMeMessage request) {
+		_transactionId = request._transactionId;
+	}
 
 	int $estimate();
 	void $pack();
 	void $unpack();
 
-	void $init() {
+	void $initPack(int commandId) {
 		_data = Uint8List($estimate());
+		$packUint32(commandId);
+		$packUint32(_transactionId ?? (++_globalTransactionId & 0xFFFFFFFF));
+	}
+	void $initUnpack() {
+		$unpackUint32();
+		_transactionId = $unpackUint32();
 	}
 	void $reset() {
 		_data = null;
