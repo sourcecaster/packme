@@ -8,7 +8,9 @@ abstract class PackMeMessage {
 	static int _globalTransactionId = 0;
 	int? _transactionId;
 	final List<int> $flags = <int>[];
-	int _bitNumber = 0;
+	final List<int> $bools = <int>[];
+	int _flagsBitNumber = 0;
+	int _boolsBitNumber = 0;
 
 	int get $transactionId => _transactionId ?? -1;
 	PackMeMessage? get $response => null;
@@ -33,18 +35,33 @@ abstract class PackMeMessage {
 		_data = null;
 		_offset = 0;
 		$flags.clear();
-		_bitNumber = 0;
+		$bools.clear();
+		_flagsBitNumber = 0;
 	}
+
 	void $setFlag(bool on) {
-		final int index = _bitNumber ~/ 8;
+		final int index = _flagsBitNumber ~/ 8;
 		if (index >= $flags.length) $flags.add(0);
-		if (on) $flags[index] |= 1 << (_bitNumber % 8);
-		_bitNumber++;
+		if (on) $flags[index] |= 1 << (_flagsBitNumber % 8);
+		_flagsBitNumber++;
 	}
 	bool $getFlag() {
-		final int index = _bitNumber ~/ 8;
-		final bool result = ($flags[index] >> (_bitNumber % 8)) & 1 == 1;
-		_bitNumber++;
+		final int index = _flagsBitNumber ~/ 8;
+		final bool result = ($flags[index] >> (_flagsBitNumber % 8)) & 1 == 1;
+		_flagsBitNumber++;
+		return result;
+	}
+
+	void $setBool(bool on) {
+		final int index = _boolsBitNumber ~/ 8;
+		if (index >= $flags.length) $flags.add(0);
+		if (on) $flags[index] |= 1 << (_boolsBitNumber % 8);
+		_boolsBitNumber++;
+	}
+	bool $getBool() {
+		final int index = _boolsBitNumber ~/ 8;
+		final bool result = ($flags[index] >> (_boolsBitNumber % 8)) & 1 == 1;
+		_boolsBitNumber++;
 		return result;
 	}
 
