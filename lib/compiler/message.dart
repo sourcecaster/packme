@@ -16,6 +16,7 @@ class Message {
 
     /// Generate Message class code lines.
     void parse() {
+        code.clear();
         final Map<String, MessageField> fields = <String, MessageField>{};
         /// We need to estimate class data size in order to create buffer.
         int bufferSize = 0;
@@ -24,19 +25,33 @@ class Message {
         for (final MapEntry<String, dynamic> entry in manifest.entries) {
             final String fieldName = validName(entry.key);
             if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name"');
-            if (fields[fieldName] != null) throw Exception('Message field name "$fieldName" is duplicated for message "$name".');
+            if (fields[fieldName] != null) throw Exception('Message field name "$fieldName" is duplicated for "$name"');
+            if (reserved.contains(fieldName)) throw Exception('Message field name "$fieldName" is reserved by Dart for "$name"');
             final bool optional = entry.key[0] == '?';
             final bool array = entry.value is List;
-            if (array && entry.value.length != 1) throw Exception('Array declarations must contain one single type: "${entry.value}" is invalid for field "$fieldName" of "$name"');
+            if (array && entry.value.length != 1) throw Exception('Array declarations must contain only one type: "${entry.value}" is invalid for field "$fieldName" of "$name"');
             dynamic value = array ? entry.value[0] : entry.value;
+
+            /// Field is a nested Message object.
             if (value is Map) {
                 String postfix = validName(entry.key, firstCapital: true);
                 if (array && postfix[postfix.length - 1] == 's') postfix = postfix.substring(0, postfix.length - 1);
                 nested.add(value = Message('$name$postfix', value as Map<String, dynamic>));
             }
+
+            /// Field is a referenced Message object.
+            else if (value is String && value[0] == '@') {
+                final Message? message = types[value.substring(1)];
+                if (message == null) throw Exception('"$name" field "$fieldName" type "$value" is not declared.');
+                value = message;
+            }
+
             fields[fieldName] = MessageField(fieldName, value, optional, array);
             if (optional) optionalCount++;
-            if (!optional && !array && value is String && value != 'string') bufferSize += sizeOf[value]!;
+            if (!optional && !array && value is String && value != 'string') {
+                if (sizeOf[value] != null) bufferSize += sizeOf[value]!;
+                else throw Exception('Unknown type "$value" for field "$fieldName" of "$name"');
+            }
         }
         /// Add required bytes to store field existence flags.
         final int flagBytes = (optionalCount / 8).ceil();
@@ -96,7 +111,7 @@ class Message {
 
             '@override',
             r'String toString() {',
-                "return '$name\x1b[0m(${fields.values.map((MessageField field) => '${field.name}: \${PackMe.dye(${field.name})}').join(', ')})';",
+                "return '$name\\x1b[0m(${fields.values.map((MessageField field) => '${field.name}: \${PackMe.dye(${field.name})}').join(', ')})';",
             '}',
 
             '}\n',

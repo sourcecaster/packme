@@ -48,6 +48,7 @@ part 'compiler/utils.dart';
 void writeOutput(String outputFilename, String prefix) {
 	final List<String> out = <String>[
 		"import 'package:packme/packme.dart';\n",
+		...types.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
 		...messages.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
 		'final Map<int, PackMeMessage Function()> ${validName(prefix)}MessageFactory = <int, PackMeMessage Function()>{',
 			...messages.entries.map((MapEntry<int, Message> entry) => '	${entry.key}: () => ${entry.value.name}._empty(),'),
@@ -81,6 +82,7 @@ void main(List<String> args) {
 			fatal('Unable to parse JSON: $err');
 		}
 		try {
+			types.clear();
 			messages.clear();
 			parseCommands(manifest, name);
 		}

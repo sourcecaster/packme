@@ -33,14 +33,14 @@ TestMessage randomTextMessage() {
         reqBool: rand.nextBool(),
         reqString: randomString(),
         reqList: randomList(),
-        reqNested: TestMessageReqNested(a: rand.nextInt(256), b: randomString()),
+        reqNested: NestedObject(a: rand.nextInt(256), b: randomString()),
         optInt8: rand.nextBool() ? null : rand.nextInt(256) - 128,
         optUint16: rand.nextBool() ? null : rand.nextInt(65536),
         optDouble: rand.nextBool() ? null : rand.nextDouble(),
         optBool: rand.nextBool() ? null : rand.nextBool(),
         optString: rand.nextBool() ? null : randomString(),
         optList: rand.nextBool() ? null : randomList(),
-        optNested: rand.nextBool() ? null : TestMessageOptNested(a: rand.nextInt(256), b: randomString()),
+        optNested: rand.nextBool() ? null : NestedObject(a: rand.nextInt(256), b: randomString()),
     );
     return message;
 }
@@ -49,23 +49,23 @@ void main() {
     final PackMe packer = PackMe(onError: (String error, [StackTrace? stack]) => print(error));
 
     /// Message Factory has to be registered in order to make it possible to
-    /// unpack Uint8List to Message objects
+    /// unpack Uint8List to Message objects.
     packer.register(exampleMessageFactory);
 
-    /// Generate TestMessage (see example.json) with random data
+    /// Generate TestMessage (see example.json) with random data.
     final TestMessage message = randomTextMessage();
 
-    /// Pack TestMessage to Uint8List
+    /// Pack TestMessage to Uint8List.
     Uint8List packedMessage = packer.pack(message)!;
 
-    /// Unpack Uint8List to TestMessage
+    /// Unpack Uint8List to TestMessage.
     TestMessage unpackedMessage = packer.unpack(packedMessage)! as TestMessage;
 
     print('\nSource message:\n$message');
     print('\nUnpacked message:\n$unpackedMessage');
     print('\nRunning performance test in 5 seconds (1 million cycles)...');
 
-    /// Run pack/unpack cycle 1 million times
+    /// Run pack/unpack cycle 1 million times.
     Timer(const Duration(seconds: 5), () {
         final DateTime dt1 = DateTime.now();
         print('Started: $dt1');

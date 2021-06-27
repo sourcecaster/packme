@@ -1,4 +1,8 @@
 {
+	"nested_object": {
+		"a": "uint8",
+		"b": "string"
+	},
 	"test": [
 		{
 			"req_int8": "int8",
@@ -13,14 +17,8 @@
 			"?opt_string": "string",
 			"req_list": ["uint8"],
 			"?optList": ["uint8"],
-			"req_nested": {
-				"a": "uint8",
-				"b": "string"
-			},
-			"?optNested": {
-				"a": "uint8",
-				"b": "string"
-			}
+			"req_nested": "@nested_object",
+			"?optNested": "@nested_object"
 		}
 	]
 }

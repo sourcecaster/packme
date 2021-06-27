@@ -31,7 +31,7 @@ class GetAllRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllRequest[0m()';
+		return 'GetAllRequest\x1b[0m()';
 	}
 }
 
@@ -79,7 +79,7 @@ class GetAllResponsePostAuthor extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllResponsePostAuthor[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, avatar: ${PackMe.dye(avatar)})';
+		return 'GetAllResponsePostAuthor\x1b[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, avatar: ${PackMe.dye(avatar)})';
 	}
 }
 
@@ -136,7 +136,7 @@ class GetAllResponsePost extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllResponsePost[0m(id: ${PackMe.dye(id)}, author: ${PackMe.dye(author)}, title: ${PackMe.dye(title)}, shortContent: ${PackMe.dye(shortContent)}, posted: ${PackMe.dye(posted)})';
+		return 'GetAllResponsePost\x1b[0m(id: ${PackMe.dye(id)}, author: ${PackMe.dye(author)}, title: ${PackMe.dye(title)}, shortContent: ${PackMe.dye(shortContent)}, posted: ${PackMe.dye(posted)})';
 	}
 }
 
@@ -176,7 +176,7 @@ class GetAllResponse extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllResponse[0m(posts: ${PackMe.dye(posts)})';
+		return 'GetAllResponse\x1b[0m(posts: ${PackMe.dye(posts)})';
 	}
 }
 
@@ -223,7 +223,7 @@ class GetRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetRequest[0m(postId: ${PackMe.dye(postId)})';
+		return 'GetRequest\x1b[0m(postId: ${PackMe.dye(postId)})';
 	}
 }
 
@@ -303,7 +303,7 @@ class GetResponseAuthor extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseAuthor[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, avatar: ${PackMe.dye(avatar)}, facebookId: ${PackMe.dye(facebookId)}, twitterId: ${PackMe.dye(twitterId)}, instagramId: ${PackMe.dye(instagramId)})';
+		return 'GetResponseAuthor\x1b[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, avatar: ${PackMe.dye(avatar)}, facebookId: ${PackMe.dye(facebookId)}, twitterId: ${PackMe.dye(twitterId)}, instagramId: ${PackMe.dye(instagramId)})';
 	}
 }
 
@@ -338,7 +338,7 @@ class GetResponseStats extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseStats[0m(likes: ${PackMe.dye(likes)}, dislikes: ${PackMe.dye(dislikes)})';
+		return 'GetResponseStats\x1b[0m(likes: ${PackMe.dye(likes)}, dislikes: ${PackMe.dye(dislikes)})';
 	}
 }
 
@@ -386,7 +386,7 @@ class GetResponseCommentAuthor extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseCommentAuthor[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, avatar: ${PackMe.dye(avatar)})';
+		return 'GetResponseCommentAuthor\x1b[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, avatar: ${PackMe.dye(avatar)})';
 	}
 }
 
@@ -427,7 +427,7 @@ class GetResponseComment extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseComment[0m(author: ${PackMe.dye(author)}, comment: ${PackMe.dye(comment)}, posted: ${PackMe.dye(posted)})';
+		return 'GetResponseComment\x1b[0m(author: ${PackMe.dye(author)}, comment: ${PackMe.dye(comment)}, posted: ${PackMe.dye(posted)})';
 	}
 }
 
@@ -491,7 +491,7 @@ class GetResponse extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponse[0m(title: ${PackMe.dye(title)}, content: ${PackMe.dye(content)}, posted: ${PackMe.dye(posted)}, author: ${PackMe.dye(author)}, stats: ${PackMe.dye(stats)}, comments: ${PackMe.dye(comments)})';
+		return 'GetResponse\x1b[0m(title: ${PackMe.dye(title)}, content: ${PackMe.dye(content)}, posted: ${PackMe.dye(posted)}, author: ${PackMe.dye(author)}, stats: ${PackMe.dye(stats)}, comments: ${PackMe.dye(comments)})';
 	}
 }
 
@@ -538,7 +538,7 @@ class DeleteRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'DeleteRequest[0m(postId: ${PackMe.dye(postId)})';
+		return 'DeleteRequest\x1b[0m(postId: ${PackMe.dye(postId)})';
 	}
 }
 
@@ -579,7 +579,7 @@ class DeleteResponse extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'DeleteResponse[0m(error: ${PackMe.dye(error)})';
+		return 'DeleteResponse\x1b[0m(error: ${PackMe.dye(error)})';
 	}
 }
 

@@ -8,8 +8,16 @@ void fatal(String message) {
     exit(-1);
 }
 
-/// How many bytes required to store.
+/// Reserved names you can't use as field names.
+const List<String> reserved = <String>[
+    'assert', 'break', 'case', 'catch', 'class', 'const', 'continue', 'default',
+    'do', 'else', 'enum', 'extends', 'false', 'final', 'finally', 'for', 'if',
+    'in', 'is', 'new', 'null', 'rethrow', 'return', 'super', 'switch', 'this',
+    'throw', 'true', 'try', 'var', 'void', 'while', 'with', 'hashCode',
+    'noSuchMethod', 'runtimeType', 'toString'
+];
 
+/// How many bytes required to store.
 Map<String, int> sizeOf = <String, int>{
     'bool': 1,
     'int8': 1,
@@ -27,7 +35,6 @@ Map<String, int> sizeOf = <String, int>{
 
 /// Converts lower case names with underscore to UpperCamelCase (for classes) or
 /// lowerCamelCase (for class fields).
-
 String validName(String input, {bool firstCapital = false}) {
     RegExp re = firstCapital ? RegExp(r'^[a-z]|[^a-zA-Z][a-z]') : RegExp(r'[^a-zA-Z\?][a-z]');
     String result = input.replaceAllMapped(re, (Match match) => match.group(0)!.toUpperCase());
@@ -36,6 +43,7 @@ String validName(String input, {bool firstCapital = false}) {
     return result;
 }
 
+/// Auto indents.
 List<String> format(List<String> lines) {
     int indent = 0;
     final RegExp reOpen = RegExp(r'\{');

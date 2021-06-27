@@ -31,7 +31,7 @@ class GetAllRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllRequest[0m()';
+		return 'GetAllRequest\x1b[0m()';
 	}
 }
 
@@ -106,7 +106,7 @@ class GetAllResponseUser extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllResponseUser[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, age: ${PackMe.dye(age)})';
+		return 'GetAllResponseUser\x1b[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, age: ${PackMe.dye(age)})';
 	}
 }
 
@@ -146,7 +146,7 @@ class GetAllResponse extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetAllResponse[0m(users: ${PackMe.dye(users)})';
+		return 'GetAllResponse\x1b[0m(users: ${PackMe.dye(users)})';
 	}
 }
 
@@ -193,7 +193,7 @@ class GetRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetRequest[0m(userId: ${PackMe.dye(userId)})';
+		return 'GetRequest\x1b[0m(userId: ${PackMe.dye(userId)})';
 	}
 }
 
@@ -272,7 +272,7 @@ class GetResponseInfo extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseInfo[0m(firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, male: ${PackMe.dye(male)}, age: ${PackMe.dye(age)}, birthDate: ${PackMe.dye(birthDate)})';
+		return 'GetResponseInfo\x1b[0m(firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, male: ${PackMe.dye(male)}, age: ${PackMe.dye(age)}, birthDate: ${PackMe.dye(birthDate)})';
 	}
 }
 
@@ -331,7 +331,7 @@ class GetResponseSocial extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseSocial[0m(facebookId: ${PackMe.dye(facebookId)}, twitterId: ${PackMe.dye(twitterId)}, instagramId: ${PackMe.dye(instagramId)})';
+		return 'GetResponseSocial\x1b[0m(facebookId: ${PackMe.dye(facebookId)}, twitterId: ${PackMe.dye(twitterId)}, instagramId: ${PackMe.dye(instagramId)})';
 	}
 }
 
@@ -378,7 +378,7 @@ class GetResponseStats extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseStats[0m(posts: ${PackMe.dye(posts)}, comments: ${PackMe.dye(comments)}, likes: ${PackMe.dye(likes)}, dislikes: ${PackMe.dye(dislikes)}, rating: ${PackMe.dye(rating)})';
+		return 'GetResponseStats\x1b[0m(posts: ${PackMe.dye(posts)}, comments: ${PackMe.dye(comments)}, likes: ${PackMe.dye(likes)}, dislikes: ${PackMe.dye(dislikes)}, rating: ${PackMe.dye(rating)})';
 	}
 }
 
@@ -414,7 +414,7 @@ class GetResponseLastActive extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseLastActive[0m(datetime: ${PackMe.dye(datetime)}, ip: ${PackMe.dye(ip)})';
+		return 'GetResponseLastActive\x1b[0m(datetime: ${PackMe.dye(datetime)}, ip: ${PackMe.dye(ip)})';
 	}
 }
 
@@ -454,7 +454,7 @@ class GetResponseSession extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponseSession[0m(created: ${PackMe.dye(created)}, ip: ${PackMe.dye(ip)}, active: ${PackMe.dye(active)})';
+		return 'GetResponseSession\x1b[0m(created: ${PackMe.dye(created)}, ip: ${PackMe.dye(ip)}, active: ${PackMe.dye(active)})';
 	}
 }
 
@@ -539,7 +539,7 @@ class GetResponse extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'GetResponse[0m(email: ${PackMe.dye(email)}, nickname: ${PackMe.dye(nickname)}, hidden: ${PackMe.dye(hidden)}, created: ${PackMe.dye(created)}, info: ${PackMe.dye(info)}, social: ${PackMe.dye(social)}, stats: ${PackMe.dye(stats)}, lastActive: ${PackMe.dye(lastActive)}, sessions: ${PackMe.dye(sessions)})';
+		return 'GetResponse\x1b[0m(email: ${PackMe.dye(email)}, nickname: ${PackMe.dye(nickname)}, hidden: ${PackMe.dye(hidden)}, created: ${PackMe.dye(created)}, info: ${PackMe.dye(info)}, social: ${PackMe.dye(social)}, stats: ${PackMe.dye(stats)}, lastActive: ${PackMe.dye(lastActive)}, sessions: ${PackMe.dye(sessions)})';
 	}
 }
 
@@ -586,7 +586,7 @@ class DeleteRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'DeleteRequest[0m(userId: ${PackMe.dye(userId)})';
+		return 'DeleteRequest\x1b[0m(userId: ${PackMe.dye(userId)})';
 	}
 }
 
@@ -627,7 +627,7 @@ class DeleteResponse extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'DeleteResponse[0m(error: ${PackMe.dye(error)})';
+		return 'DeleteResponse\x1b[0m(error: ${PackMe.dye(error)})';
 	}
 }
 
@@ -672,7 +672,7 @@ class UpdateSessionMessage extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'UpdateSessionMessage[0m(userId: ${PackMe.dye(userId)}, sessionId: ${PackMe.dye(sessionId)})';
+		return 'UpdateSessionMessage\x1b[0m(userId: ${PackMe.dye(userId)}, sessionId: ${PackMe.dye(sessionId)})';
 	}
 }
 

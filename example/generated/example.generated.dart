@@ -1,11 +1,11 @@
 import 'package:packme/packme.dart';
 
-class TestMessageReqNested extends PackMeMessage {
-	TestMessageReqNested({
+class NestedObject extends PackMeMessage {
+	NestedObject({
 		required this.a,
 		required this.b,
 	});
-	TestMessageReqNested._empty();
+	NestedObject._empty();
 
 	late int a;
 	late String b;
@@ -32,43 +32,7 @@ class TestMessageReqNested extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'TestMessageReqNested[0m(a: ${PackMe.dye(a)}, b: ${PackMe.dye(b)})';
-	}
-}
-
-class TestMessageOptNested extends PackMeMessage {
-	TestMessageOptNested({
-		required this.a,
-		required this.b,
-	});
-	TestMessageOptNested._empty();
-
-	late int a;
-	late String b;
-	
-	@override
-	int $estimate() {
-		$reset();
-		int bytes = 1;
-		bytes += $stringBytes(b);
-		return bytes;
-	}
-
-	@override
-	void $pack() {
-		$packUint8(a);
-		$packString(b);
-	}
-
-	@override
-	void $unpack() {
-		a = $unpackUint8();
-		b = $unpackString();
-	}
-
-	@override
-	String toString() {
-		return 'TestMessageOptNested[0m(a: ${PackMe.dye(a)}, b: ${PackMe.dye(b)})';
+		return 'NestedObject\x1b[0m(a: ${PackMe.dye(a)}, b: ${PackMe.dye(b)})';
 	}
 }
 
@@ -103,8 +67,8 @@ class TestMessage extends PackMeMessage {
 	String? optString;
 	late List<int> reqList;
 	List<int>? optList;
-	late TestMessageReqNested reqNested;
-	TestMessageOptNested? optNested;
+	late NestedObject reqNested;
+	NestedObject? optNested;
 	
 	@override
 	int $estimate() {
@@ -206,15 +170,15 @@ class TestMessage extends PackMeMessage {
 				optList!.add($unpackUint8());
 			}
 		}
-		reqNested = $unpackMessage(TestMessageReqNested._empty()) as TestMessageReqNested;
+		reqNested = $unpackMessage(NestedObject._empty()) as NestedObject;
 		if ($getFlag()) {
-			optNested = $unpackMessage(TestMessageOptNested._empty()) as TestMessageOptNested;
+			optNested = $unpackMessage(NestedObject._empty()) as NestedObject;
 		}
 	}
 
 	@override
 	String toString() {
-		return 'TestMessage[0m(reqInt8: ${PackMe.dye(reqInt8)}, reqUint16: ${PackMe.dye(reqUint16)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, optInt8: ${PackMe.dye(optInt8)}, optUint16: ${PackMe.dye(optUint16)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, reqList: ${PackMe.dye(reqList)}, optList: ${PackMe.dye(optList)}, reqNested: ${PackMe.dye(reqNested)}, optNested: ${PackMe.dye(optNested)})';
+		return 'TestMessage\x1b[0m(reqInt8: ${PackMe.dye(reqInt8)}, reqUint16: ${PackMe.dye(reqUint16)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, optInt8: ${PackMe.dye(optInt8)}, optUint16: ${PackMe.dye(optUint16)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, reqList: ${PackMe.dye(reqList)}, optList: ${PackMe.dye(optList)}, reqNested: ${PackMe.dye(reqNested)}, optNested: ${PackMe.dye(optNested)})';
 	}
 }
 
