@@ -46,17 +46,13 @@ part 'compiler/parser.dart';
 part 'compiler/utils.dart';
 
 void writeOutput(String outputFilename, String prefix) {
-	final List<String> out = <String>[];
-	out.add("import 'package:packme/packme.dart';");
-	out.add('');
-	for (final Message message in messages.values) {
-		out.addAll(message.output());
-	}
-	out.add('final Map<int, PackMeMessage Function()> ${validName(prefix)}MessageFactory = <int, PackMeMessage Function()>{');
-	for (final MapEntry<int, Message> entry in messages.entries) {
-		out.add('	${entry.key}: () => ${entry.value.name}(),');
-	}
-	out.add('};');
+	final List<String> out = <String>[
+		"import 'package:packme/packme.dart';\n",
+		...messages.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
+		'final Map<int, PackMeMessage Function()> ${validName(prefix)}MessageFactory = <int, PackMeMessage Function()>{',
+			...messages.entries.map((MapEntry<int, Message> entry) => '	${entry.key}: () => ${entry.value.name}(),'),
+		'};'
+	];
 	File(outputFilename).writeAsStringSync(out.join('\n'));
 }
 

@@ -12,6 +12,7 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
         final int hashMessage = '$prefix$commandNameMessage'.hashCode;
         final int hashRequest = '$prefix$commandNameRequest'.hashCode;
         final int hashResponse = '$prefix$commandNameResponse'.hashCode;
+
         if (commandName.isEmpty) {
             throw Exception('Command name must be adequate :) "${entry.key}" is not.');
         }
@@ -21,6 +22,7 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
             || (entry.value.length == 2 && entry.value[1] is! Map)) {
             throw Exception('Command "$commandName" declaration is invalid. Must be one or two objects (single message or request and response) in array.');
         }
+
         /// Single Message
         if (entry.value.length == 1) {
             if (allMessages[hashMessage] != null) {
@@ -28,6 +30,7 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
             }
             allMessages[hashMessage] = messages[hashMessage] = Message(commandNameMessage, entry.value[0] as Map<String, dynamic>, id: hashMessage);
         }
+
         /// Request and Response
         else {
             if (allMessages[hashRequest] != null) {

@@ -1,38 +1,37 @@
 import 'package:packme/packme.dart';
 
 class GetAllRequest extends PackMeMessage {
-	
+
 	@override
 	GetAllResponse get $response {
 		final GetAllResponse message = GetAllResponse();
 		message.$request = this;
 		return message;
 	}
-	
+
 	@override
 	int $estimate() {
 		$reset();
 		int bytes = 8;
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$initPack(63570112);
 	}
-	
+
 	@override
 	void $unpack() {
 		$initUnpack();
 	}
-	
 }
 
 class GetAllResponsePostAuthor extends PackMeMessage {
 	late List<int> id;
 	late String nickname;
 	late String avatar;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -43,7 +42,7 @@ class GetAllResponsePostAuthor extends PackMeMessage {
 		bytes += $stringBytes(avatar);
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$packUint32(id.length);
@@ -51,7 +50,7 @@ class GetAllResponsePostAuthor extends PackMeMessage {
 		$packString(nickname);
 		$packString(avatar);
 	}
-	
+
 	@override
 	void $unpack() {
 		id = <int>[];
@@ -62,7 +61,6 @@ class GetAllResponsePostAuthor extends PackMeMessage {
 		nickname = $unpackString();
 		avatar = $unpackString();
 	}
-	
 }
 
 class GetAllResponsePost extends PackMeMessage {
@@ -71,7 +69,7 @@ class GetAllResponsePost extends PackMeMessage {
 	late String title;
 	late String shortContent;
 	late DateTime posted;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -83,7 +81,7 @@ class GetAllResponsePost extends PackMeMessage {
 		bytes += $stringBytes(shortContent);
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$packUint32(id.length);
@@ -93,7 +91,7 @@ class GetAllResponsePost extends PackMeMessage {
 		$packString(shortContent);
 		$packDateTime(posted);
 	}
-	
+
 	@override
 	void $unpack() {
 		id = <int>[];
@@ -106,12 +104,11 @@ class GetAllResponsePost extends PackMeMessage {
 		shortContent = $unpackString();
 		posted = $unpackDateTime();
 	}
-	
 }
 
 class GetAllResponse extends PackMeMessage {
 	late List<GetAllResponsePost> posts;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -120,14 +117,14 @@ class GetAllResponse extends PackMeMessage {
 		for (int i = 0; i < posts.length; i++) bytes += posts[i].$estimate();
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$initPack(280110613);
 		$packUint32(posts.length);
 		posts.forEach($packMessage);
 	}
-	
+
 	@override
 	void $unpack() {
 		$initUnpack();
@@ -137,19 +134,18 @@ class GetAllResponse extends PackMeMessage {
 			posts.add($unpackMessage(GetAllResponsePost()) as GetAllResponsePost);
 		}
 	}
-	
 }
 
 class GetRequest extends PackMeMessage {
 	late List<int> postId;
-	
+
 	@override
 	GetResponse get $response {
 		final GetResponse message = GetResponse();
 		message.$request = this;
 		return message;
 	}
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -158,14 +154,14 @@ class GetRequest extends PackMeMessage {
 		bytes += 1 * postId.length;
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$initPack(187698222);
 		$packUint32(postId.length);
 		postId.forEach($packUint8);
 	}
-	
+
 	@override
 	void $unpack() {
 		$initUnpack();
@@ -175,7 +171,6 @@ class GetRequest extends PackMeMessage {
 			postId.add($unpackUint8());
 		}
 	}
-	
 }
 
 class GetResponseAuthor extends PackMeMessage {
@@ -185,7 +180,7 @@ class GetResponseAuthor extends PackMeMessage {
 	String? facebookId;
 	String? twitterId;
 	String? instagramId;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -208,7 +203,7 @@ class GetResponseAuthor extends PackMeMessage {
 		}
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
@@ -220,7 +215,7 @@ class GetResponseAuthor extends PackMeMessage {
 		if (twitterId != null) $packString(twitterId!);
 		if (instagramId != null) $packString(instagramId!);
 	}
-	
+
 	@override
 	void $unpack() {
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
@@ -241,39 +236,37 @@ class GetResponseAuthor extends PackMeMessage {
 			instagramId = $unpackString();
 		}
 	}
-	
 }
 
 class GetResponseStats extends PackMeMessage {
 	late int likes;
 	late int dislikes;
-	
+
 	@override
 	int $estimate() {
 		$reset();
 		int bytes = 8;
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$packUint32(likes);
 		$packUint32(dislikes);
 	}
-	
+
 	@override
 	void $unpack() {
 		likes = $unpackUint32();
 		dislikes = $unpackUint32();
 	}
-	
 }
 
 class GetResponseCommentAuthor extends PackMeMessage {
 	late List<int> id;
 	late String nickname;
 	late String avatar;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -284,7 +277,7 @@ class GetResponseCommentAuthor extends PackMeMessage {
 		bytes += $stringBytes(avatar);
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$packUint32(id.length);
@@ -292,7 +285,7 @@ class GetResponseCommentAuthor extends PackMeMessage {
 		$packString(nickname);
 		$packString(avatar);
 	}
-	
+
 	@override
 	void $unpack() {
 		id = <int>[];
@@ -303,14 +296,13 @@ class GetResponseCommentAuthor extends PackMeMessage {
 		nickname = $unpackString();
 		avatar = $unpackString();
 	}
-	
 }
 
 class GetResponseComment extends PackMeMessage {
 	late GetResponseCommentAuthor author;
 	late String comment;
 	late DateTime posted;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -319,21 +311,20 @@ class GetResponseComment extends PackMeMessage {
 		bytes += $stringBytes(comment);
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$packMessage(author);
 		$packString(comment);
 		$packDateTime(posted);
 	}
-	
+
 	@override
 	void $unpack() {
 		author = $unpackMessage(GetResponseCommentAuthor()) as GetResponseCommentAuthor;
 		comment = $unpackString();
 		posted = $unpackDateTime();
 	}
-	
 }
 
 class GetResponse extends PackMeMessage {
@@ -343,7 +334,7 @@ class GetResponse extends PackMeMessage {
 	late GetResponseAuthor author;
 	late GetResponseStats stats;
 	late List<GetResponseComment> comments;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -356,7 +347,7 @@ class GetResponse extends PackMeMessage {
 		for (int i = 0; i < comments.length; i++) bytes += comments[i].$estimate();
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$initPack(244485545);
@@ -368,7 +359,7 @@ class GetResponse extends PackMeMessage {
 		$packUint32(comments.length);
 		comments.forEach($packMessage);
 	}
-	
+
 	@override
 	void $unpack() {
 		$initUnpack();
@@ -383,19 +374,18 @@ class GetResponse extends PackMeMessage {
 			comments.add($unpackMessage(GetResponseComment()) as GetResponseComment);
 		}
 	}
-	
 }
 
 class DeleteRequest extends PackMeMessage {
 	late List<int> postId;
-	
+
 	@override
 	DeleteResponse get $response {
 		final DeleteResponse message = DeleteResponse();
 		message.$request = this;
 		return message;
 	}
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -404,14 +394,14 @@ class DeleteRequest extends PackMeMessage {
 		bytes += 1 * postId.length;
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$initPack(486637631);
 		$packUint32(postId.length);
 		postId.forEach($packUint8);
 	}
-	
+
 	@override
 	void $unpack() {
 		$initUnpack();
@@ -421,12 +411,11 @@ class DeleteRequest extends PackMeMessage {
 			postId.add($unpackUint8());
 		}
 	}
-	
 }
 
 class DeleteResponse extends PackMeMessage {
 	String? error;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -437,14 +426,14 @@ class DeleteResponse extends PackMeMessage {
 		}
 		return bytes;
 	}
-	
+
 	@override
 	void $pack() {
 		$initPack(788388804);
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		if (error != null) $packString(error!);
 	}
-	
+
 	@override
 	void $unpack() {
 		$initUnpack();
@@ -453,7 +442,6 @@ class DeleteResponse extends PackMeMessage {
 			error = $unpackString();
 		}
 	}
-	
 }
 
 final Map<int, PackMeMessage Function()> examplePostsMessageFactory = <int, PackMeMessage Function()>{

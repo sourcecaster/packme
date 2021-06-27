@@ -73,57 +73,53 @@ class MessageField {
 
     /// Returns code required to estimate size in bytes of this field.
     List<String> get estimate {
-        final List<String> code = <String>[];
-        if (optional) code.add('		\$setFlag($name != null);');
-        if (optional) code.add('		if ($name != null) {');
-        if (!array) {
-            if (type is String && type != 'string') code.add('${optional ? '	' : ''}		bytes += ${sizeOf[type]};');
-            else if (type == 'string') code.add('${optional ? '	' : ''}		bytes += \$stringBytes($_name);');
-            else if (type is Message) code.add('${optional ? '	' : ''}		bytes += $_name.\$estimate();');
-            else throw Exception('Wrong type "$type" for field "$name"');
-        }
-        else {
-            code.add('		${optional ? '	' : ''}bytes += 4;');
-            if (type is String && type != 'string') code.add('${optional ? '	' : ''}		bytes += ${sizeOf[type]} * $_name.length;');
-            else if (type == 'string') code.add('${optional ? '	' : ''}		for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);');
-            else if (type is Message) code.add('${optional ? '	' : ''}		for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();');
-            else throw Exception('Wrong type "$type" for field "$name"');
-        }
-        if (optional) code.add('		}');
-        return code;
+        return <String>[
+            if (optional) '\$setFlag($name != null);',
+            if (optional) 'if ($name != null) {',
+                if (!array) ...<String>[
+                    if (type is String && type != 'string') 'bytes += ${sizeOf[type]};'
+                    else if (type == 'string') 'bytes += \$stringBytes($_name);'
+                    else if (type is Message) 'bytes += $_name.\$estimate();'
+                    else throw Exception('Wrong type "$type" for field "$name"')
+                ]
+                else ...<String>[
+                    'bytes += 4;',
+                    if (type is String && type != 'string') 'bytes += ${sizeOf[type]} * $_name.length;'
+                    else if (type == 'string') 'for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);'
+                    else if (type is Message) 'for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();'
+                    else throw Exception('Wrong type "$type" for field "$name"')
+                ],
+            if (optional) '}',
+        ];
     }
 
     /// Returns code required to pack this field.
     List<String> get pack {
-        final List<String> code = <String>[];
-        if (!array) {
-            code.add('		${optional ? 'if ($name != null) ' : ''}\$$_pack($_name);');
-        }
-        else {
-            if (optional) code.add('		if ($name != null) {');
-            code.add('${optional ? '	' : ''}		\$packUint32($_name.length);');
-            code.add('${optional ? '	' : ''}		$_name.forEach(\$$_pack);');
-            if (optional) code.add('		}');
-        }
-        return code;
+        return <String>[
+            if (!array) '${optional ? 'if ($name != null) ' : ''}\$$_pack($_name);'
+            else ...<String>[
+                if (optional) 'if ($name != null) {',
+                    '\$packUint32($_name.length);',
+                    '$_name.forEach(\$$_pack);',
+                if (optional) '}',
+            ]
+        ];
     }
 
     /// Returns code required to unpack this field.
     List<String> get unpack {
-        final List<String> code = <String>[];
         final String ending = type is Message ? '(${type.name}()) as ${type.name}' : '()';
-        if (optional) code.add(r'		if ($getFlag()) {');
-        if (!array) {
-            code.add('${optional ? '	' : ''}		$name = $_unpack$ending;');
-        }
-        else {
-            code.add('${optional ? '	' : ''}		$name = <$_type>[];');
-            code.add('${optional ? '	' : ''}		final int ${name}Length = \$unpackUint32();');
-            code.add('${optional ? '	' : ''}		for (int i = 0; i < ${name}Length; i++) {');
-            code.add('${optional ? '	' : ''}			$_name.add($_unpack$ending);');
-            code.add('${optional ? '	' : ''}		}');
-        }
-        if (optional) code.add('		}');
-        return code;
+        return <String>[
+            if (optional) r'if ($getFlag()) {',
+                if (!array) '$name = $_unpack$ending;'
+                else ...<String>[
+                    '$name = <$_type>[];',
+                    'final int ${name}Length = \$unpackUint32();',
+                    'for (int i = 0; i < ${name}Length; i++) {',
+                        '$_name.add($_unpack$ending);',
+                    '}',
+                ],
+            if (optional) '}',
+        ];
     }
 }

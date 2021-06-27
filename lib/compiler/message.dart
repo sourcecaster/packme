@@ -43,50 +43,51 @@ class Message {
         bufferSize += flagBytes;
         /// Add 4 bytes for command ID and transaction ID
         if (id != null) bufferSize += 8;
-        code.add('class $name extends PackMeMessage {');
-        for (final MessageField field in fields.values) {
-            code.add('	${field.declaration}');
-        }
-        if (responseClass != null) {
-            code.add('	');
-            code.add('	@override');
-            code.add('	$responseClass get \$response {');
-            code.add('		final $responseClass message = $responseClass();');
-            code.add(r'		message.$request = this;');
-            code.add('		return message;');
-            code.add('	}');
-        }
-        code.add('	');
-        code.add('	@override');
-        code.add(r'	int $estimate() {');
-        code.add(r'		$reset();');
-        code.add('		int bytes = $bufferSize;');
-        for (final MessageField field in fields.values) {
-            if (field.optional || field.array || field.type == 'string' || field.type is Message) code.addAll(field.estimate);
-        }
-        code.add('		return bytes;');
-        code.add('	}');
-        code.add('	');
-        code.add('	@override');
-        code.add(r'	void $pack() {');
-        if (id != null) code.add('		\$initPack($id);');
-        if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) \$packUint8(\$flags[i]);');
-        for (final MessageField field in fields.values) {
-            code.addAll(field.pack);
-        }
-        code.add('	}');
-        code.add('	');
-        code.add('	@override');
-        code.add(r'	void $unpack() {');
-        if (id != null) code.add(r'		$initUnpack();'); // command ID
-        if (flagBytes > 0) code.add('		for (int i = 0; i < $flagBytes; i++) \$flags.add(\$unpackUint8());');
-        for (final MessageField field in fields.values) {
-            code.addAll(field.unpack);
-        }
-        code.add('	}');
-        code.add('	');
-        code.add('}');
-        code.add('');
+
+        code.addAll(<String>[
+            'class $name extends PackMeMessage {',
+
+            ...fields.values.map((MessageField field) => field.declaration),
+            '',
+
+            if (responseClass != null) ...<String>[
+                '@override',
+                '$responseClass get \$response {',
+                    'final $responseClass message = $responseClass();',
+                    r'message.$request = this;',
+                    'return message;',
+                '}\n',
+            ],
+
+            '@override',
+            r'int $estimate() {',
+                r'$reset();',
+                'int bytes = $bufferSize;',
+                ...fields.values.fold(<String>[], (Iterable<String> a, MessageField b) {
+                    if (b.optional || b.array || b.type == 'string' || b.type is Message) {
+                        return a.toList() + b.estimate;
+                    }
+                    else return a;
+                }),
+                'return bytes;',
+            '}\n',
+
+            '@override',
+            r'void $pack() {',
+                if (id != null) '\$initPack($id);',
+                if (flagBytes > 0) 'for (int i = 0; i < $flagBytes; i++) \$packUint8(\$flags[i]);',
+                ...fields.values.fold(<String>[], (Iterable<String> a, MessageField b) => a.toList() + b.pack),
+            '}\n',
+
+            '@override',
+            r'void $unpack() {',
+                if (id != null) r'$initUnpack();', // command ID
+                if (flagBytes > 0) 'for (int i = 0; i < $flagBytes; i++) \$flags.add(\$unpackUint8());',
+                ...fields.values.fold(<String>[], (Iterable<String> a, MessageField b) => a.toList() + b.unpack),
+            '}',
+
+            '}\n',
+        ]);
     }
 
     /// Return resulting code for current Message class and all nested ones.
