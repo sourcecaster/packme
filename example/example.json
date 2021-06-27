@@ -1,0 +1,26 @@
+{
+	"test": [
+		{
+			"req_int8": "int8",
+			"req_uint16": "uint16",
+			"req_double": "double",
+			"req_bool": "bool",
+			"req_string": "string",
+			"?opt_int8": "int8",
+			"?opt_uint16": "uint16",
+			"?opt_double": "double",
+			"?opt_bool": "bool",
+			"?opt_string": "string",
+			"req_list": ["uint8"],
+			"?optList": ["uint8"],
+			"req_nested": {
+				"a": "uint8",
+				"b": "string"
+			},
+			"?optNested": {
+				"a": "uint8",
+				"b": "string"
+			}
+		}
+	]
+}

@@ -1,10 +1,13 @@
 import 'package:packme/packme.dart';
 
 class GetAllRequest extends PackMeMessage {
+	GetAllRequest();
+	GetAllRequest._empty();
+
 	
 	@override
 	GetAllResponse get $response {
-		final GetAllResponse message = GetAllResponse();
+		final GetAllResponse message = GetAllResponse._empty();
 		message.$request = this;
 		return message;
 	}
@@ -25,9 +28,23 @@ class GetAllRequest extends PackMeMessage {
 	void $unpack() {
 		$initUnpack();
 	}
+
+	@override
+	String toString() {
+		return 'GetAllRequest[0m()';
+	}
 }
 
 class GetAllResponseUser extends PackMeMessage {
+	GetAllResponseUser({
+		required this.id,
+		required this.nickname,
+		this.firstName,
+		this.lastName,
+		this.age,
+	});
+	GetAllResponseUser._empty();
+
 	late List<int> id;
 	late String nickname;
 	String? firstName;
@@ -86,9 +103,19 @@ class GetAllResponseUser extends PackMeMessage {
 			age = $unpackUint8();
 		}
 	}
+
+	@override
+	String toString() {
+		return 'GetAllResponseUser[0m(id: ${PackMe.dye(id)}, nickname: ${PackMe.dye(nickname)}, firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, age: ${PackMe.dye(age)})';
+	}
 }
 
 class GetAllResponse extends PackMeMessage {
+	GetAllResponse({
+		required this.users,
+	});
+	GetAllResponse._empty();
+
 	late List<GetAllResponseUser> users;
 	
 	@override
@@ -113,17 +140,27 @@ class GetAllResponse extends PackMeMessage {
 		users = <GetAllResponseUser>[];
 		final int usersLength = $unpackUint32();
 		for (int i = 0; i < usersLength; i++) {
-			users.add($unpackMessage(GetAllResponseUser()) as GetAllResponseUser);
+			users.add($unpackMessage(GetAllResponseUser._empty()) as GetAllResponseUser);
 		}
+	}
+
+	@override
+	String toString() {
+		return 'GetAllResponse[0m(users: ${PackMe.dye(users)})';
 	}
 }
 
 class GetRequest extends PackMeMessage {
+	GetRequest({
+		required this.userId,
+	});
+	GetRequest._empty();
+
 	late List<int> userId;
 	
 	@override
 	GetResponse get $response {
-		final GetResponse message = GetResponse();
+		final GetResponse message = GetResponse._empty();
 		message.$request = this;
 		return message;
 	}
@@ -153,9 +190,23 @@ class GetRequest extends PackMeMessage {
 			userId.add($unpackUint8());
 		}
 	}
+
+	@override
+	String toString() {
+		return 'GetRequest[0m(userId: ${PackMe.dye(userId)})';
+	}
 }
 
 class GetResponseInfo extends PackMeMessage {
+	GetResponseInfo({
+		this.firstName,
+		this.lastName,
+		this.male,
+		this.age,
+		this.birthDate,
+	});
+	GetResponseInfo._empty();
+
 	String? firstName;
 	String? lastName;
 	int? male;
@@ -218,9 +269,21 @@ class GetResponseInfo extends PackMeMessage {
 			birthDate = $unpackDateTime();
 		}
 	}
+
+	@override
+	String toString() {
+		return 'GetResponseInfo[0m(firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, male: ${PackMe.dye(male)}, age: ${PackMe.dye(age)}, birthDate: ${PackMe.dye(birthDate)})';
+	}
 }
 
 class GetResponseSocial extends PackMeMessage {
+	GetResponseSocial({
+		this.facebookId,
+		this.twitterId,
+		this.instagramId,
+	});
+	GetResponseSocial._empty();
+
 	String? facebookId;
 	String? twitterId;
 	String? instagramId;
@@ -265,9 +328,23 @@ class GetResponseSocial extends PackMeMessage {
 			instagramId = $unpackString();
 		}
 	}
+
+	@override
+	String toString() {
+		return 'GetResponseSocial[0m(facebookId: ${PackMe.dye(facebookId)}, twitterId: ${PackMe.dye(twitterId)}, instagramId: ${PackMe.dye(instagramId)})';
+	}
 }
 
 class GetResponseStats extends PackMeMessage {
+	GetResponseStats({
+		required this.posts,
+		required this.comments,
+		required this.likes,
+		required this.dislikes,
+		required this.rating,
+	});
+	GetResponseStats._empty();
+
 	late int posts;
 	late int comments;
 	late int likes;
@@ -298,9 +375,20 @@ class GetResponseStats extends PackMeMessage {
 		dislikes = $unpackUint32();
 		rating = $unpackFloat();
 	}
+
+	@override
+	String toString() {
+		return 'GetResponseStats[0m(posts: ${PackMe.dye(posts)}, comments: ${PackMe.dye(comments)}, likes: ${PackMe.dye(likes)}, dislikes: ${PackMe.dye(dislikes)}, rating: ${PackMe.dye(rating)})';
+	}
 }
 
 class GetResponseLastActive extends PackMeMessage {
+	GetResponseLastActive({
+		required this.datetime,
+		required this.ip,
+	});
+	GetResponseLastActive._empty();
+
 	late DateTime datetime;
 	late String ip;
 	
@@ -323,9 +411,21 @@ class GetResponseLastActive extends PackMeMessage {
 		datetime = $unpackDateTime();
 		ip = $unpackString();
 	}
+
+	@override
+	String toString() {
+		return 'GetResponseLastActive[0m(datetime: ${PackMe.dye(datetime)}, ip: ${PackMe.dye(ip)})';
+	}
 }
 
 class GetResponseSession extends PackMeMessage {
+	GetResponseSession({
+		required this.created,
+		required this.ip,
+		required this.active,
+	});
+	GetResponseSession._empty();
+
 	late DateTime created;
 	late String ip;
 	late bool active;
@@ -351,9 +451,27 @@ class GetResponseSession extends PackMeMessage {
 		ip = $unpackString();
 		active = $unpackBool();
 	}
+
+	@override
+	String toString() {
+		return 'GetResponseSession[0m(created: ${PackMe.dye(created)}, ip: ${PackMe.dye(ip)}, active: ${PackMe.dye(active)})';
+	}
 }
 
 class GetResponse extends PackMeMessage {
+	GetResponse({
+		required this.email,
+		required this.nickname,
+		required this.hidden,
+		required this.created,
+		required this.info,
+		required this.social,
+		required this.stats,
+		this.lastActive,
+		required this.sessions,
+	});
+	GetResponse._empty();
+
 	late String email;
 	late String nickname;
 	late bool hidden;
@@ -406,26 +524,36 @@ class GetResponse extends PackMeMessage {
 		nickname = $unpackString();
 		hidden = $unpackBool();
 		created = $unpackDateTime();
-		info = $unpackMessage(GetResponseInfo()) as GetResponseInfo;
-		social = $unpackMessage(GetResponseSocial()) as GetResponseSocial;
-		stats = $unpackMessage(GetResponseStats()) as GetResponseStats;
+		info = $unpackMessage(GetResponseInfo._empty()) as GetResponseInfo;
+		social = $unpackMessage(GetResponseSocial._empty()) as GetResponseSocial;
+		stats = $unpackMessage(GetResponseStats._empty()) as GetResponseStats;
 		if ($getFlag()) {
-			lastActive = $unpackMessage(GetResponseLastActive()) as GetResponseLastActive;
+			lastActive = $unpackMessage(GetResponseLastActive._empty()) as GetResponseLastActive;
 		}
 		sessions = <GetResponseSession>[];
 		final int sessionsLength = $unpackUint32();
 		for (int i = 0; i < sessionsLength; i++) {
-			sessions.add($unpackMessage(GetResponseSession()) as GetResponseSession);
+			sessions.add($unpackMessage(GetResponseSession._empty()) as GetResponseSession);
 		}
+	}
+
+	@override
+	String toString() {
+		return 'GetResponse[0m(email: ${PackMe.dye(email)}, nickname: ${PackMe.dye(nickname)}, hidden: ${PackMe.dye(hidden)}, created: ${PackMe.dye(created)}, info: ${PackMe.dye(info)}, social: ${PackMe.dye(social)}, stats: ${PackMe.dye(stats)}, lastActive: ${PackMe.dye(lastActive)}, sessions: ${PackMe.dye(sessions)})';
 	}
 }
 
 class DeleteRequest extends PackMeMessage {
+	DeleteRequest({
+		required this.userId,
+	});
+	DeleteRequest._empty();
+
 	late List<int> userId;
 	
 	@override
 	DeleteResponse get $response {
-		final DeleteResponse message = DeleteResponse();
+		final DeleteResponse message = DeleteResponse._empty();
 		message.$request = this;
 		return message;
 	}
@@ -455,9 +583,19 @@ class DeleteRequest extends PackMeMessage {
 			userId.add($unpackUint8());
 		}
 	}
+
+	@override
+	String toString() {
+		return 'DeleteRequest[0m(userId: ${PackMe.dye(userId)})';
+	}
 }
 
 class DeleteResponse extends PackMeMessage {
+	DeleteResponse({
+		this.error,
+	});
+	DeleteResponse._empty();
+
 	String? error;
 	
 	@override
@@ -486,9 +624,20 @@ class DeleteResponse extends PackMeMessage {
 			error = $unpackString();
 		}
 	}
+
+	@override
+	String toString() {
+		return 'DeleteResponse[0m(error: ${PackMe.dye(error)})';
+	}
 }
 
 class UpdateSessionMessage extends PackMeMessage {
+	UpdateSessionMessage({
+		required this.userId,
+		required this.sessionId,
+	});
+	UpdateSessionMessage._empty();
+
 	late List<int> userId;
 	late String sessionId;
 	
@@ -520,14 +669,19 @@ class UpdateSessionMessage extends PackMeMessage {
 		}
 		sessionId = $unpackString();
 	}
+
+	@override
+	String toString() {
+		return 'UpdateSessionMessage[0m(userId: ${PackMe.dye(userId)}, sessionId: ${PackMe.dye(sessionId)})';
+	}
 }
 
 final Map<int, PackMeMessage Function()> exampleUsersMessageFactory = <int, PackMeMessage Function()>{
-		12982278: () => GetAllRequest(),
-		242206268: () => GetAllResponse(),
-		781905656: () => GetRequest(),
-		430536944: () => GetResponse(),
-		808423104: () => DeleteRequest(),
-		69897231: () => DeleteResponse(),
-		743336169: () => UpdateSessionMessage(),
+		12982278: () => GetAllRequest._empty(),
+		242206268: () => GetAllResponse._empty(),
+		781905656: () => GetRequest._empty(),
+		430536944: () => GetResponse._empty(),
+		808423104: () => DeleteRequest._empty(),
+		69897231: () => DeleteResponse._empty(),
+		743336169: () => UpdateSessionMessage._empty(),
 };

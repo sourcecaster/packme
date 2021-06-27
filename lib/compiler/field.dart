@@ -108,7 +108,7 @@ class MessageField {
 
     /// Returns code required to unpack this field.
     List<String> get unpack {
-        final String ending = type is Message ? '(${type.name}()) as ${type.name}' : '()';
+        final String ending = type is Message ? '(${type.name}._empty()) as ${type.name}' : '()';
         return <String>[
             if (optional) r'if ($getFlag()) {',
                 if (!array) '$name = $_unpack$ending;'

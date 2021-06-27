@@ -11,6 +11,10 @@ class PackMe {
 	final Function(String, [StackTrace])? onError;
 	final Map<int, PackMeMessage Function()> _factory = <int, PackMeMessage Function()>{};
 
+	static String dye(dynamic x) => x is String ? '\x1b[32m$x\x1b[0m'
+		: x is int || x is double || x is bool ? '\x1b[34m$x\x1b[0m'
+		: '\x1b[35m$x\x1b[0m';
+
 	void register(Map<int, PackMeMessage Function()> messageFactory) {
 		_factory.addAll(messageFactory);
 	}

@@ -47,13 +47,21 @@ class Message {
         code.addAll(<String>[
             'class $name extends PackMeMessage {',
 
+            if (fields.isNotEmpty) ...<String>[
+                '$name({',
+                ...fields.values.map((MessageField field) => '${field.optional ? '' : 'required '}this.${field.name},'),
+                '});'
+            ]
+            else '$name();',
+            '$name._empty();\n',
+
             ...fields.values.map((MessageField field) => field.declaration),
             '',
 
             if (responseClass != null) ...<String>[
                 '@override',
                 '$responseClass get \$response {',
-                    'final $responseClass message = $responseClass();',
+                    'final $responseClass message = $responseClass._empty();',
                     r'message.$request = this;',
                     'return message;',
                 '}\n',
@@ -84,6 +92,11 @@ class Message {
                 if (id != null) r'$initUnpack();', // command ID
                 if (flagBytes > 0) 'for (int i = 0; i < $flagBytes; i++) \$flags.add(\$unpackUint8());',
                 ...fields.values.fold(<String>[], (Iterable<String> a, MessageField b) => a.toList() + b.unpack),
+            '}\n',
+
+            '@override',
+            r'String toString() {',
+                "return '$name\x1b[0m(${fields.values.map((MessageField field) => '${field.name}: \${PackMe.dye(${field.name})}').join(', ')})';",
             '}',
 
             '}\n',
