@@ -445,10 +445,10 @@ class DeleteResponse extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> examplePostsMessageFactory = <int, PackMeMessage Function()>{
-	63570112: () => GetAllRequest(),
-	280110613: () => GetAllResponse(),
-	187698222: () => GetRequest(),
-	244485545: () => GetResponse(),
-	486637631: () => DeleteRequest(),
-	788388804: () => DeleteResponse(),
+		63570112: () => GetAllRequest(),
+		280110613: () => GetAllResponse(),
+		187698222: () => GetRequest(),
+		244485545: () => GetResponse(),
+		486637631: () => DeleteRequest(),
+		788388804: () => DeleteResponse(),
 };

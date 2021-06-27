@@ -53,7 +53,7 @@ void writeOutput(String outputFilename, String prefix) {
 			...messages.entries.map((MapEntry<int, Message> entry) => '	${entry.key}: () => ${entry.value.name}(),'),
 		'};'
 	];
-	File(outputFilename).writeAsStringSync(out.join('\n'));
+	File(outputFilename).writeAsStringSync(format(out).join('\n'));
 }
 
 void main(List<String> args) {

@@ -41,7 +41,7 @@ List<String> format(List<String> lines) {
     final RegExp reOpen = RegExp(r'\{');
     final RegExp reClose = RegExp(r'\}');
     for (int i = 0; i < lines.length; i++) {
-        final int change = indent += reOpen.allMatches(lines[i]).length - reClose.allMatches(lines[i]).length;
+        final int change = reOpen.allMatches(lines[i]).length - reClose.allMatches(lines[i]).length;
         if (change < 0) indent += change;
         lines[i] = '\t' * indent + lines[i];
         if (change > 0) indent += change;
