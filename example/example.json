@@ -25,7 +25,7 @@
 			"req_enum": "@type_enum",
 			"?opt_enum": "@type_enum",
 			"req_nested": "@nested_object",
-			"?optNested": "@nested_object"
+			"?opt_nested": "@nested_object"
 		}
 	]
 }
