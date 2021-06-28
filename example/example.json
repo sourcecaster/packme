@@ -21,7 +21,7 @@
 			"?opt_bool": "bool",
 			"?opt_string": "string",
 			"req_list": ["uint8"],
-			"?optList": ["uint8"],
+			"?opt_list": ["uint8"],
 			"req_enum": "@type_enum",
 			"?opt_enum": "@type_enum",
 			"req_nested": "@nested_object",
