@@ -8,6 +8,7 @@ class Enum {
             value = validName(value);
             if (value.isEmpty) throw Exception('Enum "$name" contains invalid value.');
             if (values.contains(value)) throw Exception('Enum "$name" value "$value" is duplicated.');
+            if (reserved.contains(value)) throw Exception('Enum "$name" value "$value" is reserved by Dart.');
             values.add(value);
         }
     }

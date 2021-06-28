@@ -7,12 +7,12 @@ class Message {
     Message(this.name, this.manifest, {this.id, this.responseClass}) {
         for (final MapEntry<String, dynamic> entry in manifest.entries) {
             final String fieldName = validName(entry.key);
-            if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name"');
-            if (fields[fieldName] != null) throw Exception('Message field name "$fieldName" is duplicated for "$name"');
-            if (reserved.contains(fieldName)) throw Exception('Message field name "$fieldName" is reserved by Dart for "$name"');
+            if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name".');
+            if (fields[fieldName] != null) throw Exception('Message field name "$fieldName" is duplicated for "$name".');
+            if (reserved.contains(fieldName)) throw Exception('Message field name "$fieldName" is reserved by Dart for "$name".');
             final bool optional = entry.key[0] == '?';
             final bool array = entry.value is List;
-            if (array && entry.value.length != 1) throw Exception('Array declarations must contain only one type: "${entry.value}" is invalid for field "$fieldName" of "$name"');
+            if (array && entry.value.length != 1) throw Exception('Array declarations must contain only one type: "${entry.value}" is invalid for field "$fieldName" of "$name".');
             dynamic value = array ? entry.value[0] : entry.value;
 
             /// Field is a nested Message object.
@@ -33,7 +33,7 @@ class Message {
             fields[fieldName] = MessageField(fieldName, value, optional, array);
             if (!optional && !array && (value is String || value is Enum) && value != 'string') {
                 if (sizeOf(value) != null) bufferSize += sizeOf(value)!;
-                else throw Exception('Unknown type "$value" for field "$fieldName" of "$name"');
+                else throw Exception('Unknown type "$value" for field "$fieldName" of "$name".');
             }
         }
         /// We need to estimate class data size in order to create buffer.

@@ -37,7 +37,7 @@ class MessageField {
             default:
                 if (type is Enum) return (type as Enum).name;
                 else if (type is Message) return (type as Message).name;
-                else throw Exception('Unknown data type "$type" for "$name"');
+                else throw Exception('Unknown data type "$type" for "$name".');
         }
     }
 
@@ -60,7 +60,7 @@ class MessageField {
             default:
                 if (type is Enum) return 'packUint8($name.index)';
                 else if (type is Message) return 'packMessage($name)';
-                else throw Exception('Unknown data type "$type" for "$name"');
+                else throw Exception('Unknown data type "$type" for "$name".');
         }
     }
 
@@ -92,14 +92,14 @@ class MessageField {
                     if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)};'
                     else if (type == 'string') 'bytes += \$stringBytes($_name);'
                     else if (type is Message) 'bytes += $_name.\$estimate();'
-                    else throw Exception('Wrong type "$type" for field "$name"')
+                    else throw Exception('Wrong type "$type" for field "$name".')
                 ]
                 else ...<String>[
                     'bytes += 4;',
                     if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)} * $_name.length;'
                     else if (type == 'string') 'for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);'
                     else if (type is Message) 'for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();'
-                    else throw Exception('Wrong type "$type" for field "$name"')
+                    else throw Exception('Wrong type "$type" for field "$name".')
                 ],
             if (optional) '}',
         ];
