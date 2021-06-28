@@ -36,8 +36,10 @@ import 'package:packme/packme.dart';
 
 PackMe packMe = PackMe();
 packMe.register(manifestMessageFactory); // Required by PackMe to create class instances while unpacking messages
+
 GetUserRequest request = GetUserRequest(id: 'a7db84cc2ef5012a6498bc64334ffa7d');
 socket.send(packMe.pack(request)); // Some socket implementation
+
 socket.listen((Uint8List data) {
     final PackMeMessage? message = packMe.unpack(data);
     if (message is GetUserResponse) print('User data: ${message.firstName} ${message.firstName}, ${message.age} y.o.');
@@ -52,6 +54,7 @@ import 'package:packme/packme.dart';
 
 PackMe packMe = PackMe();
 packMe.register(manifestMessageFactory); // Required by PackMe to create class instances while unpacking messages
+
 server.listen((Uint8List data, SomeSocket socket) { // Some server implementation
     final PackMeMessage? message = packMe.unpack(data);
     if (message is GetUserRequest) {
