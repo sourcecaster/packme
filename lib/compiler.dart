@@ -51,7 +51,7 @@ void writeOutput(String outputFilename, String prefix) {
 		...types.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
 		...messages.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
 		'final Map<int, PackMeMessage Function()> ${validName(prefix)}MessageFactory = <int, PackMeMessage Function()>{',
-			...messages.entries.map((MapEntry<int, Message> entry) => '	${entry.key}: () => ${entry.value.name}._empty(),'),
+			...messages.entries.map((MapEntry<int, Message> entry) => '${entry.key}: () => ${entry.value.name}._empty(),'),
 		'};'
 	];
 	File(outputFilename).writeAsStringSync(format(out).join('\n'));

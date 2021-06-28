@@ -46,13 +46,14 @@ String validName(String input, {bool firstCapital = false}) {
 /// Auto indents.
 List<String> format(List<String> lines) {
     int indent = 0;
-    final RegExp reOpen = RegExp(r'\{');
-    final RegExp reClose = RegExp(r'\}');
+    final RegExp reOpen = RegExp(r'\{[^\}]*$');
+    final RegExp reClose = RegExp(r'^[^\{]*\}');
     for (int i = 0; i < lines.length; i++) {
-        final int change = reOpen.allMatches(lines[i]).length - reClose.allMatches(lines[i]).length;
-        if (change < 0) indent += change;
+        final bool increase = reOpen.hasMatch(lines[i]);
+        final bool decrease = reClose.hasMatch(lines[i]);
+        if (decrease) indent--;
         lines[i] = '\t' * indent + lines[i];
-        if (change > 0) indent += change;
+        if (increase) indent++;
     }
     return lines;
 }

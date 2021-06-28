@@ -71,6 +71,12 @@ class MessageField {
         else return '${optional ? '' : 'late '}List<$_type>${optional ? '?' : ''} $name;';
     }
 
+    /// Returns code of field declaration as method attribute.
+    String get attribute {
+        if (!array) return '${optional ? '' : 'required '}$_type${optional ? '?' : ''} $name,';
+        else return '${optional ? '' : 'required '}List<$_type>${optional ? '?' : ''} $name,';
+    }
+
     /// Returns code required to estimate size in bytes of this field.
     List<String> get estimate {
         return <String>[

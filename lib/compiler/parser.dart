@@ -45,8 +45,8 @@ void parseCommands(Map<String, dynamic> node, String prefix) {
             if (allMessages[hashResponse] != null) {
                 throw Exception('Message name "$nameResponse" is duplicated. Or hash code turned out to be the same as for "${allMessages[hashResponse]!.name}".');
             }
-            allMessages[hashRequest] = messages[hashRequest] = Message(nameRequest, entry.value[0] as Map<String, dynamic>, id: hashRequest, responseClass: nameResponse);
             allMessages[hashResponse] = messages[hashResponse] = Message(nameResponse, entry.value[1] as Map<String, dynamic>, id: hashResponse);
+            allMessages[hashRequest] = messages[hashRequest] = Message(nameRequest, entry.value[0] as Map<String, dynamic>, id: hashRequest, responseClass: messages[hashResponse]);
         }
 
         /// Any other format is invalid.

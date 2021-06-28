@@ -13,7 +13,6 @@ abstract class PackMeMessage {
 	int _boolsBitNumber = 0;
 
 	int get $transactionId => _transactionId ?? -1;
-	PackMeMessage? get $response => null;
 	set $request(PackMeMessage request) {
 		_transactionId = request._transactionId;
 	}

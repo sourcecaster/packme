@@ -183,5 +183,5 @@ class TestMessage extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> exampleMessageFactory = <int, PackMeMessage Function()>{
-		475203406: () => TestMessage._empty(),
+	475203406: () => TestMessage._empty(),
 };

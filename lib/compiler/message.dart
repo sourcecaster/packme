@@ -4,24 +4,7 @@
 part of packme.compiler;
 
 class Message {
-    Message(this.name, this.manifest, {this.id, this.responseClass});
-
-    final int? id;
-    final String? responseClass;
-    final String name;
-    final Map<String, dynamic> manifest;
-
-    final List<String> code = <String>[];
-    final List<Message> nested = <Message>[];
-
-    /// Generate Message class code lines.
-    void parse() {
-        code.clear();
-        final Map<String, MessageField> fields = <String, MessageField>{};
-        /// We need to estimate class data size in order to create buffer.
-        int bufferSize = 0;
-        /// Only optional fields require existence flags (bits).
-        int optionalCount = 0;
+    Message(this.name, this.manifest, {this.id, this.responseClass}) {
         for (final MapEntry<String, dynamic> entry in manifest.entries) {
             final String fieldName = validName(entry.key);
             if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name"');
@@ -47,18 +30,35 @@ class Message {
             }
 
             fields[fieldName] = MessageField(fieldName, value, optional, array);
-            if (optional) optionalCount++;
             if (!optional && !array && value is String && value != 'string') {
                 if (sizeOf[value] != null) bufferSize += sizeOf[value]!;
                 else throw Exception('Unknown type "$value" for field "$fieldName" of "$name"');
             }
         }
+        /// We need to estimate class data size in order to create buffer.
+        /// Only optional fields require existence flags (bits).
+        final int optionalCount = fields.values.where((MessageField f) => f.optional).length;
         /// Add required bytes to store field existence flags.
-        final int flagBytes = (optionalCount / 8).ceil();
+        flagBytes = (optionalCount / 8).ceil();
         bufferSize += flagBytes;
         /// Add 4 bytes for command ID and transaction ID
         if (id != null) bufferSize += 8;
+    }
 
+    final int? id;
+    final Message? responseClass;
+    final String name;
+    final Map<String, dynamic> manifest;
+    int bufferSize = 0;
+    late final int flagBytes;
+
+    final Map<String, MessageField> fields = <String, MessageField>{};
+    final List<String> code = <String>[];
+    final List<Message> nested = <Message>[];
+
+    /// Generate Message class code lines.
+    void parse() {
+        code.clear();
         code.addAll(<String>[
             'class $name extends PackMeMessage {',
 
@@ -74,9 +74,15 @@ class Message {
             '',
 
             if (responseClass != null) ...<String>[
-                '@override',
-                '$responseClass get \$response {',
-                    'final $responseClass message = $responseClass._empty();',
+                if (responseClass!.fields.isNotEmpty) ...<String>[
+                    '${responseClass!.name} \$response({',
+                    ...responseClass!.fields.values.map((MessageField field) => field.attribute),
+                    '}) {'
+                ]
+                else '${responseClass!.name} \$response() {',
+                    'final ${responseClass!.name} message = ${responseClass!.name}(' +
+                    responseClass!.fields.values.map((MessageField field) => '${field.name}: ${field.name}').join(', ') +
+                    ');',
                     r'message.$request = this;',
                     'return message;',
                 '}\n',

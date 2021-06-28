@@ -1,40 +1,5 @@
 import 'package:packme/packme.dart';
 
-class GetAllRequest extends PackMeMessage {
-	GetAllRequest();
-	GetAllRequest._empty();
-
-	
-	@override
-	GetAllResponse get $response {
-		final GetAllResponse message = GetAllResponse._empty();
-		message.$request = this;
-		return message;
-	}
-
-	@override
-	int $estimate() {
-		$reset();
-		int bytes = 8;
-		return bytes;
-	}
-
-	@override
-	void $pack() {
-		$initPack(12982278);
-	}
-
-	@override
-	void $unpack() {
-		$initUnpack();
-	}
-
-	@override
-	String toString() {
-		return 'GetAllRequest\x1b[0m()';
-	}
-}
-
 class GetAllResponseUser extends PackMeMessage {
 	GetAllResponseUser({
 		required this.id,
@@ -150,17 +115,15 @@ class GetAllResponse extends PackMeMessage {
 	}
 }
 
-class GetRequest extends PackMeMessage {
-	GetRequest({
-		required this.userId,
-	});
-	GetRequest._empty();
+class GetAllRequest extends PackMeMessage {
+	GetAllRequest();
+	GetAllRequest._empty();
 
-	late List<int> userId;
 	
-	@override
-	GetResponse get $response {
-		final GetResponse message = GetResponse._empty();
+	GetAllResponse $response({
+		required List<GetAllResponseUser> users,
+	}) {
+		final GetAllResponse message = GetAllResponse(users: users);
 		message.$request = this;
 		return message;
 	}
@@ -169,31 +132,22 @@ class GetRequest extends PackMeMessage {
 	int $estimate() {
 		$reset();
 		int bytes = 8;
-		bytes += 4;
-		bytes += 1 * userId.length;
 		return bytes;
 	}
 
 	@override
 	void $pack() {
-		$initPack(781905656);
-		$packUint32(userId.length);
-		userId.forEach($packUint8);
+		$initPack(12982278);
 	}
 
 	@override
 	void $unpack() {
 		$initUnpack();
-		userId = <int>[];
-		final int userIdLength = $unpackUint32();
-		for (int i = 0; i < userIdLength; i++) {
-			userId.add($unpackUint8());
-		}
 	}
 
 	@override
 	String toString() {
-		return 'GetRequest\x1b[0m(userId: ${PackMe.dye(userId)})';
+		return 'GetAllRequest\x1b[0m()';
 	}
 }
 
@@ -543,17 +497,26 @@ class GetResponse extends PackMeMessage {
 	}
 }
 
-class DeleteRequest extends PackMeMessage {
-	DeleteRequest({
+class GetRequest extends PackMeMessage {
+	GetRequest({
 		required this.userId,
 	});
-	DeleteRequest._empty();
+	GetRequest._empty();
 
 	late List<int> userId;
 	
-	@override
-	DeleteResponse get $response {
-		final DeleteResponse message = DeleteResponse._empty();
+	GetResponse $response({
+		required String email,
+		required String nickname,
+		required bool hidden,
+		required DateTime created,
+		required GetResponseInfo info,
+		required GetResponseSocial social,
+		required GetResponseStats stats,
+		GetResponseLastActive? lastActive,
+		required List<GetResponseSession> sessions,
+	}) {
+		final GetResponse message = GetResponse(email: email, nickname: nickname, hidden: hidden, created: created, info: info, social: social, stats: stats, lastActive: lastActive, sessions: sessions);
 		message.$request = this;
 		return message;
 	}
@@ -569,7 +532,7 @@ class DeleteRequest extends PackMeMessage {
 
 	@override
 	void $pack() {
-		$initPack(808423104);
+		$initPack(781905656);
 		$packUint32(userId.length);
 		userId.forEach($packUint8);
 	}
@@ -586,7 +549,7 @@ class DeleteRequest extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'DeleteRequest\x1b[0m(userId: ${PackMe.dye(userId)})';
+		return 'GetRequest\x1b[0m(userId: ${PackMe.dye(userId)})';
 	}
 }
 
@@ -628,6 +591,54 @@ class DeleteResponse extends PackMeMessage {
 	@override
 	String toString() {
 		return 'DeleteResponse\x1b[0m(error: ${PackMe.dye(error)})';
+	}
+}
+
+class DeleteRequest extends PackMeMessage {
+	DeleteRequest({
+		required this.userId,
+	});
+	DeleteRequest._empty();
+
+	late List<int> userId;
+	
+	DeleteResponse $response({
+		String? error,
+	}) {
+		final DeleteResponse message = DeleteResponse(error: error);
+		message.$request = this;
+		return message;
+	}
+
+	@override
+	int $estimate() {
+		$reset();
+		int bytes = 8;
+		bytes += 4;
+		bytes += 1 * userId.length;
+		return bytes;
+	}
+
+	@override
+	void $pack() {
+		$initPack(808423104);
+		$packUint32(userId.length);
+		userId.forEach($packUint8);
+	}
+
+	@override
+	void $unpack() {
+		$initUnpack();
+		userId = <int>[];
+		final int userIdLength = $unpackUint32();
+		for (int i = 0; i < userIdLength; i++) {
+			userId.add($unpackUint8());
+		}
+	}
+
+	@override
+	String toString() {
+		return 'DeleteRequest\x1b[0m(userId: ${PackMe.dye(userId)})';
 	}
 }
 
@@ -677,11 +688,11 @@ class UpdateSessionMessage extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> exampleUsersMessageFactory = <int, PackMeMessage Function()>{
-		12982278: () => GetAllRequest._empty(),
-		242206268: () => GetAllResponse._empty(),
-		781905656: () => GetRequest._empty(),
-		430536944: () => GetResponse._empty(),
-		808423104: () => DeleteRequest._empty(),
-		69897231: () => DeleteResponse._empty(),
-		743336169: () => UpdateSessionMessage._empty(),
+	242206268: () => GetAllResponse._empty(),
+	12982278: () => GetAllRequest._empty(),
+	430536944: () => GetResponse._empty(),
+	781905656: () => GetRequest._empty(),
+	69897231: () => DeleteResponse._empty(),
+	808423104: () => DeleteRequest._empty(),
+	743336169: () => UpdateSessionMessage._empty(),
 };
