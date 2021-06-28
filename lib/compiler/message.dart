@@ -22,16 +22,17 @@ class Message {
                 nested.add(value = Message('$name$postfix', value as Map<String, dynamic>));
             }
 
-            /// Field is a referenced Message object.
+            /// Field is an Enum or a referenced Message object.
             else if (value is String && value[0] == '@') {
+                final Enum? enumeration = enums[value.substring(1)];
                 final Message? message = types[value.substring(1)];
-                if (message == null) throw Exception('"$name" field "$fieldName" type "$value" is not declared.');
-                value = message;
+                if (enumeration == null && message == null) throw Exception('"$name" field "$fieldName" type "$value" is not declared.');
+                value = enumeration ?? message;
             }
 
             fields[fieldName] = MessageField(fieldName, value, optional, array);
-            if (!optional && !array && value is String && value != 'string') {
-                if (sizeOf[value] != null) bufferSize += sizeOf[value]!;
+            if (!optional && !array && (value is String || value is Enum) && value != 'string') {
+                if (sizeOf(value) != null) bufferSize += sizeOf(value)!;
                 else throw Exception('Unknown type "$value" for field "$fieldName" of "$name"');
             }
         }

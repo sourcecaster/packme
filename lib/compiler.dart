@@ -40,6 +40,7 @@ library packme.compiler;
 import 'dart:convert';
 import 'dart:io';
 
+part 'compiler/enum.dart';
 part 'compiler/field.dart';
 part 'compiler/message.dart';
 part 'compiler/parser.dart';
@@ -48,6 +49,7 @@ part 'compiler/utils.dart';
 void writeOutput(String outputFilename, String prefix) {
 	final List<String> out = <String>[
 		"import 'package:packme/packme.dart';\n",
+		...enums.values.fold(<String>[], (Iterable<String> a, Enum b) => a.toList() + b.output()),
 		...types.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
 		...messages.values.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
 		'final Map<int, PackMeMessage Function()> ${validName(prefix)}MessageFactory = <int, PackMeMessage Function()>{',
@@ -82,6 +84,7 @@ void main(List<String> args) {
 			fatal('Unable to parse JSON: $err');
 		}
 		try {
+			enums.clear();
 			types.clear();
 			messages.clear();
 			parseCommands(manifest, name);

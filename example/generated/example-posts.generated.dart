@@ -26,7 +26,7 @@ class GetAllResponsePostAuthor extends PackMeMessage {
 	@override
 	void $pack() {
 		$packUint32(id.length);
-		id.forEach($packUint8);
+		for (final int item in id) $packUint8(item);
 		$packString(nickname);
 		$packString(avatar);
 	}
@@ -79,7 +79,7 @@ class GetAllResponsePost extends PackMeMessage {
 	@override
 	void $pack() {
 		$packUint32(id.length);
-		id.forEach($packUint8);
+		for (final int item in id) $packUint8(item);
 		$packMessage(author);
 		$packString(title);
 		$packString(shortContent);
@@ -93,7 +93,7 @@ class GetAllResponsePost extends PackMeMessage {
 		for (int i = 0; i < idLength; i++) {
 			id.add($unpackUint8());
 		}
-		author = $unpackMessage(GetAllResponsePostAuthor._empty()) as GetAllResponsePostAuthor;
+		author = $unpackMessage(GetAllResponsePostAuthor._empty());
 		title = $unpackString();
 		shortContent = $unpackString();
 		posted = $unpackDateTime();
@@ -126,7 +126,7 @@ class GetAllResponse extends PackMeMessage {
 	void $pack() {
 		$initPack(280110613);
 		$packUint32(posts.length);
-		posts.forEach($packMessage);
+		for (final GetAllResponsePost item in posts) $packMessage(item);
 	}
 
 	@override
@@ -135,7 +135,7 @@ class GetAllResponse extends PackMeMessage {
 		posts = <GetAllResponsePost>[];
 		final int postsLength = $unpackUint32();
 		for (int i = 0; i < postsLength; i++) {
-			posts.add($unpackMessage(GetAllResponsePost._empty()) as GetAllResponsePost);
+			posts.add($unpackMessage(GetAllResponsePost._empty()));
 		}
 	}
 
@@ -226,7 +226,7 @@ class GetResponseAuthor extends PackMeMessage {
 	void $pack() {
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		$packUint32(id.length);
-		id.forEach($packUint8);
+		for (final int item in id) $packUint8(item);
 		$packString(nickname);
 		$packString(avatar);
 		if (facebookId != null) $packString(facebookId!);
@@ -322,7 +322,7 @@ class GetResponseCommentAuthor extends PackMeMessage {
 	@override
 	void $pack() {
 		$packUint32(id.length);
-		id.forEach($packUint8);
+		for (final int item in id) $packUint8(item);
 		$packString(nickname);
 		$packString(avatar);
 	}
@@ -374,7 +374,7 @@ class GetResponseComment extends PackMeMessage {
 
 	@override
 	void $unpack() {
-		author = $unpackMessage(GetResponseCommentAuthor._empty()) as GetResponseCommentAuthor;
+		author = $unpackMessage(GetResponseCommentAuthor._empty());
 		comment = $unpackString();
 		posted = $unpackDateTime();
 	}
@@ -425,7 +425,7 @@ class GetResponse extends PackMeMessage {
 		$packMessage(author);
 		$packMessage(stats);
 		$packUint32(comments.length);
-		comments.forEach($packMessage);
+		for (final GetResponseComment item in comments) $packMessage(item);
 	}
 
 	@override
@@ -434,12 +434,12 @@ class GetResponse extends PackMeMessage {
 		title = $unpackString();
 		content = $unpackString();
 		posted = $unpackDateTime();
-		author = $unpackMessage(GetResponseAuthor._empty()) as GetResponseAuthor;
-		stats = $unpackMessage(GetResponseStats._empty()) as GetResponseStats;
+		author = $unpackMessage(GetResponseAuthor._empty());
+		stats = $unpackMessage(GetResponseStats._empty());
 		comments = <GetResponseComment>[];
 		final int commentsLength = $unpackUint32();
 		for (int i = 0; i < commentsLength; i++) {
-			comments.add($unpackMessage(GetResponseComment._empty()) as GetResponseComment);
+			comments.add($unpackMessage(GetResponseComment._empty()));
 		}
 	}
 
@@ -483,7 +483,7 @@ class GetRequest extends PackMeMessage {
 	void $pack() {
 		$initPack(187698222);
 		$packUint32(postId.length);
-		postId.forEach($packUint8);
+		for (final int item in postId) $packUint8(item);
 	}
 
 	@override
@@ -572,7 +572,7 @@ class DeleteRequest extends PackMeMessage {
 	void $pack() {
 		$initPack(486637631);
 		$packUint32(postId.length);
-		postId.forEach($packUint8);
+		for (final int item in postId) $packUint8(item);
 	}
 
 	@override

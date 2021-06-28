@@ -18,7 +18,7 @@ const List<String> reserved = <String>[
 ];
 
 /// How many bytes required to store.
-Map<String, int> sizeOf = <String, int>{
+Map<String, int> _sizeOf = <String, int>{
     'bool': 1,
     'int8': 1,
     'uint8': 1,
@@ -32,6 +32,11 @@ Map<String, int> sizeOf = <String, int>{
     'double': 8,
     'datetime': 8,
 };
+int? sizeOf(dynamic type) {
+    if (type is String) return _sizeOf[type];
+    if (type is Enum) return 1;
+    return null;
+}
 
 /// Converts lower case names with underscore to UpperCamelCase (for classes) or
 /// lowerCamelCase (for class fields).

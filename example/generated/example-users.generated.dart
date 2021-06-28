@@ -42,7 +42,7 @@ class GetAllResponseUser extends PackMeMessage {
 	void $pack() {
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		$packUint32(id.length);
-		id.forEach($packUint8);
+		for (final int item in id) $packUint8(item);
 		$packString(nickname);
 		if (firstName != null) $packString(firstName!);
 		if (lastName != null) $packString(lastName!);
@@ -96,7 +96,7 @@ class GetAllResponse extends PackMeMessage {
 	void $pack() {
 		$initPack(242206268);
 		$packUint32(users.length);
-		users.forEach($packMessage);
+		for (final GetAllResponseUser item in users) $packMessage(item);
 	}
 
 	@override
@@ -105,7 +105,7 @@ class GetAllResponse extends PackMeMessage {
 		users = <GetAllResponseUser>[];
 		final int usersLength = $unpackUint32();
 		for (int i = 0; i < usersLength; i++) {
-			users.add($unpackMessage(GetAllResponseUser._empty()) as GetAllResponseUser);
+			users.add($unpackMessage(GetAllResponseUser._empty()));
 		}
 	}
 
@@ -467,7 +467,7 @@ class GetResponse extends PackMeMessage {
 		$packMessage(stats);
 		if (lastActive != null) $packMessage(lastActive!);
 		$packUint32(sessions.length);
-		sessions.forEach($packMessage);
+		for (final GetResponseSession item in sessions) $packMessage(item);
 	}
 
 	@override
@@ -478,16 +478,16 @@ class GetResponse extends PackMeMessage {
 		nickname = $unpackString();
 		hidden = $unpackBool();
 		created = $unpackDateTime();
-		info = $unpackMessage(GetResponseInfo._empty()) as GetResponseInfo;
-		social = $unpackMessage(GetResponseSocial._empty()) as GetResponseSocial;
-		stats = $unpackMessage(GetResponseStats._empty()) as GetResponseStats;
+		info = $unpackMessage(GetResponseInfo._empty());
+		social = $unpackMessage(GetResponseSocial._empty());
+		stats = $unpackMessage(GetResponseStats._empty());
 		if ($getFlag()) {
-			lastActive = $unpackMessage(GetResponseLastActive._empty()) as GetResponseLastActive;
+			lastActive = $unpackMessage(GetResponseLastActive._empty());
 		}
 		sessions = <GetResponseSession>[];
 		final int sessionsLength = $unpackUint32();
 		for (int i = 0; i < sessionsLength; i++) {
-			sessions.add($unpackMessage(GetResponseSession._empty()) as GetResponseSession);
+			sessions.add($unpackMessage(GetResponseSession._empty()));
 		}
 	}
 
@@ -534,7 +534,7 @@ class GetRequest extends PackMeMessage {
 	void $pack() {
 		$initPack(781905656);
 		$packUint32(userId.length);
-		userId.forEach($packUint8);
+		for (final int item in userId) $packUint8(item);
 	}
 
 	@override
@@ -623,7 +623,7 @@ class DeleteRequest extends PackMeMessage {
 	void $pack() {
 		$initPack(808423104);
 		$packUint32(userId.length);
-		userId.forEach($packUint8);
+		for (final int item in userId) $packUint8(item);
 	}
 
 	@override
@@ -666,7 +666,7 @@ class UpdateSessionMessage extends PackMeMessage {
 	void $pack() {
 		$initPack(743336169);
 		$packUint32(userId.length);
-		userId.forEach($packUint8);
+		for (final int item in userId) $packUint8(item);
 		$packString(sessionId);
 	}
 

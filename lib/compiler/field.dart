@@ -35,35 +35,41 @@ class MessageField {
             case 'string':
                 return 'String';
             default:
-                if (type is Message) return (type as Message).name;
+                if (type is Enum) return (type as Enum).name;
+                else if (type is Message) return (type as Message).name;
                 else throw Exception('Unknown data type "$type" for "$name"');
         }
     }
 
     /// Returns required pack method depending on field type.
-    String get _pack {
+    String _pack(String name) {
         switch (type) {
-            case 'bool': return 'packBool';
-            case 'int8': return 'packInt8';
-            case 'uint8': return 'packUint8';
-            case 'int16': return 'packInt16';
-            case 'uint16': return 'packUint16';
-            case 'int32': return 'packInt32';
-            case 'uint32': return 'packUint32';
-            case 'int64': return 'packInt64';
-            case 'uint64': return 'packUint64';
-            case 'float': return 'packFloat';
-            case 'double': return 'packDouble';
-            case 'datetime': return 'packDateTime';
-            case 'string': return 'packString';
+            case 'bool': return 'packBool($name)';
+            case 'int8': return 'packInt8($name)';
+            case 'uint8': return 'packUint8($name)';
+            case 'int16': return 'packInt16($name)';
+            case 'uint16': return 'packUint16($name)';
+            case 'int32': return 'packInt32($name)';
+            case 'uint32': return 'packUint32($name)';
+            case 'int64': return 'packInt64($name)';
+            case 'uint64': return 'packUint64($name)';
+            case 'float': return 'packFloat($name)';
+            case 'double': return 'packDouble($name)';
+            case 'datetime': return 'packDateTime($name)';
+            case 'string': return 'packString($name)';
             default:
-                if (type is Message) return 'packMessage';
+                if (type is Enum) return 'packUint8($name.index)';
+                else if (type is Message) return 'packMessage($name)';
                 else throw Exception('Unknown data type "$type" for "$name"');
         }
     }
 
     /// Returns required unpack method depending on field type.
-    String get _unpack => '\$un$_pack';
+    String get _unpack {
+        if (type is Enum) return '$_type.values[\$unpackUint8()]';
+        else if (type is Message) return '\$unpackMessage(${type.name}._empty())';
+        else return '\$un${_pack('')}';
+    }
 
     /// Returns code of class field declaration.
     String get declaration {
@@ -83,14 +89,14 @@ class MessageField {
             if (optional) '\$setFlag($name != null);',
             if (optional) 'if ($name != null) {',
                 if (!array) ...<String>[
-                    if (type is String && type != 'string') 'bytes += ${sizeOf[type]};'
+                    if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)};'
                     else if (type == 'string') 'bytes += \$stringBytes($_name);'
                     else if (type is Message) 'bytes += $_name.\$estimate();'
                     else throw Exception('Wrong type "$type" for field "$name"')
                 ]
                 else ...<String>[
                     'bytes += 4;',
-                    if (type is String && type != 'string') 'bytes += ${sizeOf[type]} * $_name.length;'
+                    if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)} * $_name.length;'
                     else if (type == 'string') 'for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);'
                     else if (type is Message) 'for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();'
                     else throw Exception('Wrong type "$type" for field "$name"')
@@ -102,11 +108,11 @@ class MessageField {
     /// Returns code required to pack this field.
     List<String> get pack {
         return <String>[
-            if (!array) '${optional ? 'if ($name != null) ' : ''}\$$_pack($_name);'
+            if (!array) '${optional ? 'if ($name != null) ' : ''}\$${_pack(_name)};'
             else ...<String>[
                 if (optional) 'if ($name != null) {',
                     '\$packUint32($_name.length);',
-                    '$_name.forEach(\$$_pack);',
+                    'for (final $_type item in $_name) \$${_pack('item')};',
                 if (optional) '}',
             ]
         ];
@@ -114,15 +120,14 @@ class MessageField {
 
     /// Returns code required to unpack this field.
     List<String> get unpack {
-        final String ending = type is Message ? '(${type.name}._empty()) as ${type.name}' : '()';
         return <String>[
             if (optional) r'if ($getFlag()) {',
-                if (!array) '$name = $_unpack$ending;'
+                if (!array) '$name = $_unpack;'
                 else ...<String>[
                     '$name = <$_type>[];',
                     'final int ${name}Length = \$unpackUint32();',
                     'for (int i = 0; i < ${name}Length; i++) {',
-                        '$_name.add($_unpack$ending);',
+                        '$_name.add($_unpack);',
                     '}',
                 ],
             if (optional) '}',

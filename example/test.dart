@@ -33,6 +33,7 @@ TestMessage randomTextMessage() {
         reqBool: rand.nextBool(),
         reqString: randomString(),
         reqList: randomList(),
+        reqEnum: TypeEnum.values[rand.nextInt(TypeEnum.values.length)],
         reqNested: NestedObject(a: rand.nextInt(256), b: randomString()),
         optInt8: rand.nextBool() ? null : rand.nextInt(256) - 128,
         optUint16: rand.nextBool() ? null : rand.nextInt(65536),
@@ -40,6 +41,7 @@ TestMessage randomTextMessage() {
         optBool: rand.nextBool() ? null : rand.nextBool(),
         optString: rand.nextBool() ? null : randomString(),
         optList: rand.nextBool() ? null : randomList(),
+        optEnum: rand.nextBool() ? null : TypeEnum.values[rand.nextInt(TypeEnum.values.length)],
         optNested: rand.nextBool() ? null : NestedObject(a: rand.nextInt(256), b: randomString()),
     );
     return message;

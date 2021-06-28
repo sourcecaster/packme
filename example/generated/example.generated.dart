@@ -1,5 +1,11 @@
 import 'package:packme/packme.dart';
 
+enum TypeEnum {
+	one,
+	two,
+	four,
+}
+
 class NestedObject extends PackMeMessage {
 	NestedObject({
 		required this.a,
@@ -50,6 +56,8 @@ class TestMessage extends PackMeMessage {
 		this.optString,
 		required this.reqList,
 		this.optList,
+		required this.reqEnum,
+		this.optEnum,
 		required this.reqNested,
 		this.optNested,
 	});
@@ -67,13 +75,15 @@ class TestMessage extends PackMeMessage {
 	String? optString;
 	late List<int> reqList;
 	List<int>? optList;
+	late TypeEnum reqEnum;
+	TypeEnum? optEnum;
 	late NestedObject reqNested;
 	NestedObject? optNested;
 	
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 21;
+		int bytes = 22;
 		bytes += $stringBytes(reqString);
 		$setFlag(optInt8 != null);
 		if (optInt8 != null) {
@@ -102,6 +112,10 @@ class TestMessage extends PackMeMessage {
 			bytes += 4;
 			bytes += 1 * optList!.length;
 		}
+		$setFlag(optEnum != null);
+		if (optEnum != null) {
+			bytes += 1;
+		}
 		bytes += reqNested.$estimate();
 		$setFlag(optNested != null);
 		if (optNested != null) {
@@ -125,11 +139,13 @@ class TestMessage extends PackMeMessage {
 		if (optBool != null) $packBool(optBool!);
 		if (optString != null) $packString(optString!);
 		$packUint32(reqList.length);
-		reqList.forEach($packUint8);
+		for (final int item in reqList) $packUint8(item);
 		if (optList != null) {
 			$packUint32(optList!.length);
-			optList!.forEach($packUint8);
+			for (final int item in optList!) $packUint8(item);
 		}
+		$packUint8(reqEnum.index);
+		if (optEnum != null) $packUint8(optEnum!.index);
 		$packMessage(reqNested);
 		if (optNested != null) $packMessage(optNested!);
 	}
@@ -170,15 +186,19 @@ class TestMessage extends PackMeMessage {
 				optList!.add($unpackUint8());
 			}
 		}
-		reqNested = $unpackMessage(NestedObject._empty()) as NestedObject;
+		reqEnum = TypeEnum.values[$unpackUint8()];
 		if ($getFlag()) {
-			optNested = $unpackMessage(NestedObject._empty()) as NestedObject;
+			optEnum = TypeEnum.values[$unpackUint8()];
+		}
+		reqNested = $unpackMessage(NestedObject._empty());
+		if ($getFlag()) {
+			optNested = $unpackMessage(NestedObject._empty());
 		}
 	}
 
 	@override
 	String toString() {
-		return 'TestMessage\x1b[0m(reqInt8: ${PackMe.dye(reqInt8)}, reqUint16: ${PackMe.dye(reqUint16)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, optInt8: ${PackMe.dye(optInt8)}, optUint16: ${PackMe.dye(optUint16)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, reqList: ${PackMe.dye(reqList)}, optList: ${PackMe.dye(optList)}, reqNested: ${PackMe.dye(reqNested)}, optNested: ${PackMe.dye(optNested)})';
+		return 'TestMessage\x1b[0m(reqInt8: ${PackMe.dye(reqInt8)}, reqUint16: ${PackMe.dye(reqUint16)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, optInt8: ${PackMe.dye(optInt8)}, optUint16: ${PackMe.dye(optUint16)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, reqList: ${PackMe.dye(reqList)}, optList: ${PackMe.dye(optList)}, reqEnum: ${PackMe.dye(reqEnum)}, optEnum: ${PackMe.dye(optEnum)}, reqNested: ${PackMe.dye(reqNested)}, optNested: ${PackMe.dye(optNested)})';
 	}
 }
 

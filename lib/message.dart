@@ -75,7 +75,7 @@ abstract class PackMeMessage {
 		message.$pack();
 		_offset = message._offset;
 	}
-	PackMeMessage $unpackMessage(PackMeMessage message) {
+	T $unpackMessage<T extends PackMeMessage>(T message) {
 		message._data = _data;
 		message._offset = _offset;
 		message.$unpack();
