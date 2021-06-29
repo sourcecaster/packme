@@ -47,7 +47,7 @@ socket.send(packMe.pack(request)); // Some socket implementation
 socket.listen((Uint8List data) {
     final PackMeMessage? message = packMe.unpack(data);
     if (message is GetUserResponse) {
-        print('He is awesome: ${message.firstName} ${message.firstName}, ${message.age} y.o.');
+        print('He is awesome: ${message.firstName} ${message.lastName}, ${message.age} y.o.');
     }
 });
 ```
