@@ -17,7 +17,7 @@ Here's a simple manifest.json file (located in packme directory) for some hypoth
 {
     "get_user": [
         {
-            "id": "string",
+            "id": "string"
         },
         {
             "first_name": "string",
