@@ -2,7 +2,7 @@
 PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over tcp connection) and unpacking it back to class objects described in a simple way via JSON manifest file.
 
 ## It is Fast
-Since PackMe generates .dart classes, there is no need for any resource demanding serialization/deserialization process. No intermediate steps involved, every class has it's own efficient methods to quickly put all data to Uint8List buffer and extract it. Comparing to popular solutions it's performance is similar to FlatBuffers and greately outperforms Proto Buffers.
+Since PackMe generates .dart classes, there is no need for any resource demanding serialization/deserialization process. No intermediate steps involved, every class has it's own efficient methods to quickly put all data to Uint8List buffer and extract it. Comparing to popular solutions it's performance is similar to FlatBuffers and greatly outperforms Proto Buffers.
 
 ## It is Simple
 You do not need to learn any additional data format or special manifest syntax (like in case of using FlatBuffers or Proto Buffers), just use JSON! Everyone knows JSON, right? Objects, types and messages declarations are very simple and intuitive.
