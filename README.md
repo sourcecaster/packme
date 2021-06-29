@@ -22,7 +22,7 @@ Here's a simple manifest.json file (located in packme directory) for some hypoth
         {
             "first_name": "string",
             "last_name": "string",
-            "age": "uint16"
+            "age": "uint8"
         }
     ]
 }
