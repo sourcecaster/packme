@@ -8,6 +8,8 @@ Since PackMe generates .dart classes, there is no need for any resource demandin
 You do not need to learn any additional data format or special manifest syntax (like in case of using FlatBuffers or Proto Buffers), just use JSON! Everyone knows JSON, right? Objects, types and messages declarations are very simple and intuitive.
 
 ## Usage
+The best way of using it for client-server applications is by using ConnectMe package which provides all necessary stuff like adding listeners, calling asynchronous queries etc. But you can use it separately as well.
+
 Here's a simple manifest.json file (located in packme directory) for some hypothetical client-server application:
 ```json
 {
