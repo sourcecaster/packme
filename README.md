@@ -1,26 +1,28 @@
 ## What is PackMe
-PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over tcp connection) and unpacking it back to class objects described in a simple way via JSON manifest file.
+PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over tcp connection) and unpacking it back to class objects described in a simple way via JSON manifest files.
 
-## It is Fast
+## It is Fast 
+Spoiler alert! ~500k pack/unpack cycles per second for data of average size and complexity. Of course it depends on system configuration :)
+
 Since PackMe generates .dart classes, there is no need for any resource demanding serialization/deserialization process. No intermediate steps involved, every class has it's own efficient methods to quickly put all data to Uint8List buffer and extract it. Comparing to popular solutions it's performance is similar to FlatBuffers and greatly outperforms Proto Buffers.
 
 ## It is Simple
-You do not need to learn any additional data format or special manifest syntax (like in case of using FlatBuffers or Proto Buffers), just use JSON! Everyone knows JSON, right? Objects, types and messages declarations are very simple and intuitive.
+No special file formats (like for FlatBuffers or Proto Buffers manifest files), just use JSON. Objects, types and messages declarations are very simple and intuitive.
 
 ## Usage
-The best way of using it for client-server applications is by using ConnectMe package which provides all necessary stuff like adding listeners, calling asynchronous queries etc. But you can use it separately as well.
+The best way of using it for client-server applications is by using ConnectMe package which provides all necessary stuff like adding message listeners, calling asynchronous queries etc. But you can use it separately as well.
 
 Here's a simple manifest.json file (located in packme directory) for some hypothetical client-server application:
 ```json
 {
     "get_user": [
         {
-            "id": "string",
+            "id": "string"
         },
         {
             "first_name": "string",
             "last_name": "string",
-            "age": "uint16"
+            "age": "uint8"
         }
     ]
 }
@@ -45,7 +47,7 @@ socket.send(packMe.pack(request)); // Some socket implementation
 socket.listen((Uint8List data) {
     final PackMeMessage? message = packMe.unpack(data);
     if (message is GetUserResponse) {
-        print('He is awesome: ${message.firstName} ${message.firstName}, ${message.age} y.o.');
+        print('He is awesome: ${message.firstName} ${message.lastName}, ${message.age} y.o.');
     }
 });
 ```
