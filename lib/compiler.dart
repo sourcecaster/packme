@@ -84,10 +84,7 @@ void main(List<String> args) {
 			fatal('Unable to parse JSON: $err');
 		}
 		try {
-			enums.clear();
-			types.clear();
-			messages.clear();
-			parseCommands(manifest, name);
+			parse(manifest, name);
 		}
 		catch (err) {
 			fatal('An error occurred while processing manifest: $err');

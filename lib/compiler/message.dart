@@ -4,7 +4,24 @@
 part of packme.compiler;
 
 class Message {
-    Message(this.name, this.manifest, {this.id, this.responseClass}) {
+    Message(this.name, this.manifest, {this.id, this.responseClass});
+
+    final int? id;
+    final Message? responseClass;
+    final String name;
+    final Map<String, dynamic> manifest;
+    int bufferSize = 0;
+    late final int flagBytes;
+
+    final Map<String, MessageField> fields = <String, MessageField>{};
+    final List<String> code = <String>[];
+    final List<Message> nested = <Message>[];
+
+    bool _initialized = false;
+
+    /// Parse manifest and initialize everything.
+    void _init() {
+        if (_initialized) return;
         for (final MapEntry<String, dynamic> entry in manifest.entries) {
             final String fieldName = validName(entry.key);
             if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name".');
@@ -44,21 +61,11 @@ class Message {
         bufferSize += flagBytes;
         /// Add 4 bytes for command ID and transaction ID
         if (id != null) bufferSize += 8;
+        _initialized = true;
     }
 
-    final int? id;
-    final Message? responseClass;
-    final String name;
-    final Map<String, dynamic> manifest;
-    int bufferSize = 0;
-    late final int flagBytes;
-
-    final Map<String, MessageField> fields = <String, MessageField>{};
-    final List<String> code = <String>[];
-    final List<Message> nested = <Message>[];
-
     /// Generate Message class code lines.
-    void parse() {
+    void _parse() {
         code.clear();
         code.addAll(<String>[
             'class $name extends PackMeMessage {',
@@ -127,8 +134,9 @@ class Message {
 
     /// Return resulting code for current Message class and all nested ones.
     List<String> output() {
+        _init();
         final List<String> result = <String>[];
-        parse();
+        _parse();
         for (final Message message in nested) {
             result.addAll(message.output());
         }
