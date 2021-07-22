@@ -11,7 +11,7 @@ class NestedObject extends PackMeMessage {
 		required this.a,
 		required this.b,
 	});
-	NestedObject._empty();
+	NestedObject.$empty();
 
 	late int a;
 	late String b;
@@ -61,7 +61,7 @@ class TestMessage extends PackMeMessage {
 		required this.reqNested,
 		this.optNested,
 	});
-	TestMessage._empty();
+	TestMessage.$empty();
 
 	late int reqInt8;
 	late int reqUint16;
@@ -190,9 +190,9 @@ class TestMessage extends PackMeMessage {
 		if ($getFlag()) {
 			optEnum = TypeEnum.values[$unpackUint8()];
 		}
-		reqNested = $unpackMessage(NestedObject._empty());
+		reqNested = $unpackMessage(NestedObject.$empty());
 		if ($getFlag()) {
-			optNested = $unpackMessage(NestedObject._empty());
+			optNested = $unpackMessage(NestedObject.$empty());
 		}
 	}
 
@@ -203,5 +203,5 @@ class TestMessage extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> exampleMessageFactory = <int, PackMeMessage Function()>{
-	475203406: () => TestMessage._empty(),
+	475203406: () => TestMessage.$empty(),
 };

@@ -3,8 +3,9 @@
 part of packme.compiler;
 
 class MessageField {
-    MessageField(this.name, this.type, this.optional, this.array);
+    MessageField(this.message, this.name, this.type, this.optional, this.array);
 
+    final Message message;
     final String name;
     final dynamic type;
     final bool optional;
@@ -37,7 +38,7 @@ class MessageField {
             default:
                 if (type is Enum) return (type as Enum).name;
                 else if (type is Message) return (type as Message).name;
-                else throw Exception('Unknown data type "$type" for "$name".');
+                else throw Exception('Unknown data type "$type" for "$name" in "${message.filename}".');
         }
     }
 
@@ -60,14 +61,14 @@ class MessageField {
             default:
                 if (type is Enum) return 'packUint8($name.index)';
                 else if (type is Message) return 'packMessage($name)';
-                else throw Exception('Unknown data type "$type" for "$name".');
+                else throw Exception('Unknown data type "$type" for "$name" in "${message.filename}".');
         }
     }
 
     /// Returns required unpack method depending on field type.
     String get _unpack {
         if (type is Enum) return '$_type.values[\$unpackUint8()]';
-        else if (type is Message) return '\$unpackMessage(${type.name}._empty())';
+        else if (type is Message) return '\$unpackMessage(${type.name}.\$empty())';
         else return '\$un${_pack('')}';
     }
 
@@ -92,14 +93,14 @@ class MessageField {
                     if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)};'
                     else if (type == 'string') 'bytes += \$stringBytes($_name);'
                     else if (type is Message) 'bytes += $_name.\$estimate();'
-                    else throw Exception('Wrong type "$type" for field "$name".')
+                    else throw Exception('Wrong type "$type" for field "$name" in "${message.filename}".')
                 ]
                 else ...<String>[
                     'bytes += 4;',
                     if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)} * $_name.length;'
                     else if (type == 'string') 'for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);'
                     else if (type is Message) 'for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();'
-                    else throw Exception('Wrong type "$type" for field "$name".')
+                    else throw Exception('Wrong type "$type" for field "$name" in "${message.filename}".')
                 ],
             if (optional) '}',
         ];

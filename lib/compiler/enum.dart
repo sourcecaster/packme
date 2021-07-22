@@ -2,8 +2,8 @@
 
 part of packme.compiler;
 
-class Enum {
-    Enum(this.name, this.manifest) {
+class Enum extends FieldType {
+    Enum(String filename, String name, this.manifest) : super(filename, name) {
         for (String value in manifest) {
             value = validName(value);
             if (value.isEmpty) throw Exception('Enum "$name" contains invalid value.');
@@ -13,7 +13,6 @@ class Enum {
         }
     }
 
-    final String name;
     final List<String> manifest;
     final List<String> values = <String>[];
 

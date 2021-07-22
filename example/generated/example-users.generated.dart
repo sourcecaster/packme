@@ -8,7 +8,7 @@ class GetAllResponseUser extends PackMeMessage {
 		this.lastName,
 		this.age,
 	});
-	GetAllResponseUser._empty();
+	GetAllResponseUser.$empty();
 
 	late List<int> id;
 	late String nickname;
@@ -79,7 +79,7 @@ class GetAllResponse extends PackMeMessage {
 	GetAllResponse({
 		required this.users,
 	});
-	GetAllResponse._empty();
+	GetAllResponse.$empty();
 
 	late List<GetAllResponseUser> users;
 	
@@ -105,7 +105,7 @@ class GetAllResponse extends PackMeMessage {
 		users = <GetAllResponseUser>[];
 		final int usersLength = $unpackUint32();
 		for (int i = 0; i < usersLength; i++) {
-			users.add($unpackMessage(GetAllResponseUser._empty()));
+			users.add($unpackMessage(GetAllResponseUser.$empty()));
 		}
 	}
 
@@ -117,7 +117,7 @@ class GetAllResponse extends PackMeMessage {
 
 class GetAllRequest extends PackMeMessage {
 	GetAllRequest();
-	GetAllRequest._empty();
+	GetAllRequest.$empty();
 
 	
 	GetAllResponse $response({
@@ -159,7 +159,7 @@ class GetResponseInfo extends PackMeMessage {
 		this.age,
 		this.birthDate,
 	});
-	GetResponseInfo._empty();
+	GetResponseInfo.$empty();
 
 	String? firstName;
 	String? lastName;
@@ -236,7 +236,7 @@ class GetResponseSocial extends PackMeMessage {
 		this.twitterId,
 		this.instagramId,
 	});
-	GetResponseSocial._empty();
+	GetResponseSocial.$empty();
 
 	String? facebookId;
 	String? twitterId;
@@ -297,7 +297,7 @@ class GetResponseStats extends PackMeMessage {
 		required this.dislikes,
 		required this.rating,
 	});
-	GetResponseStats._empty();
+	GetResponseStats.$empty();
 
 	late int posts;
 	late int comments;
@@ -341,7 +341,7 @@ class GetResponseLastActive extends PackMeMessage {
 		required this.datetime,
 		required this.ip,
 	});
-	GetResponseLastActive._empty();
+	GetResponseLastActive.$empty();
 
 	late DateTime datetime;
 	late String ip;
@@ -378,7 +378,7 @@ class GetResponseSession extends PackMeMessage {
 		required this.ip,
 		required this.active,
 	});
-	GetResponseSession._empty();
+	GetResponseSession.$empty();
 
 	late DateTime created;
 	late String ip;
@@ -424,7 +424,7 @@ class GetResponse extends PackMeMessage {
 		this.lastActive,
 		required this.sessions,
 	});
-	GetResponse._empty();
+	GetResponse.$empty();
 
 	late String email;
 	late String nickname;
@@ -478,16 +478,16 @@ class GetResponse extends PackMeMessage {
 		nickname = $unpackString();
 		hidden = $unpackBool();
 		created = $unpackDateTime();
-		info = $unpackMessage(GetResponseInfo._empty());
-		social = $unpackMessage(GetResponseSocial._empty());
-		stats = $unpackMessage(GetResponseStats._empty());
+		info = $unpackMessage(GetResponseInfo.$empty());
+		social = $unpackMessage(GetResponseSocial.$empty());
+		stats = $unpackMessage(GetResponseStats.$empty());
 		if ($getFlag()) {
-			lastActive = $unpackMessage(GetResponseLastActive._empty());
+			lastActive = $unpackMessage(GetResponseLastActive.$empty());
 		}
 		sessions = <GetResponseSession>[];
 		final int sessionsLength = $unpackUint32();
 		for (int i = 0; i < sessionsLength; i++) {
-			sessions.add($unpackMessage(GetResponseSession._empty()));
+			sessions.add($unpackMessage(GetResponseSession.$empty()));
 		}
 	}
 
@@ -501,7 +501,7 @@ class GetRequest extends PackMeMessage {
 	GetRequest({
 		required this.userId,
 	});
-	GetRequest._empty();
+	GetRequest.$empty();
 
 	late List<int> userId;
 	
@@ -557,7 +557,7 @@ class DeleteResponse extends PackMeMessage {
 	DeleteResponse({
 		this.error,
 	});
-	DeleteResponse._empty();
+	DeleteResponse.$empty();
 
 	String? error;
 	
@@ -598,7 +598,7 @@ class DeleteRequest extends PackMeMessage {
 	DeleteRequest({
 		required this.userId,
 	});
-	DeleteRequest._empty();
+	DeleteRequest.$empty();
 
 	late List<int> userId;
 	
@@ -647,7 +647,7 @@ class UpdateSessionMessage extends PackMeMessage {
 		required this.userId,
 		required this.sessionId,
 	});
-	UpdateSessionMessage._empty();
+	UpdateSessionMessage.$empty();
 
 	late List<int> userId;
 	late String sessionId;
@@ -688,11 +688,11 @@ class UpdateSessionMessage extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> exampleUsersMessageFactory = <int, PackMeMessage Function()>{
-	242206268: () => GetAllResponse._empty(),
-	12982278: () => GetAllRequest._empty(),
-	430536944: () => GetResponse._empty(),
-	781905656: () => GetRequest._empty(),
-	69897231: () => DeleteResponse._empty(),
-	808423104: () => DeleteRequest._empty(),
-	743336169: () => UpdateSessionMessage._empty(),
+	242206268: () => GetAllResponse.$empty(),
+	12982278: () => GetAllRequest.$empty(),
+	430536944: () => GetResponse.$empty(),
+	781905656: () => GetRequest.$empty(),
+	69897231: () => DeleteResponse.$empty(),
+	808423104: () => DeleteRequest.$empty(),
+	743336169: () => UpdateSessionMessage.$empty(),
 };

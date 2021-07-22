@@ -1,3 +1,7 @@
+## v1.1.0
+* Enums and Types are now can be referenced from another manifest files.
+* Added some details for compiler error messages.
+
 ## v1.0.1
 * Bugfix: it was impossible to refer type declared after current one.
 

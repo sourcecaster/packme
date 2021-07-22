@@ -6,7 +6,7 @@ class GetAllResponsePostAuthor extends PackMeMessage {
 		required this.nickname,
 		required this.avatar,
 	});
-	GetAllResponsePostAuthor._empty();
+	GetAllResponsePostAuthor.$empty();
 
 	late List<int> id;
 	late String nickname;
@@ -56,7 +56,7 @@ class GetAllResponsePost extends PackMeMessage {
 		required this.shortContent,
 		required this.posted,
 	});
-	GetAllResponsePost._empty();
+	GetAllResponsePost.$empty();
 
 	late List<int> id;
 	late GetAllResponsePostAuthor author;
@@ -93,7 +93,7 @@ class GetAllResponsePost extends PackMeMessage {
 		for (int i = 0; i < idLength; i++) {
 			id.add($unpackUint8());
 		}
-		author = $unpackMessage(GetAllResponsePostAuthor._empty());
+		author = $unpackMessage(GetAllResponsePostAuthor.$empty());
 		title = $unpackString();
 		shortContent = $unpackString();
 		posted = $unpackDateTime();
@@ -109,7 +109,7 @@ class GetAllResponse extends PackMeMessage {
 	GetAllResponse({
 		required this.posts,
 	});
-	GetAllResponse._empty();
+	GetAllResponse.$empty();
 
 	late List<GetAllResponsePost> posts;
 	
@@ -135,7 +135,7 @@ class GetAllResponse extends PackMeMessage {
 		posts = <GetAllResponsePost>[];
 		final int postsLength = $unpackUint32();
 		for (int i = 0; i < postsLength; i++) {
-			posts.add($unpackMessage(GetAllResponsePost._empty()));
+			posts.add($unpackMessage(GetAllResponsePost.$empty()));
 		}
 	}
 
@@ -147,7 +147,7 @@ class GetAllResponse extends PackMeMessage {
 
 class GetAllRequest extends PackMeMessage {
 	GetAllRequest();
-	GetAllRequest._empty();
+	GetAllRequest.$empty();
 
 	
 	GetAllResponse $response({
@@ -190,7 +190,7 @@ class GetResponseAuthor extends PackMeMessage {
 		this.twitterId,
 		this.instagramId,
 	});
-	GetResponseAuthor._empty();
+	GetResponseAuthor.$empty();
 
 	late List<int> id;
 	late String nickname;
@@ -266,7 +266,7 @@ class GetResponseStats extends PackMeMessage {
 		required this.likes,
 		required this.dislikes,
 	});
-	GetResponseStats._empty();
+	GetResponseStats.$empty();
 
 	late int likes;
 	late int dislikes;
@@ -302,7 +302,7 @@ class GetResponseCommentAuthor extends PackMeMessage {
 		required this.nickname,
 		required this.avatar,
 	});
-	GetResponseCommentAuthor._empty();
+	GetResponseCommentAuthor.$empty();
 
 	late List<int> id;
 	late String nickname;
@@ -350,7 +350,7 @@ class GetResponseComment extends PackMeMessage {
 		required this.comment,
 		required this.posted,
 	});
-	GetResponseComment._empty();
+	GetResponseComment.$empty();
 
 	late GetResponseCommentAuthor author;
 	late String comment;
@@ -374,7 +374,7 @@ class GetResponseComment extends PackMeMessage {
 
 	@override
 	void $unpack() {
-		author = $unpackMessage(GetResponseCommentAuthor._empty());
+		author = $unpackMessage(GetResponseCommentAuthor.$empty());
 		comment = $unpackString();
 		posted = $unpackDateTime();
 	}
@@ -394,7 +394,7 @@ class GetResponse extends PackMeMessage {
 		required this.stats,
 		required this.comments,
 	});
-	GetResponse._empty();
+	GetResponse.$empty();
 
 	late String title;
 	late String content;
@@ -434,12 +434,12 @@ class GetResponse extends PackMeMessage {
 		title = $unpackString();
 		content = $unpackString();
 		posted = $unpackDateTime();
-		author = $unpackMessage(GetResponseAuthor._empty());
-		stats = $unpackMessage(GetResponseStats._empty());
+		author = $unpackMessage(GetResponseAuthor.$empty());
+		stats = $unpackMessage(GetResponseStats.$empty());
 		comments = <GetResponseComment>[];
 		final int commentsLength = $unpackUint32();
 		for (int i = 0; i < commentsLength; i++) {
-			comments.add($unpackMessage(GetResponseComment._empty()));
+			comments.add($unpackMessage(GetResponseComment.$empty()));
 		}
 	}
 
@@ -453,7 +453,7 @@ class GetRequest extends PackMeMessage {
 	GetRequest({
 		required this.postId,
 	});
-	GetRequest._empty();
+	GetRequest.$empty();
 
 	late List<int> postId;
 	
@@ -506,7 +506,7 @@ class DeleteResponse extends PackMeMessage {
 	DeleteResponse({
 		this.error,
 	});
-	DeleteResponse._empty();
+	DeleteResponse.$empty();
 
 	String? error;
 	
@@ -547,7 +547,7 @@ class DeleteRequest extends PackMeMessage {
 	DeleteRequest({
 		required this.postId,
 	});
-	DeleteRequest._empty();
+	DeleteRequest.$empty();
 
 	late List<int> postId;
 	
@@ -592,10 +592,10 @@ class DeleteRequest extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> examplePostsMessageFactory = <int, PackMeMessage Function()>{
-	280110613: () => GetAllResponse._empty(),
-	63570112: () => GetAllRequest._empty(),
-	244485545: () => GetResponse._empty(),
-	187698222: () => GetRequest._empty(),
-	788388804: () => DeleteResponse._empty(),
-	486637631: () => DeleteRequest._empty(),
+	280110613: () => GetAllResponse.$empty(),
+	63570112: () => GetAllRequest.$empty(),
+	244485545: () => GetResponse.$empty(),
+	187698222: () => GetRequest.$empty(),
+	788388804: () => DeleteResponse.$empty(),
+	486637631: () => DeleteRequest.$empty(),
 };

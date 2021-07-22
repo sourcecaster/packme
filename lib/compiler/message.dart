@@ -3,12 +3,11 @@
 
 part of packme.compiler;
 
-class Message {
-    Message(this.name, this.manifest, {this.id, this.responseClass});
+class Message extends FieldType {
+    Message(String filename, String name, this.manifest, {this.id, this.responseClass}) : super(filename, name);
 
     final int? id;
     final Message? responseClass;
-    final String name;
     final Map<String, dynamic> manifest;
     int bufferSize = 0;
     late final int flagBytes;
@@ -16,41 +15,48 @@ class Message {
     final Map<String, MessageField> fields = <String, MessageField>{};
     final List<String> code = <String>[];
     final List<Message> nested = <Message>[];
+    final List<FieldType> references = <FieldType>[];
 
     bool _initialized = false;
+
+    void _refer(FieldType reference) {
+        if (!references.contains(reference)) references.add(reference);
+    }
 
     /// Parse manifest and initialize everything.
     void _init() {
         if (_initialized) return;
         for (final MapEntry<String, dynamic> entry in manifest.entries) {
             final String fieldName = validName(entry.key);
-            if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name".');
-            if (fields[fieldName] != null) throw Exception('Message field name "$fieldName" is duplicated for "$name".');
-            if (reserved.contains(fieldName)) throw Exception('Message field name "$fieldName" is reserved by Dart for "$name".');
+            if (fieldName.isEmpty) throw Exception('Field name declaration "${entry.key}" is invalid for "$name" in "$filename".');
+            if (fields[fieldName] != null) throw Exception('Message field name "$fieldName" is duplicated for "$name" in "$filename".');
+            if (reserved.contains(fieldName)) throw Exception('Message field name "$fieldName" is reserved by Dart for "$name" in "$filename".');
             final bool optional = entry.key[0] == '?';
             final bool array = entry.value is List;
-            if (array && entry.value.length != 1) throw Exception('Array declarations must contain only one type: "${entry.value}" is invalid for field "$fieldName" of "$name".');
+            if (array && entry.value.length != 1) throw Exception('Array declarations must contain only one type: "${entry.value}" is invalid for field "$fieldName" of "$name" in "$filename".');
             dynamic value = array ? entry.value[0] : entry.value;
 
             /// Field is a nested Message object.
             if (value is Map) {
                 String postfix = validName(entry.key, firstCapital: true);
                 if (array && postfix[postfix.length - 1] == 's') postfix = postfix.substring(0, postfix.length - 1);
-                nested.add(value = Message('$name$postfix', value as Map<String, dynamic>));
+                nested.add(value = Message(filename, '$name$postfix', value as Map<String, dynamic>));
             }
 
             /// Field is an Enum or a referenced Message object.
             else if (value is String && value[0] == '@') {
                 final Enum? enumeration = enums[value.substring(1)];
                 final Message? message = types[value.substring(1)];
-                if (enumeration == null && message == null) throw Exception('"$name" field "$fieldName" type "$value" is not declared.');
+                if (enumeration != null) _refer(enumeration);
+                else if (message != null) _refer(message);
+                else throw Exception('"$name" field "$fieldName" in "$filename" type "$value" is not declared.');
                 value = enumeration ?? message;
             }
 
-            fields[fieldName] = MessageField(fieldName, value, optional, array);
+            fields[fieldName] = MessageField(this, fieldName, value, optional, array);
             if (!optional && !array && (value is String || value is Enum) && value != 'string') {
                 if (sizeOf(value) != null) bufferSize += sizeOf(value)!;
-                else throw Exception('Unknown type "$value" for field "$fieldName" of "$name".');
+                else throw Exception('Unknown type "$value" for field "$fieldName" of "$name" in "$filename".');
             }
         }
         /// We need to estimate class data size in order to create buffer.
@@ -76,7 +82,7 @@ class Message {
                 '});'
             ]
             else '$name();',
-            '$name._empty();\n',
+            '$name.\$empty();\n',
 
             ...fields.values.map((MessageField field) => field.declaration),
             '',
