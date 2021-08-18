@@ -29,6 +29,7 @@ Here's a simple manifest.json file (located in packme directory) for some hypoth
 ```
 Generate dart files: 
 ```bash
+# Usage: compiler.dart <json_manifests_dir> <generated_classes_dir>
 dart compiler.dart packme generated
 ```
 Using on client side:
@@ -36,43 +37,47 @@ Using on client side:
 import 'generated/manifest.generated.dart';
 import 'package:packme/packme.dart';
 
-...
+void main() {
+    // ... whatever code goes here
 
-PackMe packMe = PackMe();
-packMe.register(manifestMessageFactory); // Required by PackMe to create class instances while unpacking messages
-
-GetUserRequest request = GetUserRequest(id: 'a7db84cc2ef5012a6498bc64334ffa7d');
-socket.send(packMe.pack(request)); // Some socket implementation
-
-socket.listen((Uint8List data) {
-    final PackMeMessage? message = packMe.unpack(data);
-    if (message is GetUserResponse) {
-        print('He is awesome: ${message.firstName} ${message.lastName}, ${message.age} y.o.');
-    }
-});
+    PackMe packMe = PackMe();
+    packMe.register(manifestMessageFactory); // Required by PackMe to create class instances while unpacking messages
+    
+    GetUserRequest request = GetUserRequest(id: 'a7db84cc2ef5012a6498bc64334ffa7d');
+    socket.send(packMe.pack(request)); // Some socket implementation
+    
+    socket.listen((Uint8List data) {
+        final PackMeMessage? message = packMe.unpack(data);
+        if (message is GetUserResponse) {
+            print('He is awesome: ${message.firstName} ${message.lastName}, ${message.age} y.o.');
+        }
+    });
+}
 ```
 Using on server side:
 ```dart
 import 'generated/manifest.generated.dart';
 import 'package:packme/packme.dart';
 
-...
+void main() {
+    // ... whatever code goes here
 
-PackMe packMe = PackMe();
-packMe.register(manifestMessageFactory); // Required by PackMe to create class instances while unpacking messages
-
-server.listen((Uint8List data, SomeSocket socket) { // Some server implementation
-    final PackMeMessage? message = packMe.unpack(data);
-    if (message is GetUserRequest) {
-        GetUserResponse response = GetUserResponse(
-            firstName: 'Peter',
-            lastName: 'Hollens',
-            age: '39'
-        );
-        socket.send(packMe.pack(response));
-    }
-});
+    PackMe packMe = PackMe();
+    packMe.register(manifestMessageFactory); // Required by PackMe to create class instances while unpacking messages
+    
+    server.listen((Uint8List data, SomeSocket socket) { // Some server implementation
+        final PackMeMessage? message = packMe.unpack(data);
+        if (message is GetUserRequest) {
+            GetUserResponse response = GetUserResponse(
+                firstName: 'Peter',
+                lastName: 'Hollens',
+                age: 39,
+            );
+            socket.send(packMe.pack(response));
+        }
+    });
+}
 ```
 
 ## Supported platforms
-Now it's only for Dart. Will it be cross platform? Well it depends... If developers will find this package useful then it will be implemented for JavaScript and C++ I guess.
+Now it's only for Dart and JavaScript. Will there be more platforms? Well it depends... If developers will find this package useful then it will be implemented for C++ I guess.
