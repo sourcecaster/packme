@@ -1,3 +1,6 @@
+## v1.1.1
+* ReadMe typo fixed.
+
 ## v1.1.0
 * Enums and Types are now can be referenced from another manifest files.
 * Added some details for compiler error messages.
@@ -6,7 +9,6 @@
 * Bugfix: it was impossible to refer type declared after current one.
 
 ## v1.0.0
-
 * Enum declaration implemented.
 * Type (nested object) declaration implemented.
 * Single message or request and response messages declaration implemented.

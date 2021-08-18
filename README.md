@@ -29,7 +29,7 @@ Here's a simple manifest.json file (located in packme directory) for some hypoth
 ```
 Generate dart files: 
 ```bash
-dart compile.dart packme generated
+dart compiler.dart packme generated
 ```
 Using on client side:
 ```dart
