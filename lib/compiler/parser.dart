@@ -81,10 +81,12 @@ Map<String, List<String>> parse(List<Node> nodes) {
                 .fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
             ...messages.values.where((Message item) => item.filename == filename)
                 .fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
-            'final Map<int, PackMeMessage Function()> ${validName(filename)}MessageFactory = <int, PackMeMessage Function()>{',
-            ...messages.entries.where((MapEntry<int, Message> entry) => entry.value.filename == filename)
-                .map((MapEntry<int, Message> entry) => '${entry.key}: () => ${entry.value.name}.\$empty(),'),
-            '};'
+            if (messages.entries.where((MapEntry<int, Message> entry) => entry.value.filename == filename).isNotEmpty) ...<String>[
+                'final Map<int, PackMeMessage Function()> ${validName(filename)}MessageFactory = <int, PackMeMessage Function()>{',
+                ...messages.entries.where((MapEntry<int, Message> entry) => entry.value.filename == filename)
+                    .map((MapEntry<int, Message> entry) => '${entry.key}: () => ${entry.value.name}.\$empty(),'),
+                '};'
+            ]
         ];
 
         /// Add additional import lines according to messages' references data.

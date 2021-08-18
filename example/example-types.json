@@ -1,0 +1,21 @@
+{
+	"user_status": [
+		"active",
+		"suspended",
+		"deleted"
+	],
+	"user_profile": {
+		"email": "string",
+		"nickname": "string",
+		"?first_name": "string",
+		"?last_name": "string",
+		"?age": "uint8",
+		"?birth_date": "datetime"
+	},
+	"user_session": {
+		"created": "datetime",
+		"updated": "datetime",
+		"ip": "string",
+		"active": "bool"
+	}
+}
