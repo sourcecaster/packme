@@ -1,5 +1,7 @@
 ## v1.1.1
-* ReadMe typo fixed.
+* MessageFactory no longer generated if no messages declared.
+* Examples updated.
+* ReadMe updated.
 
 ## v1.1.0
 * Enums and Types are now can be referenced from another manifest files.
