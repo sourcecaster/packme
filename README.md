@@ -1,5 +1,5 @@
 ## What is PackMe
-PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over tcp connection) and unpacking it back to class objects described in a simple way via JSON manifest files.
+PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over TCP connection) and unpacking it back to class objects described in a simple way via JSON manifest files.
 
 ## It is Fast 
 Spoiler alert! ~500k pack/unpack cycles per second for data of average size and complexity. Of course it depends on system configuration :)
