@@ -40,13 +40,13 @@ library packme.compiler;
 import 'dart:convert';
 import 'dart:io';
 
-part 'compiler/enum.dart';
-part 'compiler/field.dart';
-part 'compiler/fieldtype.dart';
-part 'compiler/message.dart';
-part 'compiler/node.dart';
-part 'compiler/parser.dart';
-part 'compiler/utils.dart';
+part 'src/compiler/enum.dart';
+part 'src/compiler/field.dart';
+part 'src/compiler/fieldtype.dart';
+part 'src/compiler/message.dart';
+part 'src/compiler/node.dart';
+part 'src/compiler/parser.dart';
+part 'src/compiler/utils.dart';
 
 void main(List<String> args) {
 	final String dirPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');

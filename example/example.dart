@@ -70,14 +70,14 @@ void main() {
     /// Run pack/unpack cycle 1 million times.
     Timer(const Duration(seconds: 5), () {
         final DateTime dt1 = DateTime.now();
-        print('Started: $dt1');
+        print('Started at: $dt1');
         for (int i = 0; i < 1000000; i++) {
             packedMessage = packer.pack(message)!;
             unpackedMessage = packer.unpack(packedMessage)! as TestMessage;
         }
         final DateTime dt2 = DateTime.now();
         final double delta = (dt2.millisecondsSinceEpoch - dt1.millisecondsSinceEpoch) / 1000;
-        print('Finished: $dt2 and took ${delta.toStringAsFixed(2)} seconds.');
+        print('Finished at: $dt2 and took ${delta.toStringAsFixed(2)} seconds.');
         print('Cycles per second: ${(1000000 / delta).round()}');
     });
 }

@@ -3,7 +3,7 @@ library packme;
 import 'dart:convert';
 import 'dart:typed_data';
 
-part 'message.dart';
+part 'src/message.dart';
 
 class PackMe {
 	PackMe({this.onError});
