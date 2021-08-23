@@ -1,7 +1,7 @@
 /// This file allows you to generate Dart source code files for PackMe data
 /// protocol using JSON manifest files.
 ///
-/// Usage: dart compile.dart <sourceDirectory> <destinationDirectory>
+/// Usage: dart packme <sourceDirectory> <destinationDirectory>
 ///
 /// JSON Manifest file represents a set of commands, each command consists of
 /// one (single message) or two (request and response) messages. In your server

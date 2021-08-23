@@ -29,8 +29,8 @@ Here's a simple manifest.json file (located in packme directory) for some hypoth
 ```
 Generate dart files: 
 ```bash
-# Usage: compiler.dart <json_manifests_dir> <generated_classes_dir>
-dart compiler.dart packme generated
+# Usage: dart run packme <json_manifests_dir> <generated_classes_dir>
+dart run packme packme generated
 ```
 Using on client side:
 ```dart

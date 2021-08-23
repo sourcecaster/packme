@@ -51,11 +51,27 @@ part 'src/compiler/utils.dart';
 void main(List<String> args) {
 	final String dirPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');
 	final String outPath = Directory.current.path + (args.length < 2 ? '' : '/${args[1]}');
-	final List<FileSystemEntity> files = Directory(dirPath).listSync();
+	final Directory dirDir = Directory(dirPath);
+	final Directory outDir = Directory(outPath);
+	final List<FileSystemEntity> files = <FileSystemEntity>[];
 	final RegExp reJson = RegExp(r'\.json$');
 	final RegExp reName = RegExp(r'.+[\/\\](.+?)\.json$');
 
+	try {
+		if (!dirDir.existsSync()) fatal('Path not found: $dirPath');
+		if (!outDir.existsSync()) outDir.createSync(recursive: true);
+		files.addAll(dirDir.listSync());
+	}
+	catch (err) {
+		fatal('Unable to process files: $err');
+	}
+
 	final List<Node> nodes = <Node>[];
+	final int count = files.where((FileSystemEntity file) => reJson.hasMatch(file.path)).length;
+	print('Found $count JSON manifest files in $dirPath');
+	print('Output path: $outPath');
+	print('...');
+
 	for (final FileSystemEntity file in files) {
 		if (!reJson.hasMatch(file.path)) continue;
 		final String filename = reName.firstMatch(file.path)!.group(1)!;
@@ -92,4 +108,5 @@ void main(List<String> args) {
 	catch (err) {
 		fatal('An error occurred while parsing manifest: $err');
 	}
+	print('All files are successfully processed');
 }
