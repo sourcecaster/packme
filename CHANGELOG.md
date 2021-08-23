@@ -1,3 +1,6 @@
+## v1.1.4
+* Description updated.
+
 ## v1.1.3
 * Added some additional log output for the compiler script.
 * Tests implemented.

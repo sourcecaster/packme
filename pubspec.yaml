@@ -1,6 +1,6 @@
 name: packme
-description: PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over TCP connection) and unpacking it back to class objects described in a simple way via JSON manifest files.
-version: 1.1.3
+description: Simple and extremely fast binary serialization using classes generated from JSON manifest files.
+version: 1.1.4
 homepage: https://github.com/sourcecaster/packme
 repository: https://github.com/sourcecaster/packme
 issue_tracker: https://github.com/sourcecaster/packme/issues
