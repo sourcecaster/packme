@@ -7,3 +7,5 @@ issue_tracker: https://github.com/sourcecaster/packme/issues
 documentation: https://github.com/sourcecaster/packme
 environment:
   sdk: ">=2.13.0 <3.0.0"
+executables:
+  compile: compile
