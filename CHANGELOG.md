@@ -1,3 +1,6 @@
+## v1.1.2
+* Project structure updated.
+
 ## v1.1.1
 * MessageFactory no longer generated if no messages declared.
 * Examples updated.
