@@ -1,0 +1,38 @@
+{
+	"half_life_version": [
+		"one",
+		"two",
+		"four"
+	],
+
+	"info_entity": {
+		"string": "string",
+		"value": "uint32",
+		"flag": "bool",
+		"version": "@half_life_version"
+	},
+
+	"send_info": [
+		{
+			"id": ["uint8"],
+			"notes": ["string"],
+			"version": "@half_life_version",
+			"entity": "@info_entity"
+		}
+	],
+
+	"get_data": [
+		{
+			"id": ["uint8"],
+			"?limit": "uint16"
+		},
+		{
+			"items": [{
+				"?string": "string",
+				"?value": "uint32",
+				"?flag": "bool",
+				"?version": "@half_life_version"
+			}]
+		}
+	]
+}

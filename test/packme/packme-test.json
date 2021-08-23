@@ -1,0 +1,45 @@
+{
+	"test_enum": [
+		"one",
+		"two",
+		"three"
+	],
+	"nested_object": {
+		"a": "uint8",
+		"b": "string"
+	},
+	"test": [
+		{
+			"req_int8": "int8",
+			"req_uint8": "uint8",
+			"req_int16": "int16",
+			"req_uint16": "uint16",
+			"req_int32": "int32",
+			"req_uint32": "uint32",
+			"req_int64": "int64",
+			"req_uint64": "uint64",
+			"req_float": "float",
+			"req_double": "double",
+			"req_bool": "bool",
+			"req_string": "string",
+			"req_list": ["uint8"],
+			"req_enum": "@test_enum",
+			"req_nested": "@nested_object",
+			"?opt_int8": "int8",
+			"?opt_uint8": "uint8",
+			"?opt_int16": "int16",
+			"?opt_uint16": "uint16",
+			"?opt_int32": "int32",
+			"?opt_uint32": "uint32",
+			"?opt_int64": "int64",
+			"?opt_uint64": "uint64",
+			"?opt_float": "float",
+			"?opt_double": "double",
+			"?opt_bool": "bool",
+			"?opt_string": "string",
+			"?opt_list": ["uint8"],
+			"?opt_enum": "@test_enum",
+			"?opt_nested": "@nested_object"
+		}
+	]
+}

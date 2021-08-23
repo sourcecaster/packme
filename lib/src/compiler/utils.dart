@@ -3,8 +3,9 @@ part of packme.compiler;
 const String RED = '\x1b[31m';
 const String RESET = '\x1b[0m';
 
-void fatal(String message) {
-    print('$RED$message$RESET');
+void fatal(String message, {bool test = false}) {
+    if (test) throw Exception(message);
+    else print('$RED$message$RESET');
     exit(-1);
 }
 

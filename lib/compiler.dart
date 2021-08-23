@@ -51,6 +51,7 @@ part 'src/compiler/utils.dart';
 void main(List<String> args) {
 	final String dirPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');
 	final String outPath = Directory.current.path + (args.length < 2 ? '' : '/${args[1]}');
+	final bool isTest = (args.length < 3 ? '' : args[2]) == '--test';
 	final Directory dirDir = Directory(dirPath);
 	final Directory outDir = Directory(outPath);
 	final List<FileSystemEntity> files = <FileSystemEntity>[];
@@ -58,12 +59,12 @@ void main(List<String> args) {
 	final RegExp reName = RegExp(r'.+[\/\\](.+?)\.json$');
 
 	try {
-		if (!dirDir.existsSync()) fatal('Path not found: $dirPath');
+		if (!dirDir.existsSync()) fatal('Path not found: $dirPath', test: isTest);
 		if (!outDir.existsSync()) outDir.createSync(recursive: true);
 		files.addAll(dirDir.listSync());
 	}
 	catch (err) {
-		fatal('Unable to process files: $err');
+		fatal('Unable to process files: $err', test: isTest);
 	}
 
 	final List<Node> nodes = <Node>[];
@@ -80,7 +81,7 @@ void main(List<String> args) {
 			json = File(file.path).readAsStringSync();
 		}
 		catch (err) {
-			fatal('Unable to open manifest file: $err');
+			fatal('Unable to open manifest file: $err', test: isTest);
 		}
 		const JsonDecoder decoder = JsonDecoder();
 		late final Map<String, dynamic> manifest;
@@ -88,7 +89,7 @@ void main(List<String> args) {
 			manifest = decoder.convert(json) as Map<String, dynamic>;
 		}
 		catch (err) {
-			fatal('Unable to parse JSON: $err');
+			fatal('Unable to parse JSON: $err', test: isTest);
 		}
 		try {
 			for (final MapEntry<String, dynamic> entry in manifest.entries) {
@@ -96,17 +97,22 @@ void main(List<String> args) {
 			}
 		}
 		catch (err) {
-			fatal('An error occurred while reading manifest: $err');
+			fatal('An error occurred while reading manifest: $err', test: isTest);
 		}
 	}
 	try {
 		final Map<String, List<String>> codePerFile = parse(nodes);
 		for (final String filename in codePerFile.keys) {
-			File('$outPath/$filename.generated.dart').writeAsStringSync(format(codePerFile[filename]!).join('\n'));
+			if (!isTest) {
+				File('$outPath/$filename.generated.dart').writeAsStringSync(format(codePerFile[filename]!).join('\n'));
+			}
+			else {
+				print('$filename.generated.dart: ~${format(codePerFile[filename]!).join('\n').length} bytes');
+			}
 		}
 	}
 	catch (err) {
-		fatal('An error occurred while parsing manifest: $err');
+		fatal('An error occurred while parsing manifest: $err', test: isTest);
 	}
 	print('All files are successfully processed');
 }
