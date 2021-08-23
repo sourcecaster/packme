@@ -1,7 +1,7 @@
 /// This file allows you to generate Dart source code files for PackMe data
 /// protocol using JSON manifest files.
 ///
-/// Usage: dart compiler.dart <sourceDirectory> <destinationDirectory>
+/// Usage: dart compile.dart <sourceDirectory> <destinationDirectory>
 ///
 /// JSON Manifest file represents a set of commands, each command consists of
 /// one (single message) or two (request and response) messages. In your server
@@ -35,61 +35,8 @@
 ///
 /// Prefix "?" in field declaration means it is optional (Null by default).
 
-library packme.compiler;
-
-import 'dart:convert';
-import 'dart:io';
-
-part 'src/compiler/enum.dart';
-part 'src/compiler/field.dart';
-part 'src/compiler/fieldtype.dart';
-part 'src/compiler/message.dart';
-part 'src/compiler/node.dart';
-part 'src/compiler/parser.dart';
-part 'src/compiler/utils.dart';
+import 'package:packme/compiler.dart' as compiler;
 
 void main(List<String> args) {
-	final String dirPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');
-	final String outPath = Directory.current.path + (args.length < 2 ? '' : '/${args[1]}');
-	final List<FileSystemEntity> files = Directory(dirPath).listSync();
-	final RegExp reJson = RegExp(r'\.json$');
-	final RegExp reName = RegExp(r'.+[\/\\](.+?)\.json$');
-
-	final List<Node> nodes = <Node>[];
-	for (final FileSystemEntity file in files) {
-		if (!reJson.hasMatch(file.path)) continue;
-		final String filename = reName.firstMatch(file.path)!.group(1)!;
-		late String json;
-		try {
-			json = File(file.path).readAsStringSync();
-		}
-		catch (err) {
-			fatal('Unable to open manifest file: $err');
-		}
-		const JsonDecoder decoder = JsonDecoder();
-		late final Map<String, dynamic> manifest;
-		try {
-			manifest = decoder.convert(json) as Map<String, dynamic>;
-		}
-		catch (err) {
-			fatal('Unable to parse JSON: $err');
-		}
-		try {
-			for (final MapEntry<String, dynamic> entry in manifest.entries) {
-				nodes.add(Node(filename, entry.key, entry.value));
-			}
-		}
-		catch (err) {
-			fatal('An error occurred while reading manifest: $err');
-		}
-	}
-	try {
-		final Map<String, List<String>> codePerFile = parse(nodes);
-		for (final String filename in codePerFile.keys) {
-			File('$outPath/$filename.generated.dart').writeAsStringSync(format(codePerFile[filename]!).join('\n'));
-		}
-	}
-	catch (err) {
-		fatal('An error occurred while parsing manifest: $err');
-	}
+    compiler.main(args);
 }
