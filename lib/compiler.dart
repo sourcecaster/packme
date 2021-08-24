@@ -29,7 +29,7 @@
 /// being changed.
 ///
 /// Nested object in command request or response will be represented with class
-/// SomeCommandResponsNested. For example compiling example-posts.json will
+/// SomeCommandResponseNested. For example compiling example-posts.json will
 /// result in creating class GetResponseCommentAuthor which will contain three
 /// fields: List<int> id, String nickname and String avatar.
 ///
