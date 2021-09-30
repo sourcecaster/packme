@@ -33,7 +33,7 @@ class PackMe {
 	PackMeMessage? unpack(Uint8List data) {
 		try {
 			if (data.length < 4) return null;
-			final int id = data.buffer.asByteData().getUint32(0, Endian.big);
+			final int id = data.buffer.asByteData().getUint32(data.offsetInBytes, Endian.big);
 			final PackMeMessage? message = _factory[id]?.call();
 			message?._data = data;
 			message?.$unpack();

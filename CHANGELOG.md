@@ -1,3 +1,6 @@
+## v1.1.5
+* Safari WebSocket data parsing bug fixed (it adds some extra bytes to buffer and actual Uint8List data size is smaller that its underlying buffer).
+
 ## v1.1.4
 * Description updated.
 

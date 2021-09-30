@@ -27,7 +27,7 @@ abstract class PackMeMessage {
 		$packUint32(_transactionId ?? (_transactionId = ++_globalTransactionId & 0xFFFFFFFF));
 	}
 	void $initUnpack() {
-		$unpackUint32();
+		_offset = _data!.offsetInBytes + 4;
 		_transactionId = $unpackUint32();
 	}
 	void $reset() {
