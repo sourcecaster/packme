@@ -55,7 +55,8 @@ class Message extends FieldType {
 
             fields[fieldName] = MessageField(this, fieldName, value, optional, array);
             if (!optional && !array && (value is String || value is Enum) && value != 'string') {
-                if (sizeOf(value) != null) bufferSize += sizeOf(value)!;
+                if (fields[fieldName]!.binary) bufferSize += fields[fieldName]!.binaryLength;
+                else if (sizeOf(value) != null) bufferSize += sizeOf(value)!;
                 else throw Exception('Unknown type "$value" for field "$fieldName" of "$name" in "$filename".');
             }
         }

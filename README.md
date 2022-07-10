@@ -131,6 +131,13 @@ You can declare fields of standard type (such as uint32, double, string), custom
 - float - 32 bits (from -3.4E+38 to 3.4E+38, ~7 significant digits)
 - double - 64 bits (from -1.7E+308 to 1.7E+308, ~16 significant digits)
 
+### Binary
+```json
+"mongo_id": "binary12",
+"some_hash": "binary64"
+```
+Declaration above defines two binary buffers: 12 and 64 bytes length.
+
 ### Bool
 ```json
 "parameter": "bool"
@@ -198,6 +205,7 @@ In this case additional classes will be created: "SendUpdateMessageValues" and "
 ## Arrays
 If you need to declare a field as an array of specific type, just put your type string into square brackets:
 ```json
+"object_ids": ["binary12"],
 "numbers": ["uint32"],
 "names": ["string"],
 "users": ["@user"]

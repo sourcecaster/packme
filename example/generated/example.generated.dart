@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:packme/packme.dart';
 
 enum TypeEnum {
@@ -44,6 +45,10 @@ class NestedObject extends PackMeMessage {
 
 class TestMessage extends PackMeMessage {
 	TestMessage({
+		required this.reqId,
+		this.optId,
+		required this.reqIds,
+		this.optIds,
 		required this.reqInt8,
 		required this.reqUint16,
 		required this.reqDouble,
@@ -63,6 +68,10 @@ class TestMessage extends PackMeMessage {
 	});
 	TestMessage.$empty();
 
+	late Uint8List reqId;
+	Uint8List? optId;
+	late List<Uint8List> reqIds;
+	List<Uint8List>? optIds;
 	late int reqInt8;
 	late int reqUint16;
 	late double reqDouble;
@@ -83,7 +92,18 @@ class TestMessage extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 22;
+		int bytes = 35;
+		$setFlag(optId != null);
+		if (optId != null) {
+			bytes += 12;
+		}
+		bytes += 4;
+		bytes += 4 * reqIds.length;
+		$setFlag(optIds != null);
+		if (optIds != null) {
+			bytes += 4;
+			bytes += 4 * optIds!.length;
+		}
 		bytes += $stringBytes(reqString);
 		$setFlag(optInt8 != null);
 		if (optInt8 != null) {
@@ -127,7 +147,15 @@ class TestMessage extends PackMeMessage {
 	@override
 	void $pack() {
 		$initPack(475203406);
-		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
+		for (int i = 0; i < 2; i++) $packUint8($flags[i]);
+		$packBinary(reqId);
+		if (optId != null) $packBinary(optId!);
+		$packUint32(reqIds.length);
+		for (final Uint8List item in reqIds) $packBinary(item);
+		if (optIds != null) {
+			$packUint32(optIds!.length);
+			for (final Uint8List item in optIds!) $packBinary(item);
+		}
 		$packInt8(reqInt8);
 		$packUint16(reqUint16);
 		$packDouble(reqDouble);
@@ -153,7 +181,23 @@ class TestMessage extends PackMeMessage {
 	@override
 	void $unpack() {
 		$initUnpack();
-		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
+		for (int i = 0; i < 2; i++) $flags.add($unpackUint8());
+		reqId = $unpackBinary(12);
+		if ($getFlag()) {
+			optId = $unpackBinary(12);
+		}
+		reqIds = <Uint8List>[];
+		final int reqIdsLength = $unpackUint32();
+		for (int i = 0; i < reqIdsLength; i++) {
+			reqIds.add($unpackBinary(4));
+		}
+		if ($getFlag()) {
+			optIds = <Uint8List>[];
+			final int optIdsLength = $unpackUint32();
+			for (int i = 0; i < optIdsLength; i++) {
+				optIds!.add($unpackBinary(4));
+			}
+		}
 		reqInt8 = $unpackInt8();
 		reqUint16 = $unpackUint16();
 		reqDouble = $unpackDouble();
@@ -198,7 +242,7 @@ class TestMessage extends PackMeMessage {
 
 	@override
 	String toString() {
-		return 'TestMessage\x1b[0m(reqInt8: ${PackMe.dye(reqInt8)}, reqUint16: ${PackMe.dye(reqUint16)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, optInt8: ${PackMe.dye(optInt8)}, optUint16: ${PackMe.dye(optUint16)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, reqList: ${PackMe.dye(reqList)}, optList: ${PackMe.dye(optList)}, reqEnum: ${PackMe.dye(reqEnum)}, optEnum: ${PackMe.dye(optEnum)}, reqNested: ${PackMe.dye(reqNested)}, optNested: ${PackMe.dye(optNested)})';
+		return 'TestMessage\x1b[0m(reqId: ${PackMe.dye(reqId)}, optId: ${PackMe.dye(optId)}, reqIds: ${PackMe.dye(reqIds)}, optIds: ${PackMe.dye(optIds)}, reqInt8: ${PackMe.dye(reqInt8)}, reqUint16: ${PackMe.dye(reqUint16)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, optInt8: ${PackMe.dye(optInt8)}, optUint16: ${PackMe.dye(optUint16)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, reqList: ${PackMe.dye(reqList)}, optList: ${PackMe.dye(optList)}, reqEnum: ${PackMe.dye(reqEnum)}, optEnum: ${PackMe.dye(optEnum)}, reqNested: ${PackMe.dye(reqNested)}, optNested: ${PackMe.dye(optNested)})';
 	}
 }
 

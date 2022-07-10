@@ -13,6 +13,8 @@ class PackMe {
 
 	static String dye(dynamic x) => x is String ? '\x1b[32m$x\x1b[0m'
 		: x is int || x is double || x is bool ? '\x1b[34m$x\x1b[0m'
+		: x is Uint8List ? '\x1b[36m$x\x1b[0m'
+		: x is List ? '[${x.map((dynamic item) => dye(item)).join(', ')}]'
 		: '\x1b[35m$x\x1b[0m';
 
 	void register(Map<int, PackMeMessage Function()> messageFactory) {

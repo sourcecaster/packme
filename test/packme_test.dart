@@ -5,6 +5,13 @@ import 'generated/packme-test.generated.dart';
 
 TestMessage generateTestMessage() {
     return TestMessage(
+        reqId: Uint8List.fromList(<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+        reqIds: [
+            Uint8List.fromList(<int>[1, 2, 3, 4]),
+            Uint8List.fromList(<int>[2, 3, 4, 1]),
+            Uint8List.fromList(<int>[3, 4, 1, 2]),
+            Uint8List.fromList(<int>[5, 1, 2, 3]),
+        ],
         reqInt8: -128,
         reqUint8: 255,
         reqInt16: -32768,
@@ -23,6 +30,13 @@ TestMessage generateTestMessage() {
             a: 255,
             b: 'I am nested 😎'
         ),
+        optId: Uint8List.fromList(<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
+        optIds: [
+            Uint8List.fromList(<int>[1, 2, 3, 4]),
+            Uint8List.fromList(<int>[2, 3, 4, 1]),
+            Uint8List.fromList(<int>[3, 4, 1, 2]),
+            Uint8List.fromList(<int>[5, 1, 2, 3]),
+        ],
         optInt8: -128,
         optUint8: 255,
         optInt16: -32768,
@@ -65,6 +79,8 @@ void main() {
         final Uint8List? data = packme.pack(generateTestMessage());
         final TestMessage message = packme.unpack(data!)! as TestMessage;
         final TestMessage sample = generateTestMessage();
+        expect(message.reqId, equals(sample.reqId));
+        expect(message.reqIds, equals(sample.reqIds));
         expect(message.reqInt8, equals(sample.reqInt8));
         expect(message.reqUint8, equals(sample.reqUint8));
         expect(message.reqInt16, equals(sample.reqInt16));
@@ -81,6 +97,8 @@ void main() {
         expect(message.reqEnum, equals(sample.reqEnum));
         expect(message.reqNested.a, equals(sample.reqNested.a));
         expect(message.reqNested.b, equals(sample.reqNested.b));
+        expect(message.optId, equals(sample.optId));
+        expect(message.optIds, equals(sample.optIds));
         expect(message.optInt8, equals(sample.optInt8));
         expect(message.optUint8, equals(sample.optUint8));
         expect(message.optInt16, equals(sample.optInt16));

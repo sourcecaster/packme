@@ -16,17 +16,30 @@ String randomString() {
     return result;
 }
 
-List<int> randomList() {
+List<int> randomList([int? fixedLength]) {
     final List<int> result = <int>[];
-    final int length = rand.nextInt(10);
+    final int length = fixedLength ?? rand.nextInt(10);
     for (int i = 0; i < length; i++) {
         result.add(rand.nextInt(256));
     }
     return result;
 }
 
+List<Uint8List> listOfIds(int idLength) {
+    final List<Uint8List> result = <Uint8List>[];
+    final int length = rand.nextInt(10);
+    for (int i = 0; i < length; i++) {
+        result.add(Uint8List.fromList(randomList(idLength)));
+    }
+    return result;
+}
+
 TestMessage randomTextMessage() {
     final TestMessage message = TestMessage(
+        reqId: Uint8List.fromList(randomList(12)),
+        optId: rand.nextBool() ? null : Uint8List.fromList(randomList(12)),
+        reqIds: listOfIds(4),
+        optIds: rand.nextBool() ? null : listOfIds(4),
         reqInt8: rand.nextInt(256) - 128,
         reqUint16: rand.nextInt(65536),
         reqDouble: rand.nextDouble(),

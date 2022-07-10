@@ -1,3 +1,7 @@
+## v1.2.0
+* Added support for binary type (uses Uint8List). Format: binary<LENGTH>, for example: binary12.
+* Color schemes used to print messages are updated: list items are now displayed using color of corresponding data type.
+
 ## v1.1.5
 * Safari WebSocket data parsing bug fixed (it adds some extra bytes to buffer and actual Uint8List data size is smaller that its underlying buffer).
 

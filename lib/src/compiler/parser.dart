@@ -73,6 +73,7 @@ Map<String, List<String>> parse(List<Node> nodes) {
     nodes.where((Node node) => node.type == NodeType.message || node.type == NodeType.request).forEach(_parseCommand);
     for (final String filename in codePerFile.keys) {
         codePerFile[filename] = <String>[
+            "import 'dart:typed_data';",
             "import 'package:packme/packme.dart';",
             '',
             ...enums.values.where((Enum item) => item.filename == filename)

@@ -83,6 +83,11 @@ abstract class PackMeMessage {
 		return message;
 	}
 
+	void $packBinary(Uint8List value) {
+		for (int i = 0; i < value.length; i++) {
+			_data!.buffer.asByteData().setInt8(_offset++, value[i]);
+		}
+	}
 	void $packBool(bool value) {
 		_data!.buffer.asByteData().setUint8(_offset, value ? 1 : 0);
 		_offset++;
@@ -140,6 +145,13 @@ abstract class PackMeMessage {
 		}
 	}
 
+	Uint8List $unpackBinary(int length) {
+		final Uint8List view = _data!.buffer.asUint8List(_offset, length);
+		final Uint8List value = Uint8List(length);
+		for (int i = 0; i < length; i++) value[i] = view[i];
+		_offset += length;
+		return value;
+	}
 	bool $unpackBool() {
 		final int value = _data!.buffer.asByteData().getUint8(_offset);
 		_offset++;

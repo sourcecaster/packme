@@ -10,6 +10,10 @@
 	},
 	"test": [
 		{
+			"req_id": "binary12",
+			"?opt_id": "binary12",
+			"req_ids": ["binary4"],
+			"?opt_ids": ["binary4"],
 			"req_int8": "int8",
 			"req_uint16": "uint16",
 			"req_double": "double",

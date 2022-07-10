@@ -1,5 +1,6 @@
-import 'package:packme/packme.dart';
+import 'dart:typed_data';
 import 'example-types.generated.dart' show UserProfile, UserSession, UserStatus;
+import 'package:packme/packme.dart';
 
 class GetUsersResponseUser extends PackMeMessage {
 	GetUsersResponseUser({

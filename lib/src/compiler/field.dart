@@ -2,14 +2,31 @@
 
 part of packme.compiler;
 
+final RegExp reBinary = RegExp(r'^binary\d+$');
+
 class MessageField {
-    MessageField(this.message, this.name, this.type, this.optional, this.array);
+    MessageField(this.message, this.name, dynamic fieldType, this.optional, this.array) {
+        if (fieldType is String && reBinary.hasMatch(fieldType)) {
+            final int length = int.tryParse(fieldType.substring(6)) ?? 0;
+            if (length <= 0) throw Exception('Invalid binary data length for "$name" in "${message.filename}".');
+            type = 'binary';
+            binary = true;
+            binaryLength = length;
+        }
+        else {
+            type = fieldType;
+            binary = false;
+            binaryLength = 0;
+        }
+    }
 
     final Message message;
     final String name;
-    final dynamic type;
+    late final dynamic type;
     final bool optional;
     final bool array;
+    late final bool binary;
+    late final int binaryLength;
 
     /// Returns field name including exclamation mark if necessary.
     String get _name => '$name${optional ? '!' : ''}';
@@ -36,7 +53,8 @@ class MessageField {
             case 'string':
                 return 'String';
             default:
-                if (type is Enum) return (type as Enum).name;
+                if (binary) return 'Uint8List';
+                else if (type is Enum) return (type as Enum).name;
                 else if (type is Message) return (type as Message).name;
                 else throw Exception('Unknown data type "$type" for "$name" in "${message.filename}".');
         }
@@ -59,7 +77,8 @@ class MessageField {
             case 'datetime': return 'packDateTime($name)';
             case 'string': return 'packString($name)';
             default:
-                if (type is Enum) return 'packUint8($name.index)';
+                if (binary) return 'packBinary($name)';
+                else if (type is Enum) return 'packUint8($name.index)';
                 else if (type is Message) return 'packMessage($name)';
                 else throw Exception('Unknown data type "$type" for "$name" in "${message.filename}".');
         }
@@ -67,7 +86,8 @@ class MessageField {
 
     /// Returns required unpack method depending on field type.
     String get _unpack {
-        if (type is Enum) return '$_type.values[\$unpackUint8()]';
+        if (binary) return '\$unpackBinary($binaryLength)';
+        else if (type is Enum) return '$_type.values[\$unpackUint8()]';
         else if (type is Message) return '\$unpackMessage(${type.name}.\$empty())';
         else return '\$un${_pack('')}';
     }
@@ -90,14 +110,16 @@ class MessageField {
             if (optional) '\$setFlag($name != null);',
             if (optional) 'if ($name != null) {',
                 if (!array) ...<String>[
-                    if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)};'
+                    if (binary) 'bytes += $binaryLength;'
+                    else if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)};'
                     else if (type == 'string') 'bytes += \$stringBytes($_name);'
                     else if (type is Message) 'bytes += $_name.\$estimate();'
                     else throw Exception('Wrong type "$type" for field "$name" in "${message.filename}".')
                 ]
                 else ...<String>[
                     'bytes += 4;',
-                    if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)} * $_name.length;'
+                    if (binary) 'bytes += $binaryLength * $_name.length;'
+                    else if ((type is String || type is Enum) && type != 'string') 'bytes += ${sizeOf(type)} * $_name.length;'
                     else if (type == 'string') 'for (int i = 0; i < $_name.length; i++) bytes += \$stringBytes($_name[i]);'
                     else if (type is Message) 'for (int i = 0; i < $_name.length; i++) bytes += $_name[i].\$estimate();'
                     else throw Exception('Wrong type "$type" for field "$name" in "${message.filename}".')
