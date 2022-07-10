@@ -77,7 +77,7 @@ class MessageField {
             case 'datetime': return 'packDateTime($name)';
             case 'string': return 'packString($name)';
             default:
-                if (binary) return 'packBinary($name)';
+                if (binary) return 'packBinary($name, $binaryLength)';
                 else if (type is Enum) return 'packUint8($name.index)';
                 else if (type is Message) return 'packMessage($name)';
                 else throw Exception('Unknown data type "$type" for "$name" in "${message.filename}".');

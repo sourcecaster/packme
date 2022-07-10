@@ -204,13 +204,13 @@ class TestMessage extends PackMeMessage {
 	void $pack() {
 		$initPack(184530025);
 		for (int i = 0; i < 3; i++) $packUint8($flags[i]);
-		$packBinary(reqId);
-		if (optId != null) $packBinary(optId!);
+		$packBinary(reqId, 12);
+		if (optId != null) $packBinary(optId!, 12);
 		$packUint32(reqIds.length);
-		for (final Uint8List item in reqIds) $packBinary(item);
+		for (final Uint8List item in reqIds) $packBinary(item, 4);
 		if (optIds != null) {
 			$packUint32(optIds!.length);
-			for (final Uint8List item in optIds!) $packBinary(item);
+			for (final Uint8List item in optIds!) $packBinary(item, 4);
 		}
 		$packInt8(reqInt8);
 		$packUint8(reqUint8);

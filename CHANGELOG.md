@@ -1,3 +1,6 @@
+## v1.2.1
+* Bugfix: Uint8List with unexpected length caused out-of-range exception in pack/unpack methods.
+
 ## v1.2.0
 * Added support for binary type (uses Uint8List). Format: binary12, binary64 etc. - any buffer length in bytes.
 * Color schemes used to print messages are updated: list items are now displayed using color of corresponding data type.
