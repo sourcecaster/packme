@@ -1,5 +1,5 @@
 ## v1.2.0
-* Added support for binary type (uses Uint8List). Format: binary<LENGTH>, for example: binary12.
+* Added support for binary type (uses Uint8List). Format: binary12, binary64 etc. - any buffer length in bytes.
 * Color schemes used to print messages are updated: list items are now displayed using color of corresponding data type.
 
 ## v1.1.5
