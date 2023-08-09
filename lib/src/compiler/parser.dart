@@ -1,36 +1,31 @@
 part of packme.compiler;
 
-// TODO(sourcecaster): implement explicit includes instead of implicit ones
 final Map<String, Enum> enums = <String, Enum>{};
-final Map<String, Message> objects = <String, Message>{};
+final Map<String, Message> types = <String, Message>{};
 final Map<int, Message> messages = <int, Message>{};
 
-bool _nameDuplicated(String name, String filename) {
-    for (final Enum enumItem in enums.values) {
-        if (name == enumItem.name && filename == enumItem.filename) return true;
-    }
-    for (final Message message in objects.values) {
-        if (name == message.name && filename == message.filename) return true;
-    }
+bool _nameDuplicated(String name, [String? filename]) {
+    for (final String key in enums.keys) if (name == key) return true;
+    for (final String key in types.keys) if (name == key) return true;
     for (final Message message in messages.values) {
-        if (name == message.name && filename == message.filename) return true;
+        if (name == message.name && (filename == null || message.filename == filename)) return true;
     }
     return false;
 }
 
 void _parseEnum(Node node) {
     final String name = validName(node.name, firstCapital: true);
-    if (_nameDuplicated(name, node.filename)) throw Exception('Enum "$name" in "${node.filename}" duplicates the name of another enum, object, message.');
+    if (_nameDuplicated(name)) throw Exception('Enum "$name" in "${node.filename}" duplicates the name of another enum, type or message.');
     for (final dynamic element in node.manifest) {
         if (element is! String) throw Exception('Enum "$name" declaration must contain string values only.');
     }
     enums[node.name] = Enum(node.filename, name, (node.manifest as List<dynamic>).cast<String>());
 }
 
-void _parseObject(Node node) {
+void _parseType(Node node) {
     final String name = validName(node.name, firstCapital: true);
-    if (_nameDuplicated(name, node.filename)) throw Exception('Object "$name" in "${node.filename}" duplicates the name of another object, enum or message.');
-    objects[node.name] = Message(node.filename, name, node.manifest as Map<String, dynamic>);
+    if (_nameDuplicated(name)) throw Exception('Type "$name" in "${node.filename}" duplicates the name of another type, enum or message.');
+    types[node.name] = Message(node.filename, name, node.manifest as Map<String, dynamic>);
 }
 
 void _parseCommand(Node node) {
@@ -44,7 +39,7 @@ void _parseCommand(Node node) {
 
     if (node.type == NodeType.message) {
         if (_nameDuplicated(nameMessage, node.filename)) {
-            throw Exception('Message "$nameMessage" in "${node.filename}" duplicates the name of another message, object or enum.');
+            throw Exception('Message "$nameMessage" in "${node.filename}" duplicates the name of another message, type or enum.');
         }
         if (messages[hashMessage] != null) {
             throw Exception('Message name "$nameMessage" in "${node.filename}" hash code turned out to be the same as for "${messages[hashMessage]!.name}". Please try another name.');
@@ -54,16 +49,16 @@ void _parseCommand(Node node) {
 
     if (node.type == NodeType.request) {
         if (_nameDuplicated(nameRequest, node.filename)) {
-            throw Exception('Request message "$nameRequest" in "${node.filename}" duplicates the name of another message, object or enum.');
+            throw Exception('Message "$nameRequest" in "${node.filename}" duplicates the name of another message, type or enum.');
         }
         if (_nameDuplicated(nameResponse, node.filename)) {
-            throw Exception('Response message "$nameResponse" in "${node.filename}" duplicates the name of another message, object or enum.');
+            throw Exception('Message "$nameResponse" in "${node.filename}" duplicates the name of another message, type or enum.');
         }
         if (messages[hashRequest] != null) {
-            throw Exception('Request message "$nameRequest" in "${node.filename}" name hash code turned out to be the same as for "${messages[hashRequest]!.name}". Please try another name.');
+            throw Exception('Message "$nameRequest" in "${node.filename}" name hash code turned out to be the same as for "${messages[hashRequest]!.name}". Please try another name.');
         }
         if (messages[hashResponse] != null) {
-            throw Exception('Response message "$nameResponse" in "${node.filename}" name hash code turned out to be the same as for "${messages[hashResponse]!.name}". Please try another name.');
+            throw Exception('Message "$nameResponse" in "${node.filename}" name hash code turned out to be the same as for "${messages[hashResponse]!.name}". Please try another name.');
         }
         messages[hashResponse] = Message(node.filename, nameResponse, node.manifest[1] as Map<String, dynamic>, id: hashResponse);
         messages[hashRequest] = Message(node.filename, nameRequest, node.manifest[0] as Map<String, dynamic>, id: hashRequest, responseClass: messages[hashResponse]);
@@ -74,7 +69,7 @@ Map<String, List<String>> parse(List<Node> nodes) {
     final Map<String, List<String>> codePerFile = <String, List<String>>{};
     for (final Node node in nodes) codePerFile[node.filename] ??= <String>[];
     nodes.where((Node node) => node.type == NodeType.enumeration).forEach(_parseEnum);
-    nodes.where((Node node) => node.type == NodeType.object).forEach(_parseObject);
+    nodes.where((Node node) => node.type == NodeType.type).forEach(_parseType);
     nodes.where((Node node) => node.type == NodeType.message || node.type == NodeType.request).forEach(_parseCommand);
     for (final String filename in codePerFile.keys) {
         codePerFile[filename] = <String>[
@@ -83,7 +78,7 @@ Map<String, List<String>> parse(List<Node> nodes) {
             '',
             ...enums.values.where((Enum item) => item.filename == filename)
                 .fold(<String>[], (Iterable<String> a, Enum b) => a.toList() + b.output()),
-            ...objects.values.where((Message item) => item.filename == filename)
+            ...types.values.where((Message item) => item.filename == filename)
                 .fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
             ...messages.values.where((Message item) => item.filename == filename)
                 .fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
