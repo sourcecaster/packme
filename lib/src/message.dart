@@ -83,9 +83,9 @@ abstract class PackMeMessage {
 		return message;
 	}
 
-	void $packBinary(Uint8List value, int length) {
-		for (int i = 0; i < length; i++) {
-			_data!.buffer.asByteData().setUint8(_offset++, i < value.length ? value[i] : 0);
+	void $packBinary(Uint8List value) {
+		for (int i = 0; i < value.length; i++) {
+			_data!.buffer.asByteData().setUint8(_offset++, value[i]);
 		}
 	}
 	void $packBool(bool value) {
