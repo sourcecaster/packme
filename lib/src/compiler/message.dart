@@ -39,14 +39,15 @@ class Message extends FieldType {
             /// Field is a nested Message object.
             if (value is Map) {
                 String postfix = validName(entry.key, firstCapital: true);
-                if (array && postfix[postfix.length - 1] == 's') postfix = postfix.substring(0, postfix.length - 1);
+                if (array) postfix = toSingular(postfix);
+                // TODO(sourcecaster): check name for duplicates
                 nested.add(value = Message(filename, '$name$postfix', value as Map<String, dynamic>));
             }
 
             /// Field is an Enum or a referenced Message object.
             else if (value is String && value[0] == '@') {
                 final Enum? enumeration = enums[value.substring(1)];
-                final Message? message = types[value.substring(1)];
+                final Message? message = objects[value.substring(1)];
                 if (enumeration != null) _refer(enumeration);
                 else if (message != null) _refer(message);
                 else throw Exception('"$name" field "$fieldName" in "$filename" type "$value" is not declared.');

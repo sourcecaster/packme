@@ -1,7 +1,7 @@
 /// This file allows you to generate Dart source code files for PackMe data
 /// protocol using JSON manifest files.
 ///
-/// Usage: dart compiler.dart <sourceDirectory> <destinationDirectory>
+/// Usage: dart compiler.dart <srcDir> <outDir> [filenames (optionally)]
 ///
 /// JSON Manifest file represents a set of commands, each command consists of
 /// one (single message) or two (request and response) messages. In your server
@@ -15,7 +15,7 @@
 /// just using raw messages) is to make manifest structure as clear as possible.
 /// I.e. when you look at some command you already know how it is supposed to
 /// work, not just some random message which will be used by server or client in
-/// unobvious ways.
+/// non-obvious ways.
 ///
 /// Another thing worth mentioning is that it is not possible to separately
 /// declare a message (like in FlatBuffers or ProtoBuffers) and then reuse it in
@@ -39,80 +39,134 @@ library packme.compiler;
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
-part 'src/compiler/enum.dart';
-part 'src/compiler/field.dart';
-part 'src/compiler/fieldtype.dart';
-part 'src/compiler/message.dart';
-part 'src/compiler/node.dart';
-part 'src/compiler/parser.dart';
-part 'src/compiler/utils.dart';
+part 'src/container.dart';
+part 'src/field.dart';
+part 'src/fields/array.dart';
+part 'src/fields/bool.dart';
+part 'src/fields/binary.dart';
+part 'src/fields/datetime.dart';
+part 'src/fields/float.dart';
+part 'src/fields/int.dart';
+part 'src/fields/object.dart';
+part 'src/fields/reference.dart';
+part 'src/fields/string.dart';
+part 'src/node.dart';
+part 'src/nodes/enum.dart';
+part 'src/nodes/message.dart';
+part 'src/nodes/object.dart';
+part 'src/nodes/request.dart';
+part 'src/utils.dart';
 
 void main(List<String> args) {
-	final String dirPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');
-	final String outPath = Directory.current.path + (args.length < 2 ? '' : '/${args[1]}');
 	final bool isTest = (args.length < 3 ? '' : args[2]) == '--test';
-	final Directory dirDir = Directory(dirPath);
+	final String srcPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');
+	final String outPath = Directory.current.path + (args.length < 2 ? '' : '/${args[1]}');
+	List<String> filenames = args.sublist(min(2, args.length));
+
+	/// Add file extension if not specified
+	final RegExp extension = RegExp(r'\.json$');
+	for (int i = 0; i < filenames.length; i++) {
+		if (!extension.hasMatch(filenames[i])) filenames[i] += '.json';
+	}
+
+	/// Remove duplicates
+	filenames = filenames.toSet().toList();
+
+	try {
+		print('${GREEN}Compiling ${filenames.isEmpty ? 'all .json files...' : '${filenames.length} files: ${filenames.join(', ')}...'}$RESET');
+		print('$GREEN    Input directory: $YELLOW$srcPath$RESET');
+		print('$GREEN    Output directory: $YELLOW$outPath$RESET');
+		process(srcPath, outPath, filenames, isTest);
+	}
+	catch (err) {
+		if (isTest) rethrow;
+		else print('$RED$err$RESET');
+		exit(-1);
+	}
+}
+
+void process(String srcPath, String outPath, List<String> filenames, bool isTest) {
+	final Directory srcDir = Directory(srcPath);
 	final Directory outDir = Directory(outPath);
 	final List<FileSystemEntity> files = <FileSystemEntity>[];
 	final RegExp reJson = RegExp(r'\.json$');
-	final RegExp reName = RegExp(r'.+[\/\\](.+?)\.json$');
-
+	final RegExp reName = RegExp(r'.+[/\\](.+?)\.json$');
 	try {
-		if (!dirDir.existsSync()) fatal('Path not found: $dirPath', test: isTest);
+		if (!srcDir.existsSync()) throw Exception('Path not found: $srcPath');
 		if (!outDir.existsSync()) outDir.createSync(recursive: true);
-		files.addAll(dirDir.listSync());
+		files.addAll(srcDir.listSync());
 	}
 	catch (err) {
-		fatal('Unable to process files: $err', test: isTest);
+		throw Exception('Unable to process files: $err');
 	}
 
-	final List<Node> nodes = <Node>[];
-	final int count = files.where((FileSystemEntity file) => reJson.hasMatch(file.path)).length;
-	print('Found $count JSON manifest files in $dirPath');
-	print('Output path: $outPath');
-	print('...');
+	/// Filter file system entities, leave only manifest files to process
+	files.removeWhere((FileSystemEntity file) {
+		if (!reJson.hasMatch(file.path)) return true;
+		if (filenames.isNotEmpty) {
+			final String filename = reName.firstMatch(file.path)!.group(1)! + '.json';
+			return !filenames.contains(filename);
+		}
+		else return false;
+	});
+	for (final FileSystemEntity file in files) {
+		final String filename = reName.firstMatch(file.path)!.group(1)! + '.json';
+		filenames.remove(filename);
+	}
+	if (files.isEmpty) throw Exception('No manifest files found');
+	if (filenames.isNotEmpty) throw Exception('File not found: ${filenames.first}');
+
+	final Map<String, Container> containers = <String, Container>{};
 
 	for (final FileSystemEntity file in files) {
-		if (!reJson.hasMatch(file.path)) continue;
 		final String filename = reName.firstMatch(file.path)!.group(1)!;
-		late String json;
+
+		/// Try to get file contents as potential JSON string
+		String json;
 		try {
 			json = File(file.path).readAsStringSync();
 		}
 		catch (err) {
-			fatal('Unable to open manifest file: $err', test: isTest);
+			throw Exception('Unable to open manifest file: $err');
 		}
+
+		/// Try to parse JSON
 		const JsonDecoder decoder = JsonDecoder();
 		late final Map<String, dynamic> manifest;
 		try {
 			manifest = decoder.convert(json) as Map<String, dynamic>;
 		}
 		catch (err) {
-			fatal('Unable to parse JSON: $err', test: isTest);
+			throw Exception('Unable to parse $filename.json: $err');
 		}
-		try {
-			for (final MapEntry<String, dynamic> entry in manifest.entries) {
-				nodes.add(Node(filename, entry.key, entry.value));
-			}
+
+		/// Create nodes from parsed data
+		final List<Node> nodes = <Node>[];
+		for (final MapEntry<String, dynamic> entry in manifest.entries) {
+			nodes.add(Node.fromEntry(filename, entry));
 		}
-		catch (err) {
-			fatal('An error occurred while reading manifest: $err', test: isTest);
+		containers[filename] = Container(filename, nodes);
+	}
+
+	final Map<String, List<String>> codePerFile = <String, List<String>>{};
+
+	/// Process nodes and get resulting code strings
+	for (final Container container in containers.values) {
+		codePerFile[container.filename] ??= <String>[];
+		codePerFile[container.filename]!.addAll(container.output(containers));
+	}
+
+	/// Output resulting code
+	for (final String filename in codePerFile.keys) {
+		if (!isTest) {
+			File('$outPath/$filename.generated.dart').writeAsStringSync(formatCode(codePerFile[filename]!).join('\n'));
+		}
+		else {
+			print('$filename.generated.dart: ~${formatCode(codePerFile[filename]!).join('\n').length} bytes');
 		}
 	}
-	try {
-		final Map<String, List<String>> codePerFile = parse(nodes);
-		for (final String filename in codePerFile.keys) {
-			if (!isTest) {
-				File('$outPath/$filename.generated.dart').writeAsStringSync(format(codePerFile[filename]!).join('\n'));
-			}
-			else {
-				print('$filename.generated.dart: ~${format(codePerFile[filename]!).join('\n').length} bytes');
-			}
-		}
-	}
-	catch (err) {
-		fatal('An error occurred while parsing manifest: $err', test: isTest);
-	}
-	print('All files are successfully processed');
+
+	print('$GREEN${files.length} file${ files.length > 1 ? 's are' : ' is'} successfully processed$RESET');
 }
