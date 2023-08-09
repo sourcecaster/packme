@@ -24,7 +24,7 @@ class UserProfile extends PackMeMessage {
 	String? lastName;
 	int? age;
 	DateTime? birthDate;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -33,15 +33,28 @@ class UserProfile extends PackMeMessage {
 		bytes += $stringBytes(nickname);
 		$setFlag(firstName != null);
 		if (firstName != null) bytes += $stringBytes(firstName);
+		if (firstName != null) {
+			bytes += $stringBytes(firstName!);
+		}
 		$setFlag(lastName != null);
 		if (lastName != null) bytes += $stringBytes(lastName);
+		if (lastName != null) {
+			bytes += $stringBytes(lastName!);
+		}
 		$setFlag(age != null);
 		if (age != null) bytes += 1;
+		if (age != null) {
+			bytes += 1;
+		}
 		$setFlag(birthDate != null);
 		if (birthDate != null) bytes += 8;
+		if (birthDate != null) {
+			bytes += 8;
+		}
 		return bytes;
 	}
-	
+
+
 	@override
 	void $pack() {
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
@@ -52,7 +65,8 @@ class UserProfile extends PackMeMessage {
 		if (age != null) $packUint8(age!);
 		if (birthDate != null) $packDateTime(birthDate!);
 	}
-	
+
+
 	@override
 	void $unpack() {
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
@@ -62,8 +76,21 @@ class UserProfile extends PackMeMessage {
 		if ($getFlag()) lastName = $unpackString();
 		if ($getFlag()) age = $unpackUint8();
 		if ($getFlag()) birthDate = $unpackDateTime();
+		if ($getFlag()) {
+			firstName = $unpackString();
+		}
+		if ($getFlag()) {
+			lastName = $unpackString();
+		}
+		if ($getFlag()) {
+			age = $unpackUint8();
+		}
+		if ($getFlag()) {
+			birthDate = $unpackDateTime();
+		}
 	}
-	
+
+
 	@override
 	String toString() {
 		return 'UserProfile\x1b[0m(email: ${PackMe.dye(email)}, nickname: ${PackMe.dye(nickname)}, firstName: ${PackMe.dye(firstName)}, lastName: ${PackMe.dye(lastName)}, age: ${PackMe.dye(age)}, birthDate: ${PackMe.dye(birthDate)})';
@@ -83,7 +110,7 @@ class UserSession extends PackMeMessage {
 	late DateTime updated;
 	late String ip;
 	late bool active;
-	
+
 	@override
 	int $estimate() {
 		$reset();
@@ -91,7 +118,8 @@ class UserSession extends PackMeMessage {
 		bytes += $stringBytes(ip);
 		return bytes;
 	}
-	
+
+
 	@override
 	void $pack() {
 		$packDateTime(created);
@@ -99,7 +127,8 @@ class UserSession extends PackMeMessage {
 		$packString(ip);
 		$packBool(active);
 	}
-	
+
+
 	@override
 	void $unpack() {
 		created = $unpackDateTime();
@@ -107,9 +136,11 @@ class UserSession extends PackMeMessage {
 		ip = $unpackString();
 		active = $unpackBool();
 	}
-	
+
+
 	@override
 	String toString() {
 		return 'UserSession\x1b[0m(created: ${PackMe.dye(created)}, updated: ${PackMe.dye(updated)}, ip: ${PackMe.dye(ip)}, active: ${PackMe.dye(active)})';
 	}
 }
+
