@@ -16,13 +16,4 @@ class StringField extends Field {
 
     @override
     String unpacker([String name = '']) => r'$unpackString()';
-
-    @override
-    List<String> get estimate {
-        return <String>[
-            if (optional) '\$setFlag($name != null);',
-            if (optional) 'if ($name != null) _bytes += ${estimator(nameEnsured)};'
-            else '_bytes += ${estimator(name)};'
-        ];
-    }
 }

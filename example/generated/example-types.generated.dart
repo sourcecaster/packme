@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:packme/packme.dart';
 
 enum UserStatus {
@@ -24,30 +23,22 @@ class UserProfile extends PackMeMessage {
 	String? lastName;
 	int? age;
 	DateTime? birthDate;
-	
+
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 1;
-		bytes += $stringBytes(email);
-		bytes += $stringBytes(nickname);
+		int _bytes = 1;
+		_bytes += $stringBytes(email);
+		_bytes += $stringBytes(nickname);
 		$setFlag(firstName != null);
-		if (firstName != null) {
-			bytes += $stringBytes(firstName!);
-		}
+		if (firstName != null) _bytes += $stringBytes(firstName!);
 		$setFlag(lastName != null);
-		if (lastName != null) {
-			bytes += $stringBytes(lastName!);
-		}
+		if (lastName != null) _bytes += $stringBytes(lastName!);
 		$setFlag(age != null);
-		if (age != null) {
-			bytes += 1;
-		}
+		if (age != null) _bytes += 1;
 		$setFlag(birthDate != null);
-		if (birthDate != null) {
-			bytes += 8;
-		}
-		return bytes;
+		if (birthDate != null) _bytes += 8;
+		return _bytes;
 	}
 
 	@override
@@ -66,18 +57,10 @@ class UserProfile extends PackMeMessage {
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
 		email = $unpackString();
 		nickname = $unpackString();
-		if ($getFlag()) {
-			firstName = $unpackString();
-		}
-		if ($getFlag()) {
-			lastName = $unpackString();
-		}
-		if ($getFlag()) {
-			age = $unpackUint8();
-		}
-		if ($getFlag()) {
-			birthDate = $unpackDateTime();
-		}
+		if ($getFlag()) firstName = $unpackString();
+		if ($getFlag()) lastName = $unpackString();
+		if ($getFlag()) age = $unpackUint8();
+		if ($getFlag()) birthDate = $unpackDateTime();
 	}
 
 	@override
@@ -99,13 +82,13 @@ class UserSession extends PackMeMessage {
 	late DateTime updated;
 	late String ip;
 	late bool active;
-	
+
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 17;
-		bytes += $stringBytes(ip);
-		return bytes;
+		int _bytes = 17;
+		_bytes += $stringBytes(ip);
+		return _bytes;
 	}
 
 	@override

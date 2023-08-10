@@ -12,6 +12,7 @@ class ReferenceField extends Field {
             throw Exception('Field "$tag" of node "${node.tag}" in ${node.container.filename}.json has reference filename '
                 '"$filename.json" but no reference node.');
         }
+        if (filename != node.container.filename) node.include(filename, referenceTag);
     }
 
     final String filename;
@@ -34,6 +35,12 @@ class ReferenceField extends Field {
 
     @override
     String get type => referenceNode.name;
+
+    @override
+    int get size => static ? 1 : 0;
+
+    @override
+    bool get static => !optional && referenceNode is Enum;
 
     @override
     String estimator([String name = '']) => referenceNode is Enum

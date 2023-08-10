@@ -16,13 +16,13 @@ class NestedObject extends PackMeMessage {
 
 	late int a;
 	late String b;
-	
+
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 1;
-		bytes += $stringBytes(b);
-		return bytes;
+		int _bytes = 1;
+		_bytes += $stringBytes(b);
+		return _bytes;
 	}
 
 	@override
@@ -88,60 +88,36 @@ class TestMessage extends PackMeMessage {
 	TypeEnum? optEnum;
 	late NestedObject reqNested;
 	NestedObject? optNested;
-	
+
 	@override
 	int $estimate() {
 		$reset();
-		int bytes = 35;
+		int _bytes = 35;
 		$setFlag(optId != null);
-		if (optId != null) {
-			bytes += 12;
-		}
-		bytes += 4;
-		bytes += 4 * reqIds.length;
+		if (optId != null) _bytes += 12;
+		_bytes += 4 + reqIds.length * 4;
 		$setFlag(optIds != null);
-		if (optIds != null) {
-			bytes += 4;
-			bytes += 4 * optIds!.length;
-		}
-		bytes += $stringBytes(reqString);
+		if (optIds != null) _bytes += 4 + optIds!.fold(0, (int a, Uint8List b) => a + 4);
+		_bytes += $stringBytes(reqString);
 		$setFlag(optInt8 != null);
-		if (optInt8 != null) {
-			bytes += 1;
-		}
+		if (optInt8 != null) _bytes += 1;
 		$setFlag(optUint16 != null);
-		if (optUint16 != null) {
-			bytes += 2;
-		}
+		if (optUint16 != null) _bytes += 2;
 		$setFlag(optDouble != null);
-		if (optDouble != null) {
-			bytes += 8;
-		}
+		if (optDouble != null) _bytes += 8;
 		$setFlag(optBool != null);
-		if (optBool != null) {
-			bytes += 1;
-		}
+		if (optBool != null) _bytes += 1;
 		$setFlag(optString != null);
-		if (optString != null) {
-			bytes += $stringBytes(optString!);
-		}
-		bytes += 4;
-		bytes += 1 * reqList.length;
+		if (optString != null) _bytes += $stringBytes(optString!);
+		_bytes += 4 + reqList.length * 1;
 		$setFlag(optList != null);
-		if (optList != null) {
-			bytes += 4;
-			bytes += 1 * optList!.length;
-		}
+		if (optList != null) _bytes += 4 + optList!.fold(0, (int a, int b) => a + 1);
 		$setFlag(optEnum != null);
-		if (optEnum != null) {
-			bytes += 1;
-		}
-		bytes += reqNested.$estimate();
+		if (optEnum != null) _bytes += 1;
+		_bytes += reqNested.$estimate();
 		$setFlag(optNested != null);
-		if (optNested != null) {
-			bytes += optNested!.$estimate();
-		}
-		return bytes;
+		if (optNested != null) _bytes += optNested!.$estimate();
+		return _bytes;
 	}
 
 	@override
@@ -151,10 +127,10 @@ class TestMessage extends PackMeMessage {
 		$packBinary(reqId, 12);
 		if (optId != null) $packBinary(optId!, 12);
 		$packUint32(reqIds.length);
-		for (final Uint8List item in reqIds) $packBinary(item, 4);
+		for (int i = 0; i < reqIds.length; i++) $packBinary(reqIds[i], 4);
 		if (optIds != null) {
 			$packUint32(optIds!.length);
-			for (final Uint8List item in optIds!) $packBinary(item, 4);
+			for (int i = 0; i < optIds!.length; i++) $packBinary(optIds![i], 4);
 		}
 		$packInt8(reqInt8);
 		$packUint16(reqUint16);
@@ -167,10 +143,10 @@ class TestMessage extends PackMeMessage {
 		if (optBool != null) $packBool(optBool!);
 		if (optString != null) $packString(optString!);
 		$packUint32(reqList.length);
-		for (final int item in reqList) $packUint8(item);
+		for (int i = 0; i < reqList.length; i++) $packUint8(reqList[i]);
 		if (optList != null) {
 			$packUint32(optList!.length);
-			for (final int item in optList!) $packUint8(item);
+			for (int i = 0; i < optList!.length; i++) $packUint8(optList![i]);
 		}
 		$packUint8(reqEnum.index);
 		if (optEnum != null) $packUint8(optEnum!.index);
@@ -183,61 +159,37 @@ class TestMessage extends PackMeMessage {
 		$initUnpack();
 		for (int i = 0; i < 2; i++) $flags.add($unpackUint8());
 		reqId = $unpackBinary(12);
-		if ($getFlag()) {
-			optId = $unpackBinary(12);
-		}
+		if ($getFlag()) optId = $unpackBinary(12);
 		reqIds = <Uint8List>[];
-		final int reqIdsLength = $unpackUint32();
-		for (int i = 0; i < reqIdsLength; i++) {
-			reqIds.add($unpackBinary(4));
-		}
+		final int _reqIdsLength = $unpackUint32();
+		for (int i = 0; i < _reqIdsLength; i++) reqIds.add($unpackBinary(4));
 		if ($getFlag()) {
 			optIds = <Uint8List>[];
-			final int optIdsLength = $unpackUint32();
-			for (int i = 0; i < optIdsLength; i++) {
-				optIds!.add($unpackBinary(4));
-			}
+			final int _optIdsLength = $unpackUint32();
+			for (int i = 0; i < _optIdsLength; i++) optIds!.add($unpackBinary(4));
 		}
 		reqInt8 = $unpackInt8();
 		reqUint16 = $unpackUint16();
 		reqDouble = $unpackDouble();
 		reqBool = $unpackBool();
 		reqString = $unpackString();
-		if ($getFlag()) {
-			optInt8 = $unpackInt8();
-		}
-		if ($getFlag()) {
-			optUint16 = $unpackUint16();
-		}
-		if ($getFlag()) {
-			optDouble = $unpackDouble();
-		}
-		if ($getFlag()) {
-			optBool = $unpackBool();
-		}
-		if ($getFlag()) {
-			optString = $unpackString();
-		}
+		if ($getFlag()) optInt8 = $unpackInt8();
+		if ($getFlag()) optUint16 = $unpackUint16();
+		if ($getFlag()) optDouble = $unpackDouble();
+		if ($getFlag()) optBool = $unpackBool();
+		if ($getFlag()) optString = $unpackString();
 		reqList = <int>[];
-		final int reqListLength = $unpackUint32();
-		for (int i = 0; i < reqListLength; i++) {
-			reqList.add($unpackUint8());
-		}
+		final int _reqListLength = $unpackUint32();
+		for (int i = 0; i < _reqListLength; i++) reqList.add($unpackUint8());
 		if ($getFlag()) {
 			optList = <int>[];
-			final int optListLength = $unpackUint32();
-			for (int i = 0; i < optListLength; i++) {
-				optList!.add($unpackUint8());
-			}
+			final int _optListLength = $unpackUint32();
+			for (int i = 0; i < _optListLength; i++) optList!.add($unpackUint8());
 		}
 		reqEnum = TypeEnum.values[$unpackUint8()];
-		if ($getFlag()) {
-			optEnum = TypeEnum.values[$unpackUint8()];
-		}
+		if ($getFlag()) optEnum = TypeEnum.values[$unpackUint8()];
 		reqNested = $unpackMessage(NestedObject.$empty());
-		if ($getFlag()) {
-			optNested = $unpackMessage(NestedObject.$empty());
-		}
+		if ($getFlag()) optNested = $unpackMessage(NestedObject.$empty());
 	}
 
 	@override

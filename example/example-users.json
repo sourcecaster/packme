@@ -1,13 +1,13 @@
 {
 	"get_users": [
 		{
-			"?status": "@user_status"
+			"?status": "@example-types:user_status"
 		},
 		{
 			"users": [{
 				"id": ["uint8"],
-				"profile": "@user_profile",
-				"status": "@user_status"
+				"profile": "@example-types:user_profile",
+				"status": "@example-types:user_status"
 			}]
 		}
 	],
@@ -16,9 +16,9 @@
 			"user_id": ["uint8"]
 		},
 		{
-			"profile": "@user_profile",
+			"profile": "@example-types:user_profile",
 			"created": "datetime",
-			"sessions": ["@user_session"],
+			"sessions": ["@example-types:user_session"],
 			"?social": {
 				"?facebook_id": "string",
 				"?twitter_id": "string",

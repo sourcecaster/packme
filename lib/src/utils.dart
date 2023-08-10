@@ -82,7 +82,6 @@ String toSingular(String plural) {
     for (final RegExp re in _singularRules.keys) {
         if (re.hasMatch(plural)) {
             singular = plural.replaceFirstMapped(re, _singularRules[re]!);
-            print(plural + ' -> ' + re.toString() + ' -> ' + singular);
             break;
         }
     }

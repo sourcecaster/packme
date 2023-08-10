@@ -4,7 +4,7 @@ part of packme.compiler;
 
 class ArrayField extends Field {
     ArrayField(Node node, String tag, List<dynamic> manifest) :
-            field = Field.fromEntry(node, MapEntry<String, dynamic>('_$tag', manifest.first)),
+            field = Field.fromEntry(node, MapEntry<String, dynamic>(tag, manifest.first)),
             super(node, tag, manifest);
 
     final Field field;
@@ -22,15 +22,6 @@ class ArrayField extends Field {
 
     @override
     String unpacker([String name = '']) => '';
-
-    @override
-    List<String> get estimate {
-        return <String>[
-            if (optional) '\$setFlag($name != null);',
-            if (optional) 'if ($name != null) _bytes += ${estimator(nameEnsured)};'
-            else '_bytes += ${estimator(name)};'
-        ];
-    }
 
     @override
     List<String> get pack {

@@ -60,7 +60,8 @@ part 'src/nodes/request.dart';
 part 'src/utils.dart';
 
 void main(List<String> args) {
-	final bool isTest = (args.length < 3 ? '' : args[2]) == '--test';
+	final bool isTest = args.isNotEmpty && args.first == '--test';
+	if (isTest) args = args.sublist(1);
 	final String srcPath = Directory.current.path + (args.isEmpty ? '' : '/${args[0]}');
 	final String outPath = Directory.current.path + (args.length < 2 ? '' : '/${args[1]}');
 	List<String> filenames = args.sublist(min(2, args.length));
@@ -80,7 +81,7 @@ void main(List<String> args) {
 		print('$GREEN    Output directory: $YELLOW$outPath$RESET');
 		process(srcPath, outPath, filenames, isTest);
 	}
-	catch (err) {
+	catch (err, stack) {
 		if (isTest) rethrow;
 		else print('$RED$err$RESET');
 		exit(-1);

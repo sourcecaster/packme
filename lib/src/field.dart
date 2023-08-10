@@ -44,13 +44,13 @@ abstract class Field {
     String packer([String name = '']);
     String unpacker([String name = '']);
 
-    bool get static => !optional && this is! ArrayField && this is! ObjectField && this is! ReferenceField && this is! StringField;
+    bool get static => !optional && this is! ArrayField && this is! ObjectField && this is! StringField;
 
     /// Get initializer list declaration code
     String get initializer => '${optional ? '' : 'required '}this.$name,';
 
     /// Get attribute declaration code
-    String get attribute => optional ? '$type? $name' : 'required $type $name,';
+    String get attribute => optional ? '$type? $name,' : 'required $type $name,';
 
     /// Get property declaration code
     String get declaration => optional ? '$type? $name;' : 'late $type $name;';
@@ -58,8 +58,9 @@ abstract class Field {
     /// Get estimate buffer size code
     List<String> get estimate {
         return static ? <String>[] : <String>[
-            '\$setFlag($name != null);',
-            'if ($name != null) _bytes += ${estimator(nameEnsured)};',
+            if (optional) '\$setFlag($name != null);',
+            if (optional) 'if ($name != null) _bytes += ${estimator(nameEnsured)};'
+            else '_bytes += ${estimator(name)};',
         ];
     }
 

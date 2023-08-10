@@ -5,7 +5,9 @@ part of packme.compiler;
 class BinaryField extends Field {
     BinaryField(Node node, String tag, String manifest) :
             bytes = int.parse(manifest.substring(6)),
-            super(node, tag, manifest);
+            super(node, tag, manifest) {
+        node.container.importTypedData = true;
+    }
 
     final int bytes;
 

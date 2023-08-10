@@ -18,25 +18,28 @@ class Container {
     late final Iterable<Object> objects;
     late final Iterable<Message> messages;
     late final Iterable<Request> requests;
+    final Map<String, List<String>> includes = <String, List<String>>{};
+    final List<Object> embedded = <Object>[];
+    bool importTypedData = false;
     final Map<String, Container> containers;
 
     /// Return resulting code, must be overridden.
     List<String> output(Map<String, Container> containers) {
         return <String>[
-            "import 'dart:typed_data';",
+            if (importTypedData) "import 'dart:typed_data';",
             "import 'package:packme/packme.dart';",
-            ...nodes.fold(<String>[], (Iterable<String> a, Node b) => a.toList() + (b.includes.keys.toList()..sort()).map(
-                    (String filename) => "import '$filename' show ${b.includes[filename]!.join(', ')};"
-            ).toList()),
+            ...(includes.keys.toList()..sort()).map((String filename) => "import '$filename' show ${includes[filename]!.join(', ')};"),
             ...enums.fold(<String>[], (Iterable<String> a, Enum b) => a.toList() + b.output()),
             ...objects.fold(<String>[], (Iterable<String> a, Object b) => a.toList() + b.output()),
+            ...embedded.fold(<String>[], (Iterable<String> a, Object b) => a.toList() + b.output()),
             ...messages.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
             ...requests.fold(<String>[], (Iterable<String> a, Request b) => a.toList() + b.output()),
             if (messages.isNotEmpty || requests.isNotEmpty) ...<String>[
                 '',
                 'final Map<int, PackMeMessage Function()> ${validName(filename)}MessageFactory = <int, PackMeMessage Function()>{',
                 ...messages.map((Message message) => '${message.id}: () => ${message.name}.\$empty(),'),
-                ...requests.map((Request request) => '${request.id}: () => ${request.name}.\$empty(),\n${request.responseId}: () => ${request.responseName}.\$empty(),'),
+                ...requests.map((Request request) => '${request.id}: () => ${request.name}.\$empty(),'),
+                ...requests.map((Request request) => '${request.responseId}: () => ${request.responseName}.\$empty(),'),
                 '};'
             ]
         ];

@@ -4,7 +4,7 @@ import 'generated/compiler-test.generated.dart';
 
 void main() {
     test('Compiler run check: dart run packme packme generated', () {
-        compiler.main(<String>['test/packme', 'test/generated', '--test']);
+        compiler.main(<String>['--test', 'test/packme', 'test/generated']);
     });
 
     test('compilerTestMessageFactory contains SendInfoMessage, GetDataResponse, GetDataRequest', () {
