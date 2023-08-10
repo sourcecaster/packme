@@ -16,7 +16,7 @@ class NestedObject extends PackMeMessage {
 
 	late int a;
 	late String b;
-
+	
 	@override
 	int $estimate() {
 		$reset();
@@ -88,7 +88,7 @@ class TestMessage extends PackMeMessage {
 	TypeEnum? optEnum;
 	late NestedObject reqNested;
 	NestedObject? optNested;
-
+	
 	@override
 	int $estimate() {
 		$reset();

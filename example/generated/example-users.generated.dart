@@ -13,7 +13,7 @@ class GetUsersResponseUser extends PackMeMessage {
 	late List<int> id;
 	late UserProfile profile;
 	late UserStatus status;
-
+	
 	@override
 	int $estimate() {
 		$reset();
@@ -56,7 +56,7 @@ class GetUsersResponse extends PackMeMessage {
 	GetUsersResponse.$empty();
 
 	late List<GetUsersResponseUser> users;
-
+	
 	@override
 	int $estimate() {
 		$reset();
@@ -96,7 +96,7 @@ class GetUsersRequest extends PackMeMessage {
 	GetUsersRequest.$empty();
 
 	UserStatus? status;
-
+	
 	GetUsersResponse $response({
 		required List<GetUsersResponseUser> users,
 	}) {
@@ -149,7 +149,7 @@ class GetUserResponseSocial extends PackMeMessage {
 	String? facebookId;
 	String? twitterId;
 	String? instagramId;
-
+	
 	@override
 	int $estimate() {
 		$reset();
@@ -210,7 +210,7 @@ class GetUserResponse extends PackMeMessage {
 	late DateTime created;
 	late List<UserSession> sessions;
 	GetUserResponseSocial? social;
-
+	
 	@override
 	int $estimate() {
 		$reset();
@@ -265,7 +265,7 @@ class GetUserRequest extends PackMeMessage {
 	GetUserRequest.$empty();
 
 	late List<int> userId;
-
+	
 	GetUserResponse $response({
 		required UserProfile profile,
 		required DateTime created,
@@ -316,7 +316,7 @@ class DeleteUserResponse extends PackMeMessage {
 	DeleteUserResponse.$empty();
 
 	String? error;
-
+	
 	@override
 	int $estimate() {
 		$reset();
@@ -357,7 +357,7 @@ class DeleteUserRequest extends PackMeMessage {
 	DeleteUserRequest.$empty();
 
 	late List<int> userId;
-
+	
 	DeleteUserResponse $response({
 		String? error,
 	}) {
@@ -399,12 +399,6 @@ class DeleteUserRequest extends PackMeMessage {
 }
 
 final Map<int, PackMeMessage Function()> exampleUsersMessageFactory = <int, PackMeMessage Function()>{
-	789877955: () => GetUsersRequest.$empty(),
-	287424096: () => GetUsersResponse.$empty(),
-	1049086457: () => GetUserRequest.$empty(),
-	666547305: () => GetUserResponse.$empty(),
-	503538391: () => DeleteUserRequest.$empty(),
-	940229715: () => DeleteUserResponse.$empty(),
 	1070081631: () => GetUsersResponse.$empty(),
 	103027201: () => GetUsersRequest.$empty(),
 	164269114: () => GetUserResponse.$empty(),
