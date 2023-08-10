@@ -3,24 +3,31 @@
 part of packme.compiler;
 
 class Container {
-    Container(this.filename, this.nodes) :
-            enums = nodes.whereType<Enum>(),
-            objects = nodes.whereType<Object>(),
-            messages = nodes.whereType<Message>(),
-            requests = nodes.whereType<Request>();
+    Container(this.filename, this.manifest, this.containers) {
+        nodes.addAll(manifest.entries.map((MapEntry<String, dynamic> entry) => Node.fromEntry(this, entry)));
+        enums = nodes.whereType<Enum>();
+        objects = nodes.whereType<Object>();
+        messages = nodes.whereType<Message>();
+        requests = nodes.whereType<Request>();
+    }
 
     final String filename;
-    final List<Node> nodes;
-    final Iterable<Enum> enums;
-    final Iterable<Object> objects;
-    final Iterable<Message> messages;
-    final Iterable<Request> requests;
+    final Map<String, dynamic> manifest;
+    final List<Node> nodes = <Node>[];
+    late final Iterable<Enum> enums;
+    late final Iterable<Object> objects;
+    late final Iterable<Message> messages;
+    late final Iterable<Request> requests;
+    final Map<String, Container> containers;
 
     /// Return resulting code, must be overridden.
     List<String> output(Map<String, Container> containers) {
         return <String>[
             "import 'dart:typed_data';",
             "import 'package:packme/packme.dart';",
+            ...nodes.fold(<String>[], (Iterable<String> a, Node b) => a.toList() + (b.includes.keys.toList()..sort()).map(
+                    (String filename) => "import '$filename' show ${b.includes[filename]!.join(', ')};"
+            ).toList()),
             ...enums.fold(<String>[], (Iterable<String> a, Enum b) => a.toList() + b.output()),
             ...objects.fold(<String>[], (Iterable<String> a, Object b) => a.toList() + b.output()),
             ...messages.fold(<String>[], (Iterable<String> a, Message b) => a.toList() + b.output()),
@@ -29,7 +36,7 @@ class Container {
                 '',
                 'final Map<int, PackMeMessage Function()> ${validName(filename)}MessageFactory = <int, PackMeMessage Function()>{',
                 ...messages.map((Message message) => '${message.id}: () => ${message.name}.\$empty(),'),
-                ...requests.map((Request request) => '${request.requestId}: () => ${request.requestName}.\$empty(),\n${request.responseId}: () => ${request.responseName}.\$empty(),'),
+                ...requests.map((Request request) => '${request.id}: () => ${request.name}.\$empty(),\n${request.responseId}: () => ${request.responseName}.\$empty(),'),
                 '};'
             ]
         ];

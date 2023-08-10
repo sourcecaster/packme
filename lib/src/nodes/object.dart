@@ -3,18 +3,22 @@
 part of packme.compiler;
 
 class Object extends Node {
-    Object(String filename, String tag, dynamic manifest) : name = validName(tag, firstCapital: true), super(filename, tag, manifest) {
+    Object(Container container, String tag, dynamic manifest) : super(container, tag, validName(tag, firstCapital: true), manifest) {
         if (isReserved(name)) {
-            throw Exception('Enum node "$tag" in file "$filename" is resulted with the name "$name", which is reserved by Dart language.');
+            throw Exception('Object node "$tag" in ${container.filename}.json is resulted with the name "$name", which is reserved by Dart language.');
         }
         for (final MapEntry<String, dynamic> entry in manifest.entries) {
-            fields.add(Field.fromEntry(this, entry));
+            final Field field = Field.fromEntry(this, entry);
+            if (fields.where((Field f) => f.name == field.name).isNotEmpty) {
+                throw Exception('Object declaration "$tag" in ${container.filename}.json field "${field.tag}" is parsed into a field with duplicating name "${field.name}".');
+            }
+            if (field is ReferenceField && field.filename != container.filename) _include(field.filename, field.referenceTag);
+            fields.add(field);
         }
         _flagBytes = (fields.where((Field f) => f.optional).length / 8).ceil();
         _minBufferSize = fields.where((Field f) => f.static).fold(_flagBytes, (int a, Field b) => a + b.size);
     }
 
-    final String name;
     final List<Field> fields = <Field>[];
     int _minBufferSize = 0;
     late final int _flagBytes;
@@ -39,9 +43,9 @@ class Object extends Node {
             r'int $estimate() {',
                 r'$reset();',
                 if (fields.where((Field f) => !f.static).isNotEmpty) ...<String>[
-                    'int bytes = $_minBufferSize;',
+                    'int _bytes = $_minBufferSize;',
                     ...fields.fold(<String>[], (Iterable<String> a, Field b) => a.toList() + b.estimate),
-                    'return bytes;',
+                    'return _bytes;',
                 ]
                 else 'return $_minBufferSize;',
             '}',

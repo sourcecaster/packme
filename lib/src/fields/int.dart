@@ -3,7 +3,10 @@
 part of packme.compiler;
 
 class IntField extends Field {
-    IntField(Node node, String tag, dynamic manifest, { required this.signed, required this.bytes }) : super(node, tag, manifest);
+    IntField(Node node, String tag, String manifest) :
+            signed = manifest[0] != 'u',
+            bytes = (int.parse(manifest.replaceAll(RegExp(r'\D'), '')) / 8).round(),
+            super(node, tag, manifest);
 
     final bool signed;
     final int bytes;
@@ -15,16 +18,8 @@ class IntField extends Field {
     int get size => bytes;
 
     @override
-    List<String> get pack {
-        return <String>[
-            '${optional ? 'if ($name != null) ' : ''}\$pack${signed ? 'Int' : 'Uint'}${bytes * 8}($nameEnsured);'
-        ];
-    }
+    String packer([String name = '']) => '\$pack${signed ? 'Int' : 'Uint'}${bytes * 8}($name)';
 
     @override
-    List<String> get unpack {
-        return <String>[
-            '${optional ? r'if ($getFlag()) ' : ''}$name = \$unpack${signed ? 'Int' : 'Uint'}${bytes * 8}();'
-        ];
-    }
+    String unpacker([String name = '']) => '\$unpack${signed ? 'Int' : 'Uint'}${bytes * 8}()';
 }

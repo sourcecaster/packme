@@ -3,7 +3,7 @@
 part of packme.compiler;
 
 class BoolField extends Field {
-    BoolField(Node node, String tag, dynamic manifest) : super(node, tag, manifest);
+    BoolField(Node node, String tag, String manifest) : super(node, tag, manifest);
 
     @override
     String get type => 'bool';
@@ -12,16 +12,8 @@ class BoolField extends Field {
     int get size => 1;
 
     @override
-    List<String> get pack {
-        return <String>[
-            '${optional ? 'if ($name != null) ' : ''}\$packBool($nameEnsured);'
-        ];
-    }
+    String packer([String name = '']) => '\$packBool($name)';
 
     @override
-    List<String> get unpack {
-        return <String>[
-            '${optional ? r'if ($getFlag()) ' : ''}$name = \$unpackBool();'
-        ];
-    }
+    String unpacker([String name = '']) => r'$unpackBool()';
 }

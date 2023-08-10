@@ -3,7 +3,9 @@
 part of packme.compiler;
 
 class BinaryField extends Field {
-    BinaryField(Node node, String tag, dynamic manifest, { required this.bytes }) : super(node, tag, manifest);
+    BinaryField(Node node, String tag, String manifest) :
+            bytes = int.parse(manifest.substring(6)),
+            super(node, tag, manifest);
 
     final int bytes;
 
@@ -14,16 +16,8 @@ class BinaryField extends Field {
     int get size => bytes;
 
     @override
-    List<String> get pack {
-        return <String>[
-            '${optional ? 'if ($name != null) ' : ''}\$packBinary($nameEnsured, $bytes);'
-        ];
-    }
+    String packer([String name = '']) => '\$packBinary($name, $bytes)';
 
     @override
-    List<String> get unpack {
-        return <String>[
-            '${optional ? r'if ($getFlag()) ' : ''}$name = \$unpackBinary($bytes);'
-        ];
-    }
+    String unpacker([String name = '']) => '\$unpackBinary($bytes)';
 }

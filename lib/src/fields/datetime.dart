@@ -3,7 +3,7 @@
 part of packme.compiler;
 
 class DateTimeField extends Field {
-    DateTimeField(Node node, String tag, dynamic manifest) : super(node, tag, manifest);
+    DateTimeField(Node node, String tag, String manifest) : super(node, tag, manifest);
 
     @override
     String get type => 'DateTime';
@@ -12,16 +12,8 @@ class DateTimeField extends Field {
     int get size => 8;
 
     @override
-    List<String> get pack {
-        return <String>[
-            '${optional ? 'if ($name != null) ' : ''}\$packDateTime($nameEnsured);'
-        ];
-    }
+    String packer([String name = '']) => '\$packDateTime($name)';
 
     @override
-    List<String> get unpack {
-        return <String>[
-            '${optional ? r'if ($getFlag()) ' : ''}$name = \$unpackDateTime();'
-        ];
-    }
+    String unpacker([String name = '']) => r'$unpackDateTime()';
 }

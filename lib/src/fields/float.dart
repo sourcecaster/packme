@@ -3,7 +3,9 @@
 part of packme.compiler;
 
 class FloatField extends Field {
-    FloatField(Node node, String tag, dynamic manifest, { required this.bytes }) : super(node, tag, manifest);
+    FloatField(Node node, String tag, String manifest) :
+            bytes = manifest == 'float' ? 4 : 8,
+            super(node, tag, manifest);
 
     final int bytes;
 
@@ -14,16 +16,8 @@ class FloatField extends Field {
     int get size => bytes;
 
     @override
-    List<String> get pack {
-        return <String>[
-            '${optional ? 'if ($name != null) ' : ''}\$pack${bytes == 8 ? 'Double' : 'Float'}($nameEnsured);'
-        ];
-    }
+    String packer([String name = '']) => bytes == 8 ? '\$packDouble($name)' : '\$packFloat($name)';
 
     @override
-    List<String> get unpack {
-        return <String>[
-            '${optional ? r'if ($getFlag()) ' : ''}$name = \$unpack${bytes == 8 ? 'Double' : 'Float'}();'
-        ];
-    }
+    String unpacker([String name = '']) => bytes == 8 ? r'$unpackDouble()' : r'$unpackFloat()';
 }

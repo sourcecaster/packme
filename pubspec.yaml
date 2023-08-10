@@ -1,6 +1,6 @@
 name: packme
 description: Simple and extremely fast binary serialization using classes generated from JSON manifest files.
-version: 3.0.0-alpha
+version: 2.0.0-alpha
 homepage: https://github.com/sourcecaster/packme
 repository: https://github.com/sourcecaster/packme
 issue_tracker: https://github.com/sourcecaster/packme/issues

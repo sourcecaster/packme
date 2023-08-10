@@ -3,17 +3,15 @@
 part of packme.compiler;
 
 class Message extends Node {
-    Message(String filename, String tag, dynamic manifest) :
+    Message(Container container, String tag, dynamic manifest) :
             id = '${validName(tag, firstCapital: true)}Message'.hashCode,
-            name = '${validName(tag, firstCapital: true)}Message',
-            super(filename, tag, manifest) {
+            super(container, tag, '${validName(tag, firstCapital: true)}Message', manifest) {
         if (isReserved(name)) {
-            throw Exception('Message node "$tag" in file "$filename" is resulted with the name "$name", which is reserved by Dart language.');
+            throw Exception('Message node "$tag" in ${container.filename}.json is resulted with the name "$name", which is reserved by Dart language.');
         }
     }
 
     final int id;
-    final String name;
 
     @override
     List<String> output() {

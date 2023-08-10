@@ -3,14 +3,13 @@
 part of packme.compiler;
 
 class ObjectField extends Field {
-    ObjectField(Node node, String tag, dynamic manifest) : super(node, tag, manifest) {
-
-    }
+    ObjectField(Node node, String tag, Map<String, dynamic> manifest) : super(node, tag, manifest);
 
     @override
-    List<String> output() {
-        return <String>[];
-    }
+    String packer([String name = '']) => '';
+
+    @override
+    String unpacker([String name = '']) => '';
 
     @override
     List<String> get estimate {

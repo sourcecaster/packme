@@ -35,11 +35,12 @@ List<String> formatCode(List<String> lines) {
     int indent = 0;
     final RegExp reOpen = RegExp(r'\{[^\}]*$');
     final RegExp reClose = RegExp(r'^[^\{]*\}');
+    final RegExp reEmpty = RegExp(r'^\s*$');
     for (int i = 0; i < lines.length; i++) {
         final bool increase = reOpen.hasMatch(lines[i]);
         final bool decrease = reClose.hasMatch(lines[i]);
         if (decrease) indent--;
-        lines[i] = '\t' * indent + lines[i];
+        if (!reEmpty.hasMatch(lines[i])) lines[i] = '\t' * indent + lines[i];
         if (increase) indent++;
     }
     return lines;

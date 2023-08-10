@@ -142,12 +142,8 @@ void process(String srcPath, String outPath, List<String> filenames, bool isTest
 			throw Exception('Unable to parse $filename.json: $err');
 		}
 
-		/// Create nodes from parsed data
-		final List<Node> nodes = <Node>[];
-		for (final MapEntry<String, dynamic> entry in manifest.entries) {
-			nodes.add(Node.fromEntry(filename, entry));
-		}
-		containers[filename] = Container(filename, nodes);
+		/// Create container with nodes from parsed data
+		containers[filename] = Container(filename, manifest, containers);
 	}
 
 	final Map<String, List<String>> codePerFile = <String, List<String>>{};
