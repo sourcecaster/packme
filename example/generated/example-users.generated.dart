@@ -81,11 +81,9 @@ class GetUsersResponseUser extends PackMeMessage {
 
 	@override
 	void $unpack() {
-		id = <int>[];
-		final int _i2Length = $unpackUint32();
-		for (int _i2 = 0; _i2 < _i2Length; _i2++) {
-			id.add($unpackUint8());
-		}
+		id = List<int>.generate($unpackUint32(), (int i) {
+			return $unpackUint8();
+		});
 		profile = $unpackMessage(UserProfile.$empty());
 		status = UserStatus.values[$unpackUint8()];
 	}
@@ -169,11 +167,9 @@ class GetUsersResponse extends PackMeMessage {
 	@override
 	void $unpack() {
 		$initUnpack();
-		users = <GetUsersResponseUser>[];
-		final int _i5Length = $unpackUint32();
-		for (int _i5 = 0; _i5 < _i5Length; _i5++) {
-			users.add($unpackMessage(GetUsersResponseUser.$empty()));
-		}
+		users = List<GetUsersResponseUser>.generate($unpackUint32(), (int i) {
+			return $unpackMessage(GetUsersResponseUser.$empty());
+		});
 	}
 
 	@override
@@ -221,11 +217,9 @@ class GetUserRequest extends PackMeMessage {
 	@override
 	void $unpack() {
 		$initUnpack();
-		userId = <int>[];
-		final int _i6Length = $unpackUint32();
-		for (int _i6 = 0; _i6 < _i6Length; _i6++) {
-			userId.add($unpackUint8());
-		}
+		userId = List<int>.generate($unpackUint32(), (int i) {
+			return $unpackUint8();
+		});
 	}
 
 	@override
@@ -278,11 +272,9 @@ class GetUserResponse extends PackMeMessage {
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
 		profile = $unpackMessage(UserProfile.$empty());
 		created = $unpackDateTime();
-		sessions = <UserSession>[];
-		final int _i8Length = $unpackUint32();
-		for (int _i8 = 0; _i8 < _i8Length; _i8++) {
-			sessions.add($unpackMessage(UserSession.$empty()));
-		}
+		sessions = List<UserSession>.generate($unpackUint32(), (int i) {
+			return $unpackMessage(UserSession.$empty());
+		});
 		if ($getFlag()) social = $unpackMessage(GetUserResponseSocial.$empty());
 	}
 
@@ -328,11 +320,9 @@ class DeleteUserRequest extends PackMeMessage {
 	@override
 	void $unpack() {
 		$initUnpack();
-		userId = <int>[];
-		final int _i6Length = $unpackUint32();
-		for (int _i6 = 0; _i6 < _i6Length; _i6++) {
-			userId.add($unpackUint8());
-		}
+		userId = List<int>.generate($unpackUint32(), (int i) {
+			return $unpackUint8();
+		});
 	}
 
 	@override

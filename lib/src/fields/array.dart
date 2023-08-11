@@ -30,14 +30,10 @@ class ArrayField extends Field {
 
     @override
     String unpacker([String name = '']) {
-        final String i = '_i${name.length}';
         return <String>[
-            '$name = <${field.type}>[];',
-            'final int ${i}Length = \$unpackUint32();',
-            'for (int $i = 0; $i < ${i}Length; $i++) {',
-                if (field is ArrayField) field.unpacker('$name[$i]')
-                else '$name.add(${field.unpacker('$name[$i]')})${field is! ArrayField ? ';' : ''}',
-            '}',
+            'List<${field.type}>.generate(\$unpackUint32(), (int i) {',
+                'return ${field.unpacker()}${field is! ArrayField ? ';' : ''}',
+            '});',
         ].join('\n');
     }
 
@@ -54,7 +50,7 @@ class ArrayField extends Field {
     List<String> get unpack {
         return <String>[
             if (optional) r'if ($getFlag()) {',
-            ...unpacker(nameEnsured).split('\n'),
+            ...'$name = ${unpacker(nameEnsured)}'.split('\n'),
             if (optional) '}',
         ];
     }

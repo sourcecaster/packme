@@ -36,14 +36,15 @@ abstract class Field {
     final dynamic manifest;
 
     String get nameEnsured => '$name${optional ? '!' : ''}';
-    String get type => '';
+    String get type;
     int get size => 0;
 
-    /// Return corresponding single operation code string
+    /// Return corresponding single operation code
     String estimator([String name = '']) => '$size';
     String packer([String name = '']);
     String unpacker([String name = '']);
 
+    /// Get whether it has a fixed footprint (always fixed size in a buffer) or not
     bool get static => !optional && this is! ArrayField && this is! ObjectField && this is! StringField;
 
     /// Get initializer list declaration code

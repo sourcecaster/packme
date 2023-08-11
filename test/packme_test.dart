@@ -6,7 +6,7 @@ import 'generated/packme-test.generated.dart';
 TestMessage generateTestMessage() {
     return TestMessage(
         reqId: Uint8List.fromList(<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
-        reqIds: [
+        reqIds: <Uint8List>[
             Uint8List.fromList(<int>[1, 2, 3, 4]),
             Uint8List.fromList(<int>[2, 3, 4, 1]),
             Uint8List.fromList(<int>[3, 4, 1, 2]),
@@ -30,8 +30,14 @@ TestMessage generateTestMessage() {
             a: 255,
             b: 'I am nested 😎'
         ),
+        reqNestedList: <List<int>>[
+            <int>[1],
+            <int>[2, 3],
+            <int>[4, 5, 6],
+            <int>[7, 8, 9, 10],
+        ],
         optId: Uint8List.fromList(<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
-        optIds: [
+        optIds: <Uint8List>[
             Uint8List.fromList(<int>[1, 2, 3, 4]),
             Uint8List.fromList(<int>[2, 3, 4, 1]),
             Uint8List.fromList(<int>[3, 4, 1, 2]),
@@ -55,6 +61,12 @@ TestMessage generateTestMessage() {
             a: 255,
             b: 'I am nested 😎'
         ),
+        optNestedList: <List<int>>[
+            <int>[1],
+            <int>[2, 3],
+            <int>[4, 5, 6],
+            <int>[7, 8, 9, 10],
+        ]
     );
 }
 
@@ -97,6 +109,7 @@ void main() {
         expect(message.reqEnum, equals(sample.reqEnum));
         expect(message.reqNested.a, equals(sample.reqNested.a));
         expect(message.reqNested.b, equals(sample.reqNested.b));
+        expect(message.reqNestedList, equals(sample.reqNestedList));
         expect(message.optId, equals(sample.optId));
         expect(message.optIds, equals(sample.optIds));
         expect(message.optInt8, equals(sample.optInt8));
@@ -115,5 +128,6 @@ void main() {
         expect(message.optEnum, equals(sample.optEnum));
         expect(message.optNested!.a, equals(sample.optNested!.a));
         expect(message.optNested!.b, equals(sample.optNested!.b));
+        expect(message.optNestedList, equals(sample.optNestedList));
     });
 }

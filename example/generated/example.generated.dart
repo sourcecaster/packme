@@ -168,17 +168,13 @@ class TestMessage extends PackMeMessage {
 		for (int i = 0; i < 2; i++) $flags.add($unpackUint8());
 		reqId = $unpackBinary(12);
 		if ($getFlag()) optId = $unpackBinary(12);
-		reqIds = <Uint8List>[];
-		final int _i6Length = $unpackUint32();
-		for (int _i6 = 0; _i6 < _i6Length; _i6++) {
-			reqIds.add($unpackBinary(4));
-		}
+		reqIds = List<Uint8List>.generate($unpackUint32(), (int i) {
+			return $unpackBinary(4);
+		});
 		if ($getFlag()) {
-			optIds! = <Uint8List>[];
-			final int _i7Length = $unpackUint32();
-			for (int _i7 = 0; _i7 < _i7Length; _i7++) {
-				optIds!.add($unpackBinary(4));
-			}
+			optIds = List<Uint8List>.generate($unpackUint32(), (int i) {
+				return $unpackBinary(4);
+			});
 		}
 		reqInt8 = $unpackInt8();
 		reqUint16 = $unpackUint16();
@@ -190,17 +186,13 @@ class TestMessage extends PackMeMessage {
 		if ($getFlag()) optDouble = $unpackDouble();
 		if ($getFlag()) optBool = $unpackBool();
 		if ($getFlag()) optString = $unpackString();
-		reqList = <int>[];
-		final int _i7Length = $unpackUint32();
-		for (int _i7 = 0; _i7 < _i7Length; _i7++) {
-			reqList.add($unpackUint8());
-		}
+		reqList = List<int>.generate($unpackUint32(), (int i) {
+			return $unpackUint8();
+		});
 		if ($getFlag()) {
-			optList! = <int>[];
-			final int _i8Length = $unpackUint32();
-			for (int _i8 = 0; _i8 < _i8Length; _i8++) {
-				optList!.add($unpackUint8());
-			}
+			optList = List<int>.generate($unpackUint32(), (int i) {
+				return $unpackUint8();
+			});
 		}
 		reqEnum = TypeEnum.values[$unpackUint8()];
 		if ($getFlag()) optEnum = TypeEnum.values[$unpackUint8()];

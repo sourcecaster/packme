@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:packme/packme.dart';
 
 enum HalfLifeVersion {
@@ -20,7 +19,6 @@ class InfoEntity extends PackMeMessage {
 	late int value;
 	late bool flag;
 	late HalfLifeVersion version;
-
 
 	@override
 	int $estimate() {
@@ -65,7 +63,6 @@ class GetDataResponseItem extends PackMeMessage {
 	int? value;
 	bool? flag;
 	HalfLifeVersion? version;
-
 
 	@override
 	int $estimate() {
@@ -120,7 +117,6 @@ class SendInfoMessage extends PackMeMessage {
 	late HalfLifeVersion version;
 	late InfoEntity entity;
 
-
 	@override
 	int $estimate() {
 		$reset();
@@ -135,9 +131,13 @@ class SendInfoMessage extends PackMeMessage {
 	void $pack() {
 		$initPack(511521838);
 		$packUint32(id.length);
-		for (int i = 0; i < id.length; i++) $packUint8(id[i]);
+		for (int _i2 = 0; _i2 < id.length; _i2++) {
+			$packUint8(id[_i2]);
+		}
 		$packUint32(notes.length);
-		for (int i = 0; i < notes.length; i++) $packString(notes[i]);
+		for (int _i5 = 0; _i5 < notes.length; _i5++) {
+			$packString(notes[_i5]);
+		}
 		$packUint8(version.index);
 		$packMessage(entity);
 	}
@@ -145,12 +145,12 @@ class SendInfoMessage extends PackMeMessage {
 	@override
 	void $unpack() {
 		$initUnpack();
-		id = <int>[];
-		final int _idLength = $unpackUint32();
-		for (int i = 0; i < _idLength; i++) id.add($unpackUint8());
-		notes = <String>[];
-		final int _notesLength = $unpackUint32();
-		for (int i = 0; i < _notesLength; i++) notes.add($unpackString());
+		id = List<int>.generate($unpackUint32(), (int i) {
+			return $unpackUint8();
+		});
+		notes = List<String>.generate($unpackUint32(), (int i) {
+			return $unpackString();
+		});
 		version = HalfLifeVersion.values[$unpackUint8()];
 		entity = $unpackMessage(InfoEntity.$empty());
 	}
@@ -194,7 +194,9 @@ class GetDataRequest extends PackMeMessage {
 		$initPack(845589919);
 		for (int i = 0; i < 1; i++) $packUint8($flags[i]);
 		$packUint32(id.length);
-		for (int i = 0; i < id.length; i++) $packUint8(id[i]);
+		for (int _i2 = 0; _i2 < id.length; _i2++) {
+			$packUint8(id[_i2]);
+		}
 		if (limit != null) $packUint16(limit!);
 	}
 
@@ -202,9 +204,9 @@ class GetDataRequest extends PackMeMessage {
 	void $unpack() {
 		$initUnpack();
 		for (int i = 0; i < 1; i++) $flags.add($unpackUint8());
-		id = <int>[];
-		final int _idLength = $unpackUint32();
-		for (int i = 0; i < _idLength; i++) id.add($unpackUint8());
+		id = List<int>.generate($unpackUint32(), (int i) {
+			return $unpackUint8();
+		});
 		if ($getFlag()) limit = $unpackUint16();
 	}
 
@@ -222,7 +224,6 @@ class GetDataResponse extends PackMeMessage {
 
 	late List<GetDataResponseItem> items;
 
-
 	@override
 	int $estimate() {
 		$reset();
@@ -235,15 +236,17 @@ class GetDataResponse extends PackMeMessage {
 	void $pack() {
 		$initPack(160528308);
 		$packUint32(items.length);
-		for (int i = 0; i < items.length; i++) $packMessage(items[i]);
+		for (int _i5 = 0; _i5 < items.length; _i5++) {
+			$packMessage(items[_i5]);
+		}
 	}
 
 	@override
 	void $unpack() {
 		$initUnpack();
-		items = <GetDataResponseItem>[];
-		final int _itemsLength = $unpackUint32();
-		for (int i = 0; i < _itemsLength; i++) items.add($unpackMessage(GetDataResponseItem.$empty()));
+		items = List<GetDataResponseItem>.generate($unpackUint32(), (int i) {
+			return $unpackMessage(GetDataResponseItem.$empty());
+		});
 	}
 
 	@override
