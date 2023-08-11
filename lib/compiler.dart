@@ -1,39 +1,82 @@
-/// This file allows you to generate Dart source code files for PackMe data
-/// protocol using JSON manifest files.
+/// This file allows you to generate Dart source code files for PackMe data protocol using JSON manifest files.
 ///
 /// Usage: dart compiler.dart <srcDir> <outDir> [filenames (optionally)]
 ///
-/// JSON Manifest file represents a set of commands, each command consists of
-/// one (single message) or two (request and response) messages. In your server
-/// code you mostly listen for request messages from client and reply with
-/// response messages. However it totally depends on your architecture: server
-/// may as well send request messages and in some cases client may process those
-/// requests without reply. Though using single messages are preferred in such
-/// cases.
+/// JSON manifest file represents a set of nodes representing different entities declarations: enumerations, objects,
+/// messages and requests. In your server code you mostly listen for requests from client and reply with responses.
+/// However, it totally depends on your architecture: server may as well send messages to inform clint of some data
+/// changes or send requests and expect clients to send back responses with corresponding data.
 ///
-/// The reason why each command is strictly divided on two messages (instead of
-/// just using raw messages) is to make manifest structure as clear as possible.
-/// I.e. when you look at some command you already know how it is supposed to
-/// work, not just some random message which will be used by server or client in
-/// non-obvious ways.
+/// Enumeration declaration is represented with an array of strings. Object declaration is just an object. Message or
+/// request declarations consist of array of 1 or 2 objects respectively. In case of request the second object
+/// represents response declaration. Here's an example of JSON manifest file:
 ///
-/// Another thing worth mentioning is that it is not possible to separately
-/// declare a message (like in FlatBuffers or ProtoBuffers) and then reuse it in
-/// different commands. Here's why: if you look carefully in .json examples you
-/// will see that the same entities (like user) in different commands have
-/// different set of parameters. You don't want to encode the whole user's
-/// profile when you need to send a list of friends. Or when you need to show
-/// short user info on the post etc. Reusing declared messages firstly leads to
-/// encoding and transferring unused data, and secondly makes it hard to
-/// refactor your data protocol when different parts of your application are
-/// being changed.
+/// [
+/// 	"some_enum": [
+/// 		"one",
+/// 		"two",
+/// 		"three"
+/// 	],
+/// 	"some_object": {
+/// 		"name": "string",
+/// 		"volume": "double",
+/// 		"type": "@some_enum"
+/// 	},
+/// 	"some_message": [
+/// 		{
+/// 			"update_timestamp": "uint64",
+/// 			"update_coordinates": ["double"]
+/// 		}
+/// 	],
+/// 	"some_request": [
+/// 		{
+/// 			"search_query": "string",
+/// 			"type_filter": "@some_enum"
+/// 		},
+/// 		{
+/// 			"search_results": ["@some_object"]
+/// 		}
+/// 	]
+/// ]
 ///
-/// Nested object in command request or response will be represented with class
-/// SomeCommandResponseNested. For example compiling example-posts.json will
-/// result in creating class GetResponseCommentAuthor which will contain three
-/// fields: List<int> id, String nickname and String avatar.
+/// Nested object in command request or response will be represented with new class named like
+/// SomeCommandResponse<object_name>. For example compiling next manifest:
 ///
-/// Prefix "?" in field declaration means it is optional (Null by default).
+/// 	"get_posts": [
+/// 		{
+/// 			"from": "datatime",
+/// 			"amount": "uint16"
+/// 		},
+/// 		{
+/// 			"posts": [{
+/// 				"id": "binary12",
+/// 				"author": "string",
+///					"created: "datetime",
+///					"title": "string",
+///					"contents": "string"
+/// 			}],
+/// 			"stats": {
+/// 				"loaded": "uint16",
+/// 				"remaining": "uint32",
+/// 				"total": "uint32",
+/// 			},
+/// 			"?error": "string"
+/// 		}
+/// 	]
+///
+/// will result, for instance, in creating class GetPostsResponsePost (note that it has a singular form "Post", not
+/// "Posts" - that is because "posts" is an array of nested object) which will contain four fields: Uint8List<int> id,
+/// String author, DateTime created, String title and String contents. Also there will class GetPostsResponseStats
+/// (plural this time, same as field name "stats", because it's just a nested object, not an array) which will contain
+/// three int fields: loaded, remaining and total.
+///
+/// Here's the short list of supported features (see more details in README.md):
+/// 	- prefix "?" in field declaration means it is optional (null by default);
+/// 	- enumeration declaration: "color": ["black", "white", "yellow"];
+/// 	- object declaration: "person": { "name": "string", "age": "uint8" };
+/// 	- enumeration/object reference (filed of type enum/object declared earlier): "persons": ["@person"];
+/// 	- referencing to entity from another file: "persons": ["@protocol_types:person"];
+/// 	- object inheritance in object declaration: "animal": { "legs": "uint8" }, "cat@animal": { "fur": "bool" }.
 
 library packme.compiler;
 
@@ -81,7 +124,7 @@ void main(List<String> args) {
 		print('$GREEN    Output directory: $YELLOW$outPath$RESET');
 		process(srcPath, outPath, filenames, isTest);
 	}
-	catch (err, stack) {
+	catch (err) {
 		if (isTest) rethrow;
 		else print('$RED$err$RESET');
 		exit(-1);
