@@ -16,6 +16,9 @@ class Request extends Node {
         }
         responseObject = Object(container, '${tag}_response', manifest.last as Map<String, dynamic>, id: responseId);
         requestObject = Object(container, '${tag}_request', manifest.first as Map<String, dynamic>, id: id, response: responseObject);
+        if (responseObject.inheritTag.isNotEmpty || requestObject.inheritTag.isNotEmpty) {
+            throw Exception('Request node "$tag" in ${container.filename}.json can not be inherited from any other node.');
+        }
     }
 
     final int id;

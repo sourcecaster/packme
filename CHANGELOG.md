@@ -1,9 +1,9 @@
 ## v2.0.0
-* BREAKING CHANGE: references made with prefix @ are not loaded from other files automatically! Use @filename:refname format.
-* Object inheritance is now supported: "animal": \{&lt;fields&gt;\}, "cat@animal": \{&lt;additional fields&gt;\}.
-* Now it is possible to declare nested arrays: "field": \[\["int8"\]\].
-* Compiler rewritten from scratch: cleaner code, better error handling, more informative log.
-* Compiler command line now accepts file names (optionally): dart run packme <srcDirectory> <outDirectory> \[file1, file2, file3...\].
+* BREAKING CHANGE: references made with prefix \@ are not loaded from other files automatically, use \@filename:refname in that case.
+* Object inheritance is now supported: "animal": { \<fields> }, "cat@animal": { \<additional fields> }.
+* Now it is possible to declare nested arrays: "matrix2x2": [["double"]].
+* Compiler rewritten from scratch: cleaner code, better more informative error handling.
+* Compiler command line now accepts file names (optionally): dart run packme \<srcDirectory> \<outDirectory> [file1, file2, file3...].
 
 ## v1.2.1
 * Bugfix: Uint8List with unexpected length caused out-of-range exception in pack/unpack methods.

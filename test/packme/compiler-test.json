@@ -12,12 +12,18 @@
 		"version": "@half_life_version"
 	},
 
+	"info_subclass@info_entity": {
+		"weight": "double",
+		"comment": "string"
+	},
+
 	"send_info": [
 		{
 			"id": ["uint8"],
 			"notes": ["string"],
 			"version": "@half_life_version",
-			"entity": "@info_entity"
+			"entity": "@info_entity",
+			"sub_entity": "@info_subclass"
 		}
 	],
 

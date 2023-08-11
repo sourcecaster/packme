@@ -44,7 +44,7 @@
 ///
 /// 	"get_posts": [
 /// 		{
-/// 			"from": "datatime",
+/// 			"from": "datetime",
 /// 			"amount": "uint16"
 /// 		},
 /// 		{

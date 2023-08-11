@@ -36,6 +36,11 @@ TestMessage generateTestMessage() {
             <int>[4, 5, 6],
             <int>[7, 8, 9, 10],
         ],
+        reqInherited: SubObject(
+            a: 128,
+            b: 'I am inherited from nested 😎',
+            c: double.infinity
+        ),
         optId: Uint8List.fromList(<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
         optIds: <Uint8List>[
             Uint8List.fromList(<int>[1, 2, 3, 4]),
@@ -66,7 +71,12 @@ TestMessage generateTestMessage() {
             <int>[2, 3],
             <int>[4, 5, 6],
             <int>[7, 8, 9, 10],
-        ]
+        ],
+        optInherited: SubObject(
+            a: 128,
+            b: 'I am inherited from nested 😎',
+            c: double.infinity
+        )
     );
 }
 
@@ -110,6 +120,9 @@ void main() {
         expect(message.reqNested.a, equals(sample.reqNested.a));
         expect(message.reqNested.b, equals(sample.reqNested.b));
         expect(message.reqNestedList, equals(sample.reqNestedList));
+        expect(message.reqInherited.a, equals(sample.reqInherited.a));
+        expect(message.reqInherited.b, equals(sample.reqInherited.b));
+        expect(message.reqInherited.c, equals(sample.reqInherited.c));
         expect(message.optId, equals(sample.optId));
         expect(message.optIds, equals(sample.optIds));
         expect(message.optInt8, equals(sample.optInt8));
@@ -129,5 +142,8 @@ void main() {
         expect(message.optNested!.a, equals(sample.optNested!.a));
         expect(message.optNested!.b, equals(sample.optNested!.b));
         expect(message.optNestedList, equals(sample.optNestedList));
+        expect(message.optInherited!.a, equals(sample.optInherited!.a));
+        expect(message.optInherited!.b, equals(sample.optInherited!.b));
+        expect(message.optInherited!.c, equals(sample.optInherited!.c));
     });
 }

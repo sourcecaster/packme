@@ -29,6 +29,14 @@ void main() {
                 value: 19,
                 flag: true,
                 version: HalfLifeVersion.four
+            ),
+            subEntity: InfoSubclass(
+                string: 'Alyx Vance',
+                value: 19,
+                flag: false,
+                version: HalfLifeVersion.two,
+                weight: 1,
+                comment: 'Doctor Freeman, I presume?',
             )
         );
         final GetDataRequest getDataRequest = GetDataRequest(id: <int>[1, 7]);
@@ -38,7 +46,7 @@ void main() {
             GetDataResponseItem(),
             GetDataResponseItem(flag: true),
         ]);
-        expect(sendInfoMessage.$estimate(), equals(37));
+        expect(sendInfoMessage.$estimate(), equals(95));
         expect(getDataResponse.$estimate(), equals(50));
         expect(getDataRequest.$estimate(), equals(15));
     });

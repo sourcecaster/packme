@@ -10,6 +10,9 @@ class Message extends Node {
             throw Exception('Message node "$tag" in ${container.filename}.json is resulted with the name "$name", which is reserved by Dart language.');
         }
         messageObject = Object(container, '${tag}_message', manifest.first as Map<String, dynamic>, id: id);
+        if (messageObject.inheritTag.isNotEmpty) {
+            throw Exception('Message node "$tag" in ${container.filename}.json can not be inherited from any other node.');
+        }
     }
 
     final int id;

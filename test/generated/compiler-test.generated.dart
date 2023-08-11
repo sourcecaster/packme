@@ -50,6 +50,48 @@ class InfoEntity extends PackMeMessage {
 	}
 }
 
+class InfoSubclass extends InfoEntity {
+	InfoSubclass({
+		required String string,
+		required int value,
+		required bool flag,
+		required HalfLifeVersion version,
+		required this.weight,
+		required this.comment,
+	}) : super(string: string, value: value, flag: flag, version: version);
+	InfoSubclass.$empty() : super.$empty();
+
+	late double weight;
+	late String comment;
+
+	@override
+	int $estimate() {
+		int _bytes = super.$estimate();
+		_bytes += 8;
+		_bytes += $stringBytes(comment);
+		return _bytes;
+	}
+
+	@override
+	void $pack() {
+		super.$pack();
+		$packDouble(weight);
+		$packString(comment);
+	}
+
+	@override
+	void $unpack() {
+		super.$unpack();
+		weight = $unpackDouble();
+		comment = $unpackString();
+	}
+
+	@override
+	String toString() {
+		return 'InfoSubclass\x1b[0m(weight: ${PackMe.dye(weight)}, comment: ${PackMe.dye(comment)}) of ${super.toString()}';
+	}
+}
+
 class GetDataResponseItem extends PackMeMessage {
 	GetDataResponseItem({
 		this.string,
@@ -109,6 +151,7 @@ class SendInfoMessage extends PackMeMessage {
 		required this.notes,
 		required this.version,
 		required this.entity,
+		required this.subEntity,
 	});
 	SendInfoMessage.$empty();
 
@@ -116,6 +159,7 @@ class SendInfoMessage extends PackMeMessage {
 	late List<String> notes;
 	late HalfLifeVersion version;
 	late InfoEntity entity;
+	late InfoSubclass subEntity;
 
 	@override
 	int $estimate() {
@@ -124,6 +168,7 @@ class SendInfoMessage extends PackMeMessage {
 		_bytes += 4 + id.length * 1;
 		_bytes += 4 + notes.fold(0, (int a, String b) => a + $stringBytes(b));
 		_bytes += entity.$estimate();
+		_bytes += subEntity.$estimate();
 		return _bytes;
 	}
 
@@ -140,6 +185,7 @@ class SendInfoMessage extends PackMeMessage {
 		}
 		$packUint8(version.index);
 		$packMessage(entity);
+		$packMessage(subEntity);
 	}
 
 	@override
@@ -153,11 +199,12 @@ class SendInfoMessage extends PackMeMessage {
 		});
 		version = HalfLifeVersion.values[$unpackUint8()];
 		entity = $unpackMessage(InfoEntity.$empty());
+		subEntity = $unpackMessage(InfoSubclass.$empty());
 	}
 
 	@override
 	String toString() {
-		return 'SendInfoMessage\x1b[0m(id: ${PackMe.dye(id)}, notes: ${PackMe.dye(notes)}, version: ${PackMe.dye(version)}, entity: ${PackMe.dye(entity)})';
+		return 'SendInfoMessage\x1b[0m(id: ${PackMe.dye(id)}, notes: ${PackMe.dye(notes)}, version: ${PackMe.dye(version)}, entity: ${PackMe.dye(entity)}, subEntity: ${PackMe.dye(subEntity)})';
 	}
 }
 

@@ -1,18 +1,50 @@
 ## What is PackMe
-PackMe is a lightweight library for packing your data into binary buffer (presumably in order to be sent over TCP connection) and unpacking it back to class objects described in a simple way via JSON manifest files.
+Two words: binary serialization. Or rather, four words: Blazing Fast Binary Serialization (BFBS). PackMe is a lightweight library that allows using your JSON description of data protocols to generate all necessary classes (Flutter/Dart, JS, C++ etc.) for your client-server binary data communication.
+<table><tr><td>
 
-## It is Fast 
-Spoiler alert! ~500k pack/unpack cycles per second for data of average size and complexity. Of course it depends on system configuration :)
+```json
+"demand": [
+    {
+        "request": "string",
+        "deadline": "datetime"
+    },
+    {
+        "excuses": ["string"]
+    }
+]
 
-Since PackMe generates .dart classes, there is no need for any resource demanding serialization/deserialization process. No intermediate steps involved, every class has it's own efficient methods to quickly put all data to Uint8List buffer and extract it. Comparing to popular solutions it's performance is similar to FlatBuffers and greatly outperforms Proto Buffers.
+```
 
-## It is Simple
-No special file formats (like for FlatBuffers or Proto Buffers manifest files), just use JSON. Objects, types and messages declarations are very simple and intuitive.
+</td><td>
+
+```dart
+Future<void> main() async {
+    // ... Simple as that!
+    Uint8List buffer = packMe.pack(DemandRequest(
+        request: "I demand an answer!",
+        deadline: DateTime.now()
+    ));
+    buffer = await serverQuery(buffer);
+    DemandResponse myAnswer = packMe.unpack(buffer);
+    myAnswer.excuses.forEach(print);
+}
+```
+
+</td></tr></table>
+
+
+## Performance 
+BFBS. Spoiler alert! 500,000+ pack/unpack cycles per second for data of average size and complexity (see example.dart).
+
+Since PackMe generates .dart classes, there is no need for resource demanding serialization/deserialization process. With no intermediate steps involved, each class has efficient methods to quickly place all data into a Uint8List buffer and extract it. Compared to popular solutions, it completely outmatches JSON or Protobuf in terms of performance.
+
+## Simplicity & Security
+PackMe offers simplicity without need for special syntax knowledge - just use JSON. Declare types, messages and requests with ease. Moreover, the generated classes ensure data consistency, enhancing processing efficiency and fortifying server side security.
 
 ## Usage
-The best way of using it for client-server applications is by using ConnectMe package which provides all necessary stuff like adding message listeners, calling asynchronous queries etc. But you can use it separately as well.
+The most effective way to use it in client-server applications is through the [ConnectMe](https://pub.dev/packages/connectme) package, which provides essential features like message listeners and asynchronous queries. Nevertheless, it can also be used separately.
 
-Here's a simple manifest.json file (located in packme directory) for some hypothetical client-server application:
+Here's a simple manifest.json file (located in the "protocols" directory) for a hypothetical client-server application:
 ```json
 {
     "get_user": [
@@ -27,16 +59,17 @@ Here's a simple manifest.json file (located in packme directory) for some hypoth
     ]
 }
 ```
-Generate dart files: 
+It implies that the client can get a user with the specified "id" from the server. The first step is to generate your classes: 
 ```bash
-# Usage: dart run packme <json_manifests_dir> <generated_classes_dir>
-dart run packme packme generated
+# Usage: dart run packme <json_manifests_dir> <generated_classes_dir> [<file1>, <file2>...]
+> dart run packme protocols generated
 ```
-Using on client side:
+Next, let's import manifest.generated.dart and proceed with a simple code for both client and server sides. Here goes the client side first:
 ```dart
-import 'generated/manifest.generated.dart';
 import 'package:packme/packme.dart';
+import 'generated/manifest.generated.dart';
 
+// Hypothetical application client
 void main() {
     // ... whatever code goes here
 
@@ -55,11 +88,12 @@ void main() {
     });
 }
 ```
-Using on server side:
+Now the server side:
 ```dart
-import 'generated/manifest.generated.dart';
 import 'package:packme/packme.dart';
+import 'generated/manifest.generated.dart';
 
+// Hypothetical application server
 void main() {
     // ... whatever code goes here
 
@@ -70,54 +104,114 @@ void main() {
     server.listen((Uint8List data, SomeSocket socket) { // Some server implementation
         final PackMeMessage? message = packMe.unpack(data);
         if (message is GetUserRequest) {
-            GetUserResponse response = GetUserResponse(
+            GetUserResponse response = message.$response(
                 firstName: 'Peter',
                 lastName: 'Hollens',
-                age: 39,
+                age: 41,
             );
-            // Or: GetUserResponse response = message.$response(
-            //     firstName: 'Peter',
-            //     lastName: 'Hollens',
-            //     age: 39,
-            // );
+            // We could as well use GetUserResponse(...) but, using message.$response(...)
+            // is more valid since it sets internal $transactionId value which can be used 
+            // to determine which exactly request this response is related to.
             socket.send(packMe.pack(response));
         }
     });
 }
 ```
 
-## Messages
-There are two types of messages: single messages and request / response messages. Single message is declared as an array with single object in JSON:
-```json
-"update": [{
-    "field_1": "uint8",
-    "field_2": "uint8",
-    "field_3": "uint8"
-}]
-```
-This will create class "UpdateMessage". Single messages are used when you need to send some data one way, for example, periodic updates. Request / response messages are declared as an array with two objects:
-```json
-"get_something": [{
-    "field_1": "uint8",
-}, {
-    "field_1": "uint8",
-    "field_2": "uint8",
-    "field_3": "uint8"
-}]
-```
-This will generate two classes: "GetSomethingRequest" and "GetSomethingResponse". Request class will have method $response(...) which returns an instance of response class.
+## JSON Nodes
+The JSON manifest is structured as an object containing various nodes. There are four different types of nodes you can create: enumeration, object, message and request.
 
-## Optional fields
-By default, all fields are required. In order to declare an optional field, use "?" prefix:
+### Enumeration
+Declares a custom enumeration data type which you can later refer to:
 ```json
+"message_status": [
+    "sent",
+    "delivered",
+    "read",
+    "unsent"
+]
+```
+It will generate enum "MessageStatus". In order to declare a field of this enum type use "@" as a type prefix:
+```json
+"status": "@message_status"
+```
+
+### Object
+Declares a custom object (class) data type which can be referred to:
+```json
+"user_profile": {
+    "first_name": "string",
+    "last_name": "string",
+    "birth_date": "datetime"
+}
+```
+It will generate class "UserProfile". In order to declare a field of object type use "@" as a type prefix:
+```json
+"profile": "@user_profile"
+```
+**Objects can inherit other objects.** Use the symbol "@" to specify the object to inherit:
+```json
+"animal": {
+    "legs": "uint8",
+    "tail": "bool"
+},
+
+"cat@animal": {
+    "color": "@color_enum",
+    "fur": "bool"
+}
+```
+If the object you want to inherit is located in another file, use the following format: \<name>@\<filename>:\<object>. For instance, if the object "animal" is declared in the file "data_types.json":
+```json
+"cat@data_types:animal": {
+    "color": "@color_enum",
+    "fur": "bool"
+}
+```
+
+### Message
+Declares a message object (command) designed to be packed into a binary buffer and transmitted through a communication channel. Message is declared as an array of a single object (single - because it implies a one-way transaction with no response expected):
+```json
+"update": [
+    {
+        "field_1": "uint8",
+        "field_2": "uint16",
+        "field_3": "uint32"
+    }
+]
+```
+This will generate class "UpdateMessage". Messages are utilized for one-way data transmission, such as periodic updates.
+
+### Request
+Declares a request/response object (query) intended to be packed into a binary buffer and transmitted through a communication channel. Request is declared as an array of two objects (because it describes both the request and the expected response):
+```json
+"get_something": [
+    {
+        "field_1": "uint8",
+    }, 
+    {
+        "field_1": "uint16",
+        "field_2": "uint32",
+        "field_3": "uint64"
+    }
+]
+```
+This will generate two classes: "GetSomethingRequest" and "GetSomethingResponse". The Request class will include the method $response(...) which returns an instance of the Response class.
+
+## Fields and Data Types
+Fields are declared as key-value pairs of objects, where the key represents the field name and value defines the data type of that field. You can declare fields of standard types (such as uint32, double, string) or custom types (declared enum/object or nested object). Array of any type can be used as well.
+
+By default, all fields are required. In order to declare an optional (nullable) field, use "?" prefix:
+```json
+"something_required": "string",
 "?something_optional": "string"
 ```
-Using optional fields is a good way to optimize resulting packet size since PackMe does not store any data for null valued fields.
-
-## Types
-You can declare fields of standard type (such as uint32, double, string), custom type (declared enums or objects) or nested object type.
+Using optional fields is a good way to optimize resulting packet size since PackMe does not store any data in the buffer for null valued fields.
 
 ### Integer types
+```json
+"timestamp": "uint32"
+```
 - uint8 - 8 bits (from 0 to 255)
 - int8 - 8 bits (from -128 to 127)
 - uint16 - 16 bits (from 0 to 65,535)
@@ -128,6 +222,9 @@ You can declare fields of standard type (such as uint32, double, string), custom
 - int64 - 8 bits (from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807)
 
 ### Floating point types
+```json
+"temperature": "double"
+```
 - float - 32 bits (from -3.4E+38 to 3.4E+38, ~7 significant digits)
 - double - 64 bits (from -1.7E+308 to 1.7E+308, ~16 significant digits)
 
@@ -136,7 +233,7 @@ You can declare fields of standard type (such as uint32, double, string), custom
 "mongo_id": "binary12",
 "some_hash": "binary64"
 ```
-Declaration above defines two binary buffers: 12 and 64 bytes length.
+The declaration above defines two Uint8List fields: one with a length of 12 bytes and another with a length of 64 bytes.
 
 ### Bool
 ```json
@@ -154,62 +251,56 @@ All strings are interpreted and stored as UTF-8 strings.
 ```json
 "event_date": "datetime"
 ```
-DateTime is packed as 64-bit signed integer (number of milliseconds that have elapsed since the Unix epoch).
-
-### Enum
-Enum is a custom type you can declare in the same JSON manifest file or in the separate one. Enum is declared as an array of strings:
-```json
-"message_status": [
-    "sent",
-    "delivered",
-    "read",
-    "unsent"
-]
-```
-It will generate enum "MessageStatus". In order to declare a field of enum type use "@" as a type prefix:
-```json
-"status": "@message_status"
-```
-
-### Object
-Like enums objects can be declared in any JSON file. It will be accessible for all manifest files. Object is declared as an object:
-```json
-"user_profile": {
-    "first_name": "string",
-    "last_name": "string",
-    "birth_date": "datetime"
-}
-```
-It will generate class "UserProfile". In order to declare a field of object type use "@" as a type prefix:
-```json
-"profile": "@user_profile"
-```
+DateTime fields are packed as 64-bit signed integers (number of milliseconds that have elapsed since the Unix epoch).
 
 ### Nested object
 It is possible to use nested objects as field types:
 ```json
-"send_update": [{
-    "values": {
-        "min": "double",
-        "max": "double"
-    },
-    "rates": [{
-        "a": "float",
-        "b": "float",
-        "c": "float"
-    }]
-}]
+// Some message declaration
+"position_update": [
+    {
+        "time": "datetime",
+        "coordinates": {
+            "x": "double",
+            "y": "double"
+        }
+    }
+]
 ```
-In this case additional classes will be created: "SendUpdateMessageValues" and "SendUpdateMessageRate" which will be used as types for "values" and "rates" properties of "SendUpdateMessage" class.
+In this case an additional class named "PositionUpdateMessageCoordinates" will be generated, with "x" and "y" properties implemented.
 
-## Arrays
+### Reference
+```json
+"owner": "@user",
+"color": "@color_enum"
+```
+References are declared with the prefix "@" enabling the utilization of previously declared objects and enumerations. Note that an object declaration can include a field that references the same object within which it's declared.
+
+If the object you want to refer is located in another file, use the following format: \<name>@\<filename>:\<object>. For instance, if the object "user" is declared in the file "data_types.json":
+```json
+"owner": "@data_types:user",
+```
+
+### Array
 If you need to declare a field as an array of specific type, just put your type string into square brackets:
 ```json
-"object_ids": ["binary12"],
-"numbers": ["uint32"],
-"names": ["string"],
-"users": ["@user"]
+// Some object declaration
+"data": {
+    "object_ids": ["binary12"],
+    "numbers": ["uint32"],
+    "names": ["string"],
+    "users": ["@user"],
+    "children": [{
+        "name": "string",
+        "age": "uint8"
+    }]
+    "matrix2x2": [["double"]]
+}
 ```
+As you can see, arrays of nested objects and nested arrays are also supported. 
 
-## Supported platforms
-Now it's available for Dart and JavaScript. Will there be more platforms? Well it depends... If developers will find this package useful then it will be implemented for C++ I guess.
+It's worth noting that in this instance, an additional class named "DataChild" will be generated for the "children" field. Pay attention to a singular form of the field's name "children". Therefore the "children" property of the "Data" class will be declared as:
+```dart
+List<DataChild> children;
+```
+A singular form of the field's name will be used if possible every time you declare an array of nested objects.

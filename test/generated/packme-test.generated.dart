@@ -43,6 +43,41 @@ class NestedObject extends PackMeMessage {
 	}
 }
 
+class SubObject extends NestedObject {
+	SubObject({
+		required int a,
+		required String b,
+		required this.c,
+	}) : super(a: a, b: b);
+	SubObject.$empty() : super.$empty();
+
+	late double c;
+
+	@override
+	int $estimate() {
+		int _bytes = super.$estimate();
+		_bytes += 8;
+		return _bytes;
+	}
+
+	@override
+	void $pack() {
+		super.$pack();
+		$packDouble(c);
+	}
+
+	@override
+	void $unpack() {
+		super.$unpack();
+		c = $unpackDouble();
+	}
+
+	@override
+	String toString() {
+		return 'SubObject\x1b[0m(c: ${PackMe.dye(c)}) of ${super.toString()}';
+	}
+}
+
 class TestMessage extends PackMeMessage {
 	TestMessage({
 		required this.reqId,
@@ -65,6 +100,7 @@ class TestMessage extends PackMeMessage {
 		required this.reqEnum,
 		required this.reqNested,
 		required this.reqNestedList,
+		required this.reqInherited,
 		this.optInt8,
 		this.optUint8,
 		this.optInt16,
@@ -81,6 +117,7 @@ class TestMessage extends PackMeMessage {
 		this.optEnum,
 		this.optNested,
 		this.optNestedList,
+		this.optInherited,
 	});
 	TestMessage.$empty();
 
@@ -104,6 +141,7 @@ class TestMessage extends PackMeMessage {
 	late TestEnum reqEnum;
 	late NestedObject reqNested;
 	late List<List<int>> reqNestedList;
+	late SubObject reqInherited;
 	int? optInt8;
 	int? optUint8;
 	int? optInt16;
@@ -120,6 +158,7 @@ class TestMessage extends PackMeMessage {
 	TestEnum? optEnum;
 	NestedObject? optNested;
 	List<List<int>>? optNestedList;
+	SubObject? optInherited;
 
 	@override
 	int $estimate() {
@@ -134,6 +173,7 @@ class TestMessage extends PackMeMessage {
 		_bytes += 4 + reqList.length * 1;
 		_bytes += reqNested.$estimate();
 		_bytes += 4 + reqNestedList.fold(0, (int a, List<int> b) => a + 4 + b.length * 4);
+		_bytes += reqInherited.$estimate();
 		$setFlag(optInt8 != null);
 		if (optInt8 != null) _bytes += 1;
 		$setFlag(optUint8 != null);
@@ -166,6 +206,8 @@ class TestMessage extends PackMeMessage {
 		if (optNested != null) _bytes += optNested!.$estimate();
 		$setFlag(optNestedList != null);
 		if (optNestedList != null) _bytes += 4 + optNestedList!.fold(0, (int a, List<int> b) => a + 4 + b.fold(0, (int a, int b) => a + 4));
+		$setFlag(optInherited != null);
+		if (optInherited != null) _bytes += optInherited!.$estimate();
 		return _bytes;
 	}
 
@@ -210,6 +252,7 @@ class TestMessage extends PackMeMessage {
 				$packInt32(reqNestedList[_i13][_i19]);
 			}
 		}
+		$packMessage(reqInherited);
 		if (optInt8 != null) $packInt8(optInt8!);
 		if (optUint8 != null) $packUint8(optUint8!);
 		if (optInt16 != null) $packInt16(optInt16!);
@@ -239,6 +282,7 @@ class TestMessage extends PackMeMessage {
 				}
 			}
 		}
+		if (optInherited != null) $packMessage(optInherited!);
 	}
 
 	@override
@@ -277,6 +321,7 @@ class TestMessage extends PackMeMessage {
 				return $unpackInt32();
 			});
 		});
+		reqInherited = $unpackMessage(SubObject.$empty());
 		if ($getFlag()) optInt8 = $unpackInt8();
 		if ($getFlag()) optUint8 = $unpackUint8();
 		if ($getFlag()) optInt16 = $unpackInt16();
@@ -303,11 +348,12 @@ class TestMessage extends PackMeMessage {
 				});
 			});
 		}
+		if ($getFlag()) optInherited = $unpackMessage(SubObject.$empty());
 	}
 
 	@override
 	String toString() {
-		return 'TestMessage\x1b[0m(reqId: ${PackMe.dye(reqId)}, optId: ${PackMe.dye(optId)}, reqIds: ${PackMe.dye(reqIds)}, optIds: ${PackMe.dye(optIds)}, reqInt8: ${PackMe.dye(reqInt8)}, reqUint8: ${PackMe.dye(reqUint8)}, reqInt16: ${PackMe.dye(reqInt16)}, reqUint16: ${PackMe.dye(reqUint16)}, reqInt32: ${PackMe.dye(reqInt32)}, reqUint32: ${PackMe.dye(reqUint32)}, reqInt64: ${PackMe.dye(reqInt64)}, reqUint64: ${PackMe.dye(reqUint64)}, reqFloat: ${PackMe.dye(reqFloat)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, reqList: ${PackMe.dye(reqList)}, reqEnum: ${PackMe.dye(reqEnum)}, reqNested: ${PackMe.dye(reqNested)}, reqNestedList: ${PackMe.dye(reqNestedList)}, optInt8: ${PackMe.dye(optInt8)}, optUint8: ${PackMe.dye(optUint8)}, optInt16: ${PackMe.dye(optInt16)}, optUint16: ${PackMe.dye(optUint16)}, optInt32: ${PackMe.dye(optInt32)}, optUint32: ${PackMe.dye(optUint32)}, optInt64: ${PackMe.dye(optInt64)}, optUint64: ${PackMe.dye(optUint64)}, optFloat: ${PackMe.dye(optFloat)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, optList: ${PackMe.dye(optList)}, optEnum: ${PackMe.dye(optEnum)}, optNested: ${PackMe.dye(optNested)}, optNestedList: ${PackMe.dye(optNestedList)})';
+		return 'TestMessage\x1b[0m(reqId: ${PackMe.dye(reqId)}, optId: ${PackMe.dye(optId)}, reqIds: ${PackMe.dye(reqIds)}, optIds: ${PackMe.dye(optIds)}, reqInt8: ${PackMe.dye(reqInt8)}, reqUint8: ${PackMe.dye(reqUint8)}, reqInt16: ${PackMe.dye(reqInt16)}, reqUint16: ${PackMe.dye(reqUint16)}, reqInt32: ${PackMe.dye(reqInt32)}, reqUint32: ${PackMe.dye(reqUint32)}, reqInt64: ${PackMe.dye(reqInt64)}, reqUint64: ${PackMe.dye(reqUint64)}, reqFloat: ${PackMe.dye(reqFloat)}, reqDouble: ${PackMe.dye(reqDouble)}, reqBool: ${PackMe.dye(reqBool)}, reqString: ${PackMe.dye(reqString)}, reqList: ${PackMe.dye(reqList)}, reqEnum: ${PackMe.dye(reqEnum)}, reqNested: ${PackMe.dye(reqNested)}, reqNestedList: ${PackMe.dye(reqNestedList)}, reqInherited: ${PackMe.dye(reqInherited)}, optInt8: ${PackMe.dye(optInt8)}, optUint8: ${PackMe.dye(optUint8)}, optInt16: ${PackMe.dye(optInt16)}, optUint16: ${PackMe.dye(optUint16)}, optInt32: ${PackMe.dye(optInt32)}, optUint32: ${PackMe.dye(optUint32)}, optInt64: ${PackMe.dye(optInt64)}, optUint64: ${PackMe.dye(optUint64)}, optFloat: ${PackMe.dye(optFloat)}, optDouble: ${PackMe.dye(optDouble)}, optBool: ${PackMe.dye(optBool)}, optString: ${PackMe.dye(optString)}, optList: ${PackMe.dye(optList)}, optEnum: ${PackMe.dye(optEnum)}, optNested: ${PackMe.dye(optNested)}, optNestedList: ${PackMe.dye(optNestedList)}, optInherited: ${PackMe.dye(optInherited)})';
 	}
 }
 
