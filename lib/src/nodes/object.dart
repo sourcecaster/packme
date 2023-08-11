@@ -35,13 +35,17 @@ class Object extends Node {
             throw Exception('Node "$tag" in ${container.filename}.json refers to file "$filename.json" '
                 'which is not found within the current compilation process.');
         }
-        try {
-            return container.containers[filename]!.nodes.firstWhere((Node n) => n is Object && n.tag == referenceTag) as Object;
+        final int index = container.containers[filename]!.nodes.indexWhere((Node n) => n is Object && n.tag == referenceTag);
+        if (index == -1) throw Exception('Node "$tag" in ${container.filename}.json refers to node "$referenceTag" '
+            'in $filename.json, but such enum/object node does not exist.');
+        final Object resultObject = container.containers[filename]!.nodes[index] as Object;
+        for (final Field field in fields) {
+            if (resultObject.fields.indexWhere((Field inheritedField) => field.name == inheritedField.name) != -1) {
+                throw Exception('Node "$tag" in ${container.filename}.json has a field "${field.name}" declaration '
+                    'which is already inherited from the node "${resultObject.tag}" in ${container.filename}.json.');
+            }
         }
-        catch (err) {
-            throw Exception('Node "$tag" in ${container.filename}.json refers to node "$referenceTag" in $filename.json, '
-                'but such enum/object node does not exist.');
-        }
+        return resultObject;
     }
 
     @override
