@@ -18,17 +18,34 @@ class ArrayField extends Field {
         : '4 + $name.fold(0, (int a, ${field.type} b) => a + ${field.estimator('b')})';
 
     @override
-    String packer([String name = '']) => '';
+    String packer([String name = '']) {
+        final String i = '_i${name.length}';
+        return <String>[
+            '\$packUint32($name.length);',
+            'for (int $i = 0; $i < $name.length; $i++) {',
+                '${field.packer('$name[$i]')}${field is! ArrayField ? ';' : ''}',
+            '}'
+        ].join('\n');
+    }
 
     @override
-    String unpacker([String name = '']) => '';
+    String unpacker([String name = '']) {
+        final String i = '_i${name.length}';
+        return <String>[
+            '$name = <${field.type}>[];',
+            'final int ${i}Length = \$unpackUint32();',
+            'for (int $i = 0; $i < ${i}Length; $i++) {',
+                if (field is ArrayField) field.unpacker('$name[$i]')
+                else '$name.add(${field.unpacker('$name[$i]')})${field is! ArrayField ? ';' : ''}',
+            '}',
+        ].join('\n');
+    }
 
     @override
     List<String> get pack {
         return <String>[
             if (optional) 'if ($name != null) {',
-            '\$packUint32($nameEnsured.length);',
-            'for (int i = 0; i < $nameEnsured.length; i++) ${field.packer('$nameEnsured[i]')};',
+            ...packer(nameEnsured).split('\n'),
             if (optional) '}',
         ];
     }
@@ -37,9 +54,7 @@ class ArrayField extends Field {
     List<String> get unpack {
         return <String>[
             if (optional) r'if ($getFlag()) {',
-            '$name = <${field.type}>[];',
-            'final int _${name}Length = \$unpackUint32();',
-            'for (int i = 0; i < _${name}Length; i++) $nameEnsured.add(${field.unpacker()});',
+            ...unpacker(nameEnsured).split('\n'),
             if (optional) '}',
         ];
     }

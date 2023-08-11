@@ -72,7 +72,9 @@ class GetUsersResponseUser extends PackMeMessage {
 	@override
 	void $pack() {
 		$packUint32(id.length);
-		for (int i = 0; i < id.length; i++) $packUint8(id[i]);
+		for (int _i2 = 0; _i2 < id.length; _i2++) {
+			$packUint8(id[_i2]);
+		}
 		$packMessage(profile);
 		$packUint8(status.index);
 	}
@@ -80,8 +82,10 @@ class GetUsersResponseUser extends PackMeMessage {
 	@override
 	void $unpack() {
 		id = <int>[];
-		final int _idLength = $unpackUint32();
-		for (int i = 0; i < _idLength; i++) id.add($unpackUint8());
+		final int _i2Length = $unpackUint32();
+		for (int _i2 = 0; _i2 < _i2Length; _i2++) {
+			id.add($unpackUint8());
+		}
 		profile = $unpackMessage(UserProfile.$empty());
 		status = UserStatus.values[$unpackUint8()];
 	}
@@ -157,15 +161,19 @@ class GetUsersResponse extends PackMeMessage {
 	void $pack() {
 		$initPack(1070081631);
 		$packUint32(users.length);
-		for (int i = 0; i < users.length; i++) $packMessage(users[i]);
+		for (int _i5 = 0; _i5 < users.length; _i5++) {
+			$packMessage(users[_i5]);
+		}
 	}
 
 	@override
 	void $unpack() {
 		$initUnpack();
 		users = <GetUsersResponseUser>[];
-		final int _usersLength = $unpackUint32();
-		for (int i = 0; i < _usersLength; i++) users.add($unpackMessage(GetUsersResponseUser.$empty()));
+		final int _i5Length = $unpackUint32();
+		for (int _i5 = 0; _i5 < _i5Length; _i5++) {
+			users.add($unpackMessage(GetUsersResponseUser.$empty()));
+		}
 	}
 
 	@override
@@ -205,15 +213,19 @@ class GetUserRequest extends PackMeMessage {
 	void $pack() {
 		$initPack(711286423);
 		$packUint32(userId.length);
-		for (int i = 0; i < userId.length; i++) $packUint8(userId[i]);
+		for (int _i6 = 0; _i6 < userId.length; _i6++) {
+			$packUint8(userId[_i6]);
+		}
 	}
 
 	@override
 	void $unpack() {
 		$initUnpack();
 		userId = <int>[];
-		final int _userIdLength = $unpackUint32();
-		for (int i = 0; i < _userIdLength; i++) userId.add($unpackUint8());
+		final int _i6Length = $unpackUint32();
+		for (int _i6 = 0; _i6 < _i6Length; _i6++) {
+			userId.add($unpackUint8());
+		}
 	}
 
 	@override
@@ -254,7 +266,9 @@ class GetUserResponse extends PackMeMessage {
 		$packMessage(profile);
 		$packDateTime(created);
 		$packUint32(sessions.length);
-		for (int i = 0; i < sessions.length; i++) $packMessage(sessions[i]);
+		for (int _i8 = 0; _i8 < sessions.length; _i8++) {
+			$packMessage(sessions[_i8]);
+		}
 		if (social != null) $packMessage(social!);
 	}
 
@@ -265,8 +279,10 @@ class GetUserResponse extends PackMeMessage {
 		profile = $unpackMessage(UserProfile.$empty());
 		created = $unpackDateTime();
 		sessions = <UserSession>[];
-		final int _sessionsLength = $unpackUint32();
-		for (int i = 0; i < _sessionsLength; i++) sessions.add($unpackMessage(UserSession.$empty()));
+		final int _i8Length = $unpackUint32();
+		for (int _i8 = 0; _i8 < _i8Length; _i8++) {
+			sessions.add($unpackMessage(UserSession.$empty()));
+		}
 		if ($getFlag()) social = $unpackMessage(GetUserResponseSocial.$empty());
 	}
 
@@ -304,15 +320,19 @@ class DeleteUserRequest extends PackMeMessage {
 	void $pack() {
 		$initPack(117530906);
 		$packUint32(userId.length);
-		for (int i = 0; i < userId.length; i++) $packUint8(userId[i]);
+		for (int _i6 = 0; _i6 < userId.length; _i6++) {
+			$packUint8(userId[_i6]);
+		}
 	}
 
 	@override
 	void $unpack() {
 		$initUnpack();
 		userId = <int>[];
-		final int _userIdLength = $unpackUint32();
-		for (int i = 0; i < _userIdLength; i++) userId.add($unpackUint8());
+		final int _i6Length = $unpackUint32();
+		for (int _i6 = 0; _i6 < _i6Length; _i6++) {
+			userId.add($unpackUint8());
+		}
 	}
 
 	@override
