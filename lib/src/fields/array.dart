@@ -4,7 +4,7 @@ part of packme.compiler;
 
 class ArrayField extends Field {
     ArrayField(Node node, String tag, List<dynamic> manifest) :
-            field = Field.fromEntry(node, MapEntry<String, dynamic>(tag, manifest.first)),
+            field = Field.fromEntry(node, MapEntry<String, dynamic>(tag, manifest.first), parentIsArray: true),
             super(node, tag, manifest);
 
     final Field field;

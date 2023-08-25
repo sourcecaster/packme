@@ -3,8 +3,8 @@
 part of packme.compiler;
 
 class ObjectField extends Field {
-    ObjectField(Node node, String tag, Map<String, dynamic> manifest) :
-            embeddedObject = Object(node.container, '${node.tag}_${toSingular(tag)}', manifest),
+    ObjectField(Node node, String tag, Map<String, dynamic> manifest, { bool parentIsArray = false }) :
+            embeddedObject = Object(node.container, '${node.tag}_${parentIsArray ? toSingular(tag) : tag}', manifest),
             super(node, tag, manifest) {
         node.embed(embeddedObject);
     }

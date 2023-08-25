@@ -11,7 +11,7 @@ abstract class Field {
     }
 
     /// Try to create a Node instance of corresponding type
-    static Field fromEntry(Node node, MapEntry<String, dynamic> entry) {
+    static Field fromEntry(Node node, MapEntry<String, dynamic> entry, { bool parentIsArray = false }) {
         if (entry.value is String) {
             final String manifest = entry.value as String;
             if (manifest == 'bool') return BoolField(node, entry.key, manifest);
@@ -23,7 +23,7 @@ abstract class Field {
             if (RegExp(r'^@.+').hasMatch(manifest)) return ReferenceField(node, entry.key, manifest);
         }
         if (entry.value is List && entry.value.length == 1) return ArrayField(node, entry.key, entry.value as List<dynamic>);
-        if (entry.value is Map) return ObjectField(node, entry.key, entry.value as Map<String, dynamic>);
+        if (entry.value is Map) return ObjectField(node, entry.key, entry.value as Map<String, dynamic>, parentIsArray: parentIsArray);
         throw Exception('Field "${entry.key}" of node "${node.tag}" in ${node.container.filename}.json has invalid type. '
             'Valid types are: bool, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, datetime, string, binary# (e.g.: "binary16"). '
             'It can also be an array of type (e.g. ["int8"]), a reference to an object (e.g. "@item") or embedded object itself: { <field>: <type>, ... }');

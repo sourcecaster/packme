@@ -1,3 +1,6 @@
+## v2.0.1
+* Bugfix: singular form of embedded object field name was used even if it was not wrapped with array brackets.
+
 ## v2.0.0
 * BREAKING CHANGE: references made with prefix \@ are not loaded from other files automatically, use \@filename:refname in that case.
 * Object inheritance is now supported: "animal": { \<fields> }, "cat@animal": { \<additional fields> }.
