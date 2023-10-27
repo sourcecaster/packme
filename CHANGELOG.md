@@ -1,3 +1,6 @@
+## v2.0.2
+* Bugfix: inherited objects processing bug fixed.
+
 ## v2.0.1
 * Bugfix: singular form of embedded object field name was used even if it was not wrapped with array brackets.
 

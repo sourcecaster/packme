@@ -15,6 +15,18 @@ class InfoEntity extends PackMeMessage {
 	});
 	InfoEntity.$empty();
 
+	static Map<Type, int> $kinIds = <Type, int>{
+		InfoEntity: 0,
+		InfoSubclass: 320635948,
+	};
+
+	static InfoEntity $emptyKin(int id) {
+		switch (id) {
+			case 320635948: return InfoSubclass.$empty();
+			default: return InfoEntity.$empty();
+		}
+	}
+
 	late String string;
 	late int value;
 	late bool flag;
@@ -23,13 +35,14 @@ class InfoEntity extends PackMeMessage {
 	@override
 	int $estimate() {
 		$reset();
-		int _bytes = 6;
+		int _bytes = 10;
 		_bytes += $stringBytes(string);
 		return _bytes;
 	}
 
 	@override
 	void $pack() {
+		$packUint32($kinIds[runtimeType] ?? 0);
 		$packString(string);
 		$packUint32(value);
 		$packBool(flag);
@@ -67,7 +80,7 @@ class InfoSubclass extends InfoEntity {
 	@override
 	int $estimate() {
 		int _bytes = super.$estimate();
-		_bytes += 8;
+		_bytes += 12;
 		_bytes += $stringBytes(comment);
 		return _bytes;
 	}
@@ -88,7 +101,7 @@ class InfoSubclass extends InfoEntity {
 
 	@override
 	String toString() {
-		return 'InfoSubclass\x1b[0m(weight: ${PackMe.dye(weight)}, comment: ${PackMe.dye(comment)}) of ${super.toString()}';
+		return 'InfoSubclass\x1b[0m(string: ${PackMe.dye(string)}, value: ${PackMe.dye(value)}, flag: ${PackMe.dye(flag)}, version: ${PackMe.dye(version)}, weight: ${PackMe.dye(weight)}, comment: ${PackMe.dye(comment)})';
 	}
 }
 
@@ -198,8 +211,8 @@ class SendInfoMessage extends PackMeMessage {
 			return $unpackString();
 		});
 		version = HalfLifeVersion.values[$unpackUint8()];
-		entity = $unpackMessage(InfoEntity.$empty());
-		subEntity = $unpackMessage(InfoSubclass.$empty());
+		entity = $unpackMessage(InfoEntity.$emptyKin($unpackUint32()));
+		subEntity = $unpackMessage(InfoEntity.$emptyKin($unpackUint32())) as InfoSubclass;
 	}
 
 	@override

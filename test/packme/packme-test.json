@@ -11,6 +11,9 @@
 	"sub_object@nested_object": {
 		"c": "double"
 	},
+	"sub_sub_object@sub_object": {
+		"d": "double"
+	},
 	"test": [
 		{
 			"req_id": "binary12",
@@ -34,6 +37,8 @@
 			"req_nested": "@nested_object",
 			"req_nested_list": [["int32"]],
 			"req_inherited": "@sub_object",
+			"req_inherited_more": "@sub_sub_object",
+			"req_mixed_inherited": ["@nested_object"],
 			"?opt_int8": "int8",
 			"?opt_uint8": "uint8",
 			"?opt_int16": "int16",
@@ -50,7 +55,9 @@
 			"?opt_enum": "@test_enum",
 			"?opt_nested": "@nested_object",
 			"?opt_nested_list": [["int32"]],
-			"?opt_inherited": "@sub_object"
+			"?opt_inherited": "@sub_object",
+			"?opt_inherited_more": "@sub_sub_object",
+			"?opt_mixed_inherited": ["@nested_object"]
 		}
 	]
 }

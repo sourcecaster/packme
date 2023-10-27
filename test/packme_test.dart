@@ -41,6 +41,29 @@ TestMessage generateTestMessage() {
             b: 'I am inherited from nested 😎',
             c: double.infinity
         ),
+        reqInheritedMore: SubSubObject(
+            a: 129,
+            b: 'I am inherited from sub 😎',
+            c: double.negativeInfinity,
+            d: 1234567890
+        ),
+        reqMixedInherited: <NestedObject>[
+            SubSubObject(
+                a: 100,
+                b: '200',
+                c: 300,
+                d: 400
+            ),
+            NestedObject(
+                a: 1,
+                b: '22'
+            ),
+            SubObject(
+                a: 3,
+                b: '44',
+                c: 5.55
+            )
+        ],
         optId: Uint8List.fromList(<int>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]),
         optIds: <Uint8List>[
             Uint8List.fromList(<int>[1, 2, 3, 4]),
@@ -76,7 +99,30 @@ TestMessage generateTestMessage() {
             a: 128,
             b: 'I am inherited from nested 😎',
             c: double.infinity
-        )
+        ),
+        optInheritedMore: SubSubObject(
+            a: 129,
+            b: 'I am inherited from sub 😎',
+            c: double.negativeInfinity,
+            d: 1234567890
+        ),
+        optMixedInherited: <NestedObject>[
+            SubSubObject(
+                a: 100,
+                b: '200',
+                c: 300,
+                d: 400
+            ),
+            NestedObject(
+                a: 1,
+                b: '22'
+            ),
+            SubObject(
+                a: 3,
+                b: '44',
+                c: 5.55
+            )
+        ]
     );
 }
 
@@ -88,7 +134,10 @@ void main() {
     });
 
     test('PackMe.unpack(Uint8List data) returns TestMessage', () {
-        final PackMe packme = PackMe();
+        final PackMe packme = PackMe(onError: (String err, [StackTrace? stack]) {
+            print(err);
+            if (stack != null) print(stack);
+        });
         packme.register(packmeTestMessageFactory);
         final Uint8List? data = packme.pack(generateTestMessage());
         final PackMeMessage? message = packme.unpack(data!);
@@ -120,9 +169,17 @@ void main() {
         expect(message.reqNested.a, equals(sample.reqNested.a));
         expect(message.reqNested.b, equals(sample.reqNested.b));
         expect(message.reqNestedList, equals(sample.reqNestedList));
+        expect(message.reqInherited.runtimeType, equals(SubObject));
         expect(message.reqInherited.a, equals(sample.reqInherited.a));
         expect(message.reqInherited.b, equals(sample.reqInherited.b));
         expect(message.reqInherited.c, equals(sample.reqInherited.c));
+        expect(message.reqInheritedMore.runtimeType, equals(SubSubObject));
+        expect(message.reqInheritedMore.a, equals(sample.reqInheritedMore.a));
+        expect(message.reqInheritedMore.b, equals(sample.reqInheritedMore.b));
+        expect(message.reqInheritedMore.c, equals(sample.reqInheritedMore.c));
+        expect(message.reqInheritedMore.d, equals(sample.reqInheritedMore.d));
+        expect(message.reqMixedInherited[0] is SubSubObject, equals(true));
+        expect(message.reqMixedInherited[2] is SubObject, equals(true));
         expect(message.optId, equals(sample.optId));
         expect(message.optIds, equals(sample.optIds));
         expect(message.optInt8, equals(sample.optInt8));
@@ -142,8 +199,16 @@ void main() {
         expect(message.optNested!.a, equals(sample.optNested!.a));
         expect(message.optNested!.b, equals(sample.optNested!.b));
         expect(message.optNestedList, equals(sample.optNestedList));
+        expect(message.optInherited.runtimeType, equals(SubObject));
         expect(message.optInherited!.a, equals(sample.optInherited!.a));
         expect(message.optInherited!.b, equals(sample.optInherited!.b));
         expect(message.optInherited!.c, equals(sample.optInherited!.c));
+        expect(message.optInheritedMore.runtimeType, equals(SubSubObject));
+        expect(message.optInheritedMore!.a, equals(sample.optInheritedMore!.a));
+        expect(message.optInheritedMore!.b, equals(sample.optInheritedMore!.b));
+        expect(message.optInheritedMore!.c, equals(sample.optInheritedMore!.c));
+        expect(message.optInheritedMore!.d, equals(sample.optInheritedMore!.d));
+        expect(message.optMixedInherited![0] is SubSubObject, equals(true));
+        expect(message.optMixedInherited![2] is SubObject, equals(true));
     });
 }
