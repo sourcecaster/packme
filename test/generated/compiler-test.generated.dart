@@ -80,7 +80,7 @@ class InfoSubclass extends InfoEntity {
 	@override
 	int $estimate() {
 		int _bytes = super.$estimate();
-		_bytes += 12;
+		_bytes += 8;
 		_bytes += $stringBytes(comment);
 		return _bytes;
 	}

@@ -55,8 +55,8 @@ class ReferenceField extends Field {
     @override
     String unpacker([String name = '']) => referenceNode is Enum
         ? '${referenceNode.name}.values[\$unpackUint8()]'
-            : referenceNode is Object && ((referenceNode as Object).inheritTag.isNotEmpty || (referenceNode as Object)._getChildObjects().isNotEmpty)
-        ? '\$unpackMessage(${(referenceNode as Object)._getInheritedRoot().name}.\$emptyKin(\$unpackUint32()))'
-            + ((referenceNode as Object)._getInheritedRoot() != referenceNode ? ' as ${referenceNode.name}' : '')
-        : '\$unpackMessage(${referenceNode.name}.\$empty())';
+        : referenceNode is Object && ((referenceNode as Object).inheritTag.isNotEmpty || (referenceNode as Object)._getChildObjects().isNotEmpty)
+            ? '\$unpackMessage(${(referenceNode as Object)._getInheritedRoot().name}.\$emptyKin(\$unpackUint32()))'
+                + ((referenceNode as Object)._getInheritedRoot() != referenceNode ? ' as ${referenceNode.name}' : '')
+            : '\$unpackMessage(${referenceNode.name}.\$empty())';
 }

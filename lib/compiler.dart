@@ -66,7 +66,7 @@
 ///
 /// will result, for instance, in creating class GetPostsResponsePost (note that it has a singular form "Post", not
 /// "Posts" - that is because "posts" is an array of nested object) which will contain four fields: Uint8List<int> id,
-/// String author, DateTime created, String title and String contents. Also there will class GetPostsResponseStats
+/// String author, DateTime created, String title and String contents. Also, there will be class GetPostsResponseStats
 /// (plural this time, same as field name "stats", because it's just a nested object, not an array) which will contain
 /// three int fields: loaded, remaining and total.
 ///

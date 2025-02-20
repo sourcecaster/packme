@@ -71,7 +71,7 @@ class SubObject extends NestedObject {
 	@override
 	int $estimate() {
 		int _bytes = super.$estimate();
-		_bytes += 12;
+		_bytes += 8;
 		return _bytes;
 	}
 
@@ -107,7 +107,7 @@ class SubSubObject extends SubObject {
 	@override
 	int $estimate() {
 		int _bytes = super.$estimate();
-		_bytes += 12;
+		_bytes += 8;
 		return _bytes;
 	}
 

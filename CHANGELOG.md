@@ -1,3 +1,6 @@
+## v2.0.3
+* Bugfix: buffer size overestimation fixed (for inherited objects).
+
 ## v2.0.2
 * Bugfix: inherited objects processing bug fixed.
 

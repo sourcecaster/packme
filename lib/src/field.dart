@@ -5,9 +5,9 @@ part of packme.compiler;
 abstract class Field {
     Field(this.node, this.tag, this.manifest) : name = validName(tag), optional = RegExp(r'^\?').hasMatch(tag) {
         if (name == '') throw Exception('Field "$tag" of node "${node.tag}" in '
-            '${node.container.filename}.json is resulted with the name "$name", which is reserved by Dart language.');
-        if (isReserved(name)) throw Exception('Field "$tag" of node "${node.tag}" in '
             '${node.container.filename}.json is resulted with the name parsed into an empty string.');
+        if (isReserved(name)) throw Exception('Field "$tag" of node "${node.tag}" in '
+            '${node.container.filename}.json is resulted with the name "$name", which is reserved by Dart language.');
     }
 
     /// Try to create a Node instance of corresponding type
@@ -24,9 +24,9 @@ abstract class Field {
         }
         if (entry.value is List && entry.value.length == 1) return ArrayField(node, entry.key, entry.value as List<dynamic>);
         if (entry.value is Map) return ObjectField(node, entry.key, entry.value as Map<String, dynamic>, parentIsArray: parentIsArray);
-        throw Exception('Field "${entry.key}" of node "${node.tag}" in ${node.container.filename}.json has invalid type. '
+        throw Exception('Field "${entry.key}" of node "${node.tag}" in ${node.container.filename}.json has an invalid type. '
             'Valid types are: bool, int8, uint8, int16, uint16, int32, uint32, int64, uint64, float, double, datetime, string, binary# (e.g.: "binary16"). '
-            'It can also be an array of type (e.g. ["int8"]), a reference to an object (e.g. "@item") or embedded object itself: { <field>: <type>, ... }');
+            'It can also be an array of type (e.g. ["int8"]), a reference to an object (e.g. "@item") or an embedded object: { <field>: <type>, ... }');
     }
 
     final Node node;
@@ -72,7 +72,7 @@ abstract class Field {
         ];
     }
 
-    /// Get unpack data from buffer code
+    /// Get unpack data from the buffer code
     List<String> get unpack {
         return <String>[
             '${optional ? r'if ($getFlag()) ' : ''}$name = ${unpacker(nameEnsured)};'

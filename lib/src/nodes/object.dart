@@ -89,16 +89,16 @@ class Object extends Node {
         final Map<int, Object> childObjects = _getChildObjects();
 
         /// Add 4 bytes for specific inherited object class ID (to be able to unpack corresponding inherited object)
-        if (inheritTag.isNotEmpty || childObjects.isNotEmpty) _minBufferSize += 4;
+        if (inheritTag.isEmpty && childObjects.isNotEmpty) _minBufferSize += 4;
 
         return <String>[
             '',
             if (inheritTag.isEmpty) 'class $name extends PackMeMessage {'
             else 'class $name extends ${inheritedObject!.name} {',
 
-            if (fields.isNotEmpty) ...<String>[
+            if (fields.isNotEmpty || inheritedFields.isNotEmpty) ...<String>[
                 '$name({',
-                if (inheritTag.isNotEmpty) ...inheritedFields.map((Field f) => f.attribute),
+                ...inheritedFields.map((Field f) => f.attribute),
                 ...fields.map((Field f) => f.initializer),
                 if (inheritTag.isEmpty) '});'
                 else '}) : super(${inheritedFields.map((Field f) => '${f.name}: ${f.name}').join(', ')});'

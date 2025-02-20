@@ -46,7 +46,7 @@ void main() {
             GetDataResponseItem(),
             GetDataResponseItem(flag: true),
         ]);
-        expect(sendInfoMessage.$estimate(), equals(95));
+        expect(sendInfoMessage.$estimate(), equals(103));
         expect(getDataResponse.$estimate(), equals(50));
         expect(getDataRequest.$estimate(), equals(15));
     });
